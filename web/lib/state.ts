@@ -138,3 +138,47 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
   saveAppState(state);
   return { success: true, state };
 }
+
+export function resetToGenesis(fullReset: boolean = false): AppState {
+  const state = getAppState();
+  const now = Date.now();
+
+  state.currentKing = {
+    nickname: "👑 Sovereign Origin",
+    tagline: "The world's most contested digital screen is LIVE. Dethrone me to rule!",
+    link: "https://x.com",
+    mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
+    mediaType: "image",
+    paidAmountUsd: 1,
+    paidCryptoAmount: 0.005,
+    cryptoCurrency: "SOL",
+    txHash: "genesis_tx_001",
+    countryCode: "🌐",
+    id: `king_genesis_${now}`,
+    crownedAt: now,
+  };
+
+  state.nextMinPriceUsd = 2;
+
+  if (fullReset) {
+    state.stats = {
+      totalRaisedUsd: 1,
+      totalDethronements: 1,
+      longestReignSeconds: 1420,
+      longestReignKing: "👑 Sovereign Origin",
+      targetGoalUsd: 1000000,
+    };
+    state.hallOfFame = [];
+    state.recentEvents = [
+      {
+        id: `ev-${now}`,
+        type: "TAKEOVER",
+        text: "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
+        timestamp: now,
+      },
+    ];
+  }
+
+  saveAppState(state);
+  return state;
+}
