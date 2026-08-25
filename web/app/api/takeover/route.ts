@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { executeDethronement, getAppState } from "@/lib/state";
 import { moderateContent } from "@/lib/moderation";
+import { verifyEvmTransaction, verifySolanaTransaction } from "@/lib/blockchain";
 
 function normalizeUrl(url?: string): string | undefined {
   if (!url) return undefined;
@@ -47,6 +48,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Strict On-Chain Transaction Verification
+    if (!txHash || typeof txHash !== "string" || txHash.startsWith("tx_demo") || txHash.startsWith("tx_evm_") || txHash.startsWith("tx_solana_")) {
+      return NextResponse.json(
+        {
+          error: `Please complete the crypto payment to ${state.walletConfig.evmAddress} and provide the real on-chain transaction hash (txHash).`,
+        },
+        { status: 400 }
+      );
+    }
+
+    const isSolana = cryptoCurrency === "SOL";
+    if (isSolana) {
+      const solVerify = await verifySolanaTransaction(txHash, state.walletConfig.solanaAddress);
+      if (!solVerify.valid) {
+        return NextResponse.json(
+          { error: solVerify.reason || "Solana transaction could not be verified on-chain." },
+          { status: 400 }
+        );
+      }
+    } else {
+      const evmVerify = await verifyEvmTransaction(txHash, state.walletConfig.evmAddress, cleanAmount);
+      if (!evmVerify.valid) {
+        return NextResponse.json(
+          { error: evmVerify.reason || `EVM transaction not verified for address ${state.walletConfig.evmAddress}.` },
+          { status: 400 }
+        );
+      }
+    }
+
     // Safety / AI Moderation check
     const modResult = await moderateContent(`${nickname} - ${tagline}`, mediaUrl);
     if (!modResult.allowed) {
@@ -58,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedLink = normalizeUrl(link);
 
-    // Execute dethronement
+    // Execute verified dethronement
     const result = executeDethronement({
       nickname: nickname.trim().slice(0, 30),
       tagline: tagline.trim().slice(0, 140),
@@ -67,8 +97,8 @@ export async function POST(req: NextRequest) {
       mediaType: mediaType === "gif" ? "gif" : "image",
       paidAmountUsd: cleanAmount,
       paidCryptoAmount: Number(paidCryptoAmount) || (cleanAmount / 150),
-      cryptoCurrency: cryptoCurrency || "SOL",
-      txHash: txHash || `tx_demo_${Date.now()}`,
+      cryptoCurrency: cryptoCurrency || "USDT",
+      txHash: txHash.trim(),
       countryCode: countryCode || "🌐",
     });
 
