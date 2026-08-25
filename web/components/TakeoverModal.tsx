@@ -14,6 +14,8 @@ import {
   AlertCircle,
   RefreshCw,
   Trash2,
+  ShieldCheck,
+  Wallet,
 } from "lucide-react";
 import { AppState } from "@/lib/types";
 
@@ -57,7 +59,8 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   const [mediaUrl, setMediaUrl] = useState(MEME_PRESETS[0].url);
   const [imageSourceTab, setImageSourceTab] = useState<"UPLOAD" | "URL" | "PRESETS">("UPLOAD");
   const [bidAmount, setBidAmount] = useState<number>(nextMinPriceUsd);
-  const [paymentMethod, setPaymentMethod] = useState<"DEMO" | "SOLANA" | "EVM">("DEMO");
+  const [paymentMethod, setPaymentMethod] = useState<"EVM" | "SOLANA">("EVM");
+  const [txHashInput, setTxHashInput] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -157,6 +160,8 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     setLoading(true);
 
     try {
+      const finalTxHash = txHashInput.trim() || `tx_${paymentMethod.toLowerCase()}_${Date.now()}`;
+
       const res = await fetch("/api/takeover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -167,9 +172,9 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
           mediaUrl,
           mediaType: "image",
           paidAmountUsd: bidAmount,
-          cryptoCurrency: paymentMethod === "SOLANA" ? "SOL" : paymentMethod === "EVM" ? "USDT" : "DEMO",
-          paidCryptoAmount: paymentMethod === "SOLANA" ? bidAmount / 150 : bidAmount,
-          txHash: `tx_${paymentMethod.toLowerCase()}_${Date.now()}`,
+          cryptoCurrency: paymentMethod === "SOLANA" ? "SOL" : "USDT",
+          paidCryptoAmount: paymentMethod === "SOLANA" ? Number((bidAmount / 150).toFixed(4)) : bidAmount,
+          txHash: finalTxHash,
         }),
       });
 
@@ -213,7 +218,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               DETHRONE THE CURRENT KING
             </h2>
             <p className="text-xs sm:text-sm text-gray-400 mt-1">
-              Minimum bid to rule: <strong className="text-emerald-400 font-bold">${nextMinPriceUsd.toFixed(2)}</strong>. You hold the screen until outbid!
+              Minimum required to rule: <strong className="text-emerald-400 font-bold">${nextMinPriceUsd.toFixed(2)}</strong>. You hold the screen until outbid!
             </p>
           </div>
 
@@ -225,7 +230,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-            {/* Nickname & Link (16px base font on mobile to prevent iOS Safari auto-zoom) */}
+            {/* Nickname & Link */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div>
                 <label className="block text-xs text-gray-300 font-bold mb-1">
@@ -449,76 +454,112 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               </div>
             </div>
 
-            {/* Payment Method Selector */}
-            <div className="space-y-2 pt-2">
-              <label className="block text-xs text-gray-300 font-bold">
-                PAYMENT METHOD
+            {/* REAL CRYPTO PAYMENT METHOD SELECTOR */}
+            <div className="space-y-3 pt-2">
+              <label className="block text-xs text-gray-300 font-bold flex items-center justify-between">
+                <span>SELECT CRYPTO PAYMENT NETWORK</span>
+                <span className="text-[10px] text-emerald-400">Direct non-custodial</span>
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("DEMO")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
-                    paymentMethod === "DEMO"
-                      ? "bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                      : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
-                  }`}
-                >
-                  ⚡ 1-Click Demo Bid
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("SOLANA")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
-                    paymentMethod === "SOLANA"
-                      ? "bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
-                      : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
-                  }`}
-                >
-                  🟣 Solana Pay (SOL)
-                </button>
+
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("EVM")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
                     paymentMethod === "EVM"
                       ? "bg-blue-500/20 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
                       : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
                   }`}
                 >
-                  🔷 Base / USDT
+                  <span className="text-sm">🔷 Base / USDT / ETH</span>
+                  <span className="text-[10px] text-gray-400 font-normal">Sub-cent fee on Base</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("SOLANA")}
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
+                    paymentMethod === "SOLANA"
+                      ? "bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+                      : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <span className="text-sm">🟣 Solana (SOL)</span>
+                  <span className="text-[10px] text-gray-400 font-normal">Fast 400ms finality</span>
                 </button>
               </div>
 
-              {/* Crypto Address Details */}
-              {paymentMethod === "SOLANA" && (
-                <div className="p-3 bg-purple-950/40 border border-purple-800/50 rounded-xl text-xs space-y-1.5">
-                  <div className="text-purple-300 font-bold">Solana Deposit Address:</div>
-                  <div className="flex items-center justify-between gap-2 bg-black/60 px-2.5 py-2 rounded text-[11px] text-gray-300 font-mono">
-                    <span className="truncate">{walletConfig.solanaAddress}</span>
-                    <button
-                      type="button"
-                      onClick={() => copyToClipboard(walletConfig.solanaAddress)}
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 flex-shrink-0"
-                    >
-                      {copiedAddress ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-
+              {/* EVM Deposit Address Box */}
               {paymentMethod === "EVM" && (
-                <div className="p-3 bg-blue-950/40 border border-blue-800/50 rounded-xl text-xs space-y-1.5">
-                  <div className="text-blue-300 font-bold">EVM / Base / USDT Address:</div>
-                  <div className="flex items-center justify-between gap-2 bg-black/60 px-2.5 py-2 rounded text-[11px] text-gray-300 font-mono">
+                <div className="p-3.5 bg-blue-950/40 border border-blue-800/60 rounded-xl text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-blue-300 font-bold flex items-center gap-1.5">
+                      <Wallet className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Send ${bidAmount.toFixed(2)} USDT / ETH to:</span>
+                    </span>
+                    <span className="text-[10px] text-gray-400">Base, ETH, BSC, Polygon</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 bg-black/80 px-3 py-2.5 rounded-lg text-xs text-white font-mono border border-blue-500/30">
                     <span className="truncate">{walletConfig.evmAddress}</span>
                     <button
                       type="button"
                       onClick={() => copyToClipboard(walletConfig.evmAddress)}
-                      className="text-blue-400 hover:text-blue-300 flex items-center gap-1 flex-shrink-0"
+                      className="text-blue-400 hover:text-blue-300 flex items-center gap-1 flex-shrink-0 font-bold"
                     >
                       {copiedAddress ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                      <span>{copiedAddress ? "Copied" : "Copy"}</span>
                     </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-gray-400 mb-1">
+                      Transaction Hash (txHash) / Proof (Optional):
+                    </label>
+                    <input
+                      type="text"
+                      value={txHashInput}
+                      onChange={(e) => setTxHashInput(e.target.value)}
+                      placeholder="0x... paste your transaction hash"
+                      className="w-full bg-black/90 border border-cyber-border rounded-lg px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-400 font-mono"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Solana Deposit Address Box */}
+              {paymentMethod === "SOLANA" && (
+                <div className="p-3.5 bg-purple-950/40 border border-purple-800/60 rounded-xl text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-purple-300 font-bold flex items-center gap-1.5">
+                      <Wallet className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Send ~{(bidAmount / 150).toFixed(3)} SOL to:</span>
+                    </span>
+                    <span className="text-[10px] text-gray-400">Solana Mainnet</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 bg-black/80 px-3 py-2.5 rounded-lg text-xs text-white font-mono border border-purple-500/30">
+                    <span className="truncate">{walletConfig.solanaAddress}</span>
+                    <button
+                      type="button"
+                      onClick={() => copyToClipboard(walletConfig.solanaAddress)}
+                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 flex-shrink-0 font-bold"
+                    >
+                      {copiedAddress ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                      <span>{copiedAddress ? "Copied" : "Copy"}</span>
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-gray-400 mb-1">
+                      Solana Signature / txHash (Optional):
+                    </label>
+                    <input
+                      type="text"
+                      value={txHashInput}
+                      onChange={(e) => setTxHashInput(e.target.value)}
+                      placeholder="Paste your Solana transaction signature"
+                      className="w-full bg-black/90 border border-cyber-border rounded-lg px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-purple-400 font-mono"
+                    />
                   </div>
                 </div>
               )}
@@ -539,7 +580,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               {loading ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>CLAIMING THE THRONE...</span>
+                  <span>VERIFYING & CLAIMING THRONE...</span>
                 </>
               ) : (
                 <>
