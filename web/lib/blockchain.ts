@@ -17,9 +17,10 @@ const EVM_RPC_ENDPOINTS = [
 ];
 
 const SOLANA_RPC_ENDPOINTS = [
-  "https://api.mainnet-beta.solana.com",
-  "https://solana-mainnet.rpc.extrnode.com",
-  "https://rpc.ankr.com/solana",
+  "https://solana-rpc.publicnode.com", // Primary Fast Solana RPC
+  "https://solana-mainnet.rpc.extrnode.com", // Fallback 1
+  "https://rpc.ankr.com/solana", // Fallback 2
+  "https://api.mainnet-beta.solana.com", // Fallback 3
 ];
 
 // Anti-Replay Cache (In-Memory Set)
