@@ -290,13 +290,6 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
             </p>
           </div>
 
-          {errorMsg && (
-            <div className="mb-4 p-3 bg-red-950/80 border border-red-500 text-red-200 text-xs rounded-xl flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             {/* Nickname & Link */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -665,6 +658,17 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Error Message Placed Directly Above Submit Button */}
+            {errorMsg && (
+              <div className="p-3.5 bg-red-950/95 border-2 border-red-500 text-red-200 text-xs rounded-xl flex items-start gap-2.5 shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 leading-relaxed">
+                  <strong className="block text-white font-bold mb-0.5">PAYMENT REQUIRED:</strong>
+                  <span>{errorMsg}</span>
+                </div>
+              </div>
+            )}
 
             {/* Legal Compliance Notice */}
             <div className="text-[10px] text-gray-500 text-center leading-relaxed pt-1">
