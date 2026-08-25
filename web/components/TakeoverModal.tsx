@@ -521,11 +521,18 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
             )}
           </div>
 
+          {/* Legal Compliance Notice */}
+          <div className="text-[10px] text-gray-500 text-center leading-relaxed pt-1">
+            By submitting, you certify you own rights to this content and agree to the{" "}
+            <span className="text-yellow-400/80 underline cursor-pointer">Terms of Service</span>.{" "}
+            All micropayments are strictly final fees for live billboard display time (No financial returns).
+          </div>
+
           {/* Submit CTA Button */}
           <button
             type="submit"
             disabled={loading || isUploading}
-            className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black py-4 rounded-xl shadow-[0_0_30px_rgba(234,179,8,0.7)] text-base uppercase tracking-wider transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-4"
+            className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black py-4 rounded-xl shadow-[0_0_30px_rgba(234,179,8,0.7)] text-base uppercase tracking-wider transition-all transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
           >
             {loading ? (
               <>

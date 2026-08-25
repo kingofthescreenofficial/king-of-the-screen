@@ -9,11 +9,14 @@ import { HallOfFame } from "@/components/HallOfFame";
 import { LiveAudio } from "@/components/LiveAudio";
 import { ShareCard } from "@/components/ShareCard";
 import { LiveViewerBadge } from "@/components/LiveViewerBadge";
-import { Crown, Flame, Info } from "lucide-react";
+import { LegalModal } from "@/components/LegalModal";
+import { Crown, Flame, Info, Scale } from "lucide-react";
 
 export default function HomePage() {
   const [state, setState] = useState<AppState | null>(null);
   const [isTakeoverOpen, setIsTakeoverOpen] = useState(false);
+  const [isLegalOpen, setIsLegalOpen] = useState(false);
+  const [legalTab, setLegalTab] = useState<"TOS" | "DISCLAIMER" | "DMCA" | "PRIVACY">("TOS");
   const [lastEventId, setLastEventId] = useState<string | null>(null);
   const lastStateHashRef = useRef<string>("");
 
@@ -44,6 +47,11 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  const openLegal = (tab: "TOS" | "DISCLAIMER" | "DMCA" | "PRIVACY") => {
+    setLegalTab(tab);
+    setIsLegalOpen(true);
+  };
+
   if (!state) {
     return (
       <div className="min-h-screen bg-[#08080c] flex flex-col items-center justify-center text-white font-mono">
@@ -54,7 +62,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#08080c] text-white px-4 py-6 sm:py-8 selection:bg-yellow-500 selection:text-black">
+    <main className="min-h-screen bg-[#08080c] text-white px-4 py-6 sm:py-8 selection:bg-yellow-500 selection:text-black font-mono">
       {/* Sound & TTS Engine */}
       <LiveAudio
         lastEventId={lastEventId}
@@ -147,10 +155,47 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="text-center text-[11px] font-mono text-gray-600 pt-6 pb-12 border-t border-cyber-border/40">
-          <p>© 2026 KING OF THE SCREEN. A viral autonomous Web3 social experiment.</p>
-          <p className="mt-1 text-gray-500">Every bid is final and non-custodial.</p>
+        {/* COMPREHENSIVE LEGAL & COMPLIANCE FOOTER */}
+        <footer className="text-center text-[11px] font-mono text-gray-500 pt-8 pb-12 border-t border-cyber-border/40 space-y-3">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-400 text-xs">
+            <button
+              onClick={() => openLegal("TOS")}
+              className="hover:text-yellow-400 underline transition-colors"
+            >
+              Terms of Service
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => openLegal("DISCLAIMER")}
+              className="hover:text-yellow-400 underline transition-colors"
+            >
+              Financial Disclaimer
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => openLegal("DMCA")}
+              className="hover:text-yellow-400 underline transition-colors"
+            >
+              DMCA & Safety Policy
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => openLegal("PRIVACY")}
+              className="hover:text-yellow-400 underline transition-colors"
+            >
+              Privacy Policy
+            </button>
+          </div>
+
+          <p className="max-w-2xl mx-auto text-[10px] text-gray-600 leading-relaxed">
+            LEGAL NOTICE: King of the Screen is an interactive digital advertising billboard and live social art performance. 
+            All submitted micro-payments are strictly final and non-refundable fees for real-time digital billboard broadcast time. 
+            This service does not constitute investment advice, profit sharing, lotteries, or securities.
+          </p>
+
+          <p className="text-[10px] text-gray-600">
+            © 2026 KING OF THE SCREEN. All rights reserved.
+          </p>
         </footer>
       </div>
 
@@ -161,6 +206,13 @@ export default function HomePage() {
         nextMinPriceUsd={state.nextMinPriceUsd}
         walletConfig={state.walletConfig}
         onSuccess={(newState) => setState(newState)}
+      />
+
+      {/* Legal & Compliance Modal */}
+      <LegalModal
+        isOpen={isLegalOpen}
+        onClose={() => setIsLegalOpen(false)}
+        defaultTab={legalTab}
       />
     </main>
   );
