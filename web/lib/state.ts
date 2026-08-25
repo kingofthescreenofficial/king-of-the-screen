@@ -2,28 +2,32 @@ import fs from "fs";
 import path from "path";
 import { AppState, King } from "./types";
 
-const DATA_FILE = path.join(process.cwd(), "data", "state.json");
+const DATA_FILE = process.env.NODE_ENV === "production"
+  ? path.join("/tmp", "state.json")
+  : path.join(process.cwd(), "data", "state.json");
 
-const DEFAULT_STATE: AppState = {
+const SEED_FILE = path.join(process.cwd(), "data", "state.json");
+
+export const DEFAULT_STATE: AppState = {
   currentKing: {
-    id: "genesis-king",
     nickname: "👑 Sovereign Origin",
-    tagline: "The world's most contested screen has awakened. Dethrone me to rule!",
-    link: "https://twitter.com",
+    tagline: "The world's most contested digital screen is LIVE. Dethrone me to rule!",
+    link: "https://x.com",
     mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
     mediaType: "image",
     paidAmountUsd: 1,
     paidCryptoAmount: 0.005,
     cryptoCurrency: "SOL",
-    crownedAt: Date.now() - 1000 * 60 * 12, // 12 minutes ago
-    txHash: "genesis_block_0001",
+    txHash: "genesis_tx_001",
     countryCode: "🌐",
+    id: "king_genesis_001",
+    crownedAt: 1787680065000,
   },
   nextMinPriceUsd: 2,
   stats: {
     totalRaisedUsd: 1,
     totalDethronements: 1,
-    longestReignSeconds: 720,
+    longestReignSeconds: 1420,
     longestReignKing: "👑 Sovereign Origin",
     targetGoalUsd: 1000000,
   },
@@ -32,8 +36,8 @@ const DEFAULT_STATE: AppState = {
     {
       id: "ev-1",
       type: "TAKEOVER",
-      text: "👑 Sovereign Origin claimed the throne for $1.00",
-      timestamp: Date.now() - 1000 * 60 * 12,
+      text: "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
+      timestamp: 1787680065000,
     },
   ],
   walletConfig: {
@@ -43,20 +47,36 @@ const DEFAULT_STATE: AppState = {
   },
 };
 
+// In-memory runtime state for fast serverless responses
+let memoryState: AppState | null = null;
+
 export function getAppState(): AppState {
+  if (memoryState) {
+    return memoryState;
+  }
+
   try {
     if (fs.existsSync(DATA_FILE)) {
       const data = fs.readFileSync(DATA_FILE, "utf-8");
-      return JSON.parse(data);
+      memoryState = JSON.parse(data);
+      return memoryState!;
+    }
+    if (fs.existsSync(SEED_FILE)) {
+      const seedData = fs.readFileSync(SEED_FILE, "utf-8");
+      memoryState = JSON.parse(seedData);
+      return memoryState!;
     }
   } catch (error) {
     console.error("Error reading state file:", error);
   }
-  saveAppState(DEFAULT_STATE);
-  return DEFAULT_STATE;
+
+  memoryState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  saveAppState(memoryState!);
+  return memoryState!;
 }
 
 export function saveAppState(state: AppState): void {
+  memoryState = state;
   try {
     const dir = path.dirname(DATA_FILE);
     if (!fs.existsSync(dir)) {
@@ -64,7 +84,7 @@ export function saveAppState(state: AppState): void {
     }
     fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2), "utf-8");
   } catch (error) {
-    console.error("Error saving state file:", error);
+    console.warn("Notice: Saved to memory state (read-only disk fallback)");
   }
 }
 
@@ -140,45 +160,47 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
 }
 
 export function resetToGenesis(fullReset: boolean = false): AppState {
-  const state = getAppState();
   const now = Date.now();
 
-  state.currentKing = {
-    nickname: "👑 Sovereign Origin",
-    tagline: "The world's most contested digital screen is LIVE. Dethrone me to rule!",
-    link: "https://x.com",
-    mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-    mediaType: "image",
-    paidAmountUsd: 1,
-    paidCryptoAmount: 0.005,
-    cryptoCurrency: "SOL",
-    txHash: "genesis_tx_001",
-    countryCode: "🌐",
-    id: `king_genesis_${now}`,
-    crownedAt: now,
-  };
-
-  state.nextMinPriceUsd = 2;
-
-  if (fullReset) {
-    state.stats = {
+  const freshState: AppState = {
+    currentKing: {
+      nickname: "👑 Sovereign Origin",
+      tagline: "The world's most contested digital screen is LIVE. Dethrone me to rule!",
+      link: "https://x.com",
+      mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
+      mediaType: "image",
+      paidAmountUsd: 1,
+      paidCryptoAmount: 0.005,
+      cryptoCurrency: "SOL",
+      txHash: "genesis_tx_001",
+      countryCode: "🌐",
+      id: `king_genesis_${now}`,
+      crownedAt: now,
+    },
+    nextMinPriceUsd: 2,
+    stats: {
       totalRaisedUsd: 1,
       totalDethronements: 1,
       longestReignSeconds: 1420,
       longestReignKing: "👑 Sovereign Origin",
       targetGoalUsd: 1000000,
-    };
-    state.hallOfFame = [];
-    state.recentEvents = [
+    },
+    hallOfFame: [],
+    recentEvents: [
       {
         id: `ev-${now}`,
         type: "TAKEOVER",
         text: "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
         timestamp: now,
       },
-    ];
-  }
+    ],
+    walletConfig: {
+      solanaAddress: process.env.SOLANA_WALLET_ADDRESS || "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
+      evmAddress: process.env.EVM_WALLET_ADDRESS || "0x36f1bba134797da5ec5caf9ed4634903980ca305",
+      usdtTrc20Address: process.env.USDT_TRC20_ADDRESS || "0x36f1bba134797da5ec5caf9ed4634903980ca305",
+    },
+  };
 
-  saveAppState(state);
-  return state;
+  saveAppState(freshState);
+  return freshState;
 }

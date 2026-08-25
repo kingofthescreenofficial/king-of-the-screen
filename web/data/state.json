@@ -10,8 +10,8 @@
     "cryptoCurrency": "SOL",
     "txHash": "genesis_tx_001",
     "countryCode": "🌐",
-    "id": "king_genesis_1787687518389",
-    "crownedAt": 1787687518389
+    "id": "king_genesis_001",
+    "crownedAt": 1787680065000
   },
   "nextMinPriceUsd": 2,
   "stats": {
@@ -24,10 +24,10 @@
   "hallOfFame": [],
   "recentEvents": [
     {
-      "id": "ev-1787687518389",
+      "id": "ev-1",
       "type": "TAKEOVER",
       "text": "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
-      "timestamp": 1787687518389
+      "timestamp": 1787680065000
     }
   ],
   "walletConfig": {
