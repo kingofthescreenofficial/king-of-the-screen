@@ -14,8 +14,9 @@ import {
   AlertCircle,
   RefreshCw,
   Trash2,
-  ShieldCheck,
   Wallet,
+  Zap,
+  ExternalLink,
 } from "lucide-react";
 import { AppState } from "@/lib/types";
 
@@ -63,6 +64,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   const [txHashInput, setTxHashInput] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [walletConnecting, setWalletConnecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,6 +95,69 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     navigator.clipboard.writeText(text);
     setCopiedAddress(true);
     setTimeout(() => setCopiedAddress(false), 2000);
+  };
+
+  // 1-Click In-Browser Web3 Payment (MetaMask, TrustWallet, Rabby, Coinbase)
+  const handleDirectWeb3Pay = async () => {
+    setErrorMsg(null);
+
+    if (!nickname.trim()) {
+      setErrorMsg("Please enter your King Nickname first.");
+      return;
+    }
+    if (!tagline.trim()) {
+      setErrorMsg("Please enter your Message first.");
+      return;
+    }
+    if (!mediaUrl.trim()) {
+      setErrorMsg("Please select an image first.");
+      return;
+    }
+
+    if (typeof window !== "undefined" && (window as any).ethereum) {
+      setWalletConnecting(true);
+      try {
+        const provider = (window as any).ethereum;
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        const userAccount = accounts[0];
+
+        // Approximate ETH value (assuming ~$2500 per ETH for micro-gas or Base transfer)
+        // For sub-dollar microbids: value in wei
+        const ethPriceApprox = 2500;
+        const ethAmount = bidAmount / ethPriceApprox;
+        const weiHex = "0x" + BigInt(Math.floor(ethAmount * 1e18)).toString(16);
+
+        const txHash = await provider.request({
+          method: "eth_sendTransaction",
+          params: [
+            {
+              from: userAccount,
+              to: walletConfig.evmAddress,
+              value: weiHex,
+            },
+          ],
+        });
+
+        if (txHash) {
+          setTxHashInput(txHash);
+          // Auto submit takeover with real on-chain hash!
+          await processTakeover(txHash);
+        }
+      } catch (err: any) {
+        if (err.code === 4001) {
+          setErrorMsg("Transaction was rejected by user.");
+        } else {
+          setErrorMsg(err.message || "Failed to trigger wallet transaction.");
+        }
+      } finally {
+        setWalletConnecting(false);
+      }
+    } else {
+      // Mobile wallet deep linking fallback
+      const currentUrl = encodeURIComponent("https://king-of-the-screen.vercel.app");
+      const metaMaskUrl = `https://metamask.app.link/dapp/king-of-the-screen.vercel.app`;
+      window.open(metaMaskUrl, "_blank");
+    }
   };
 
   // Handle local file upload
@@ -136,31 +201,10 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
-
-    if (!nickname.trim()) {
-      setErrorMsg("Please enter your King Nickname.");
-      return;
-    }
-    if (!tagline.trim()) {
-      setErrorMsg("Please enter your Tagline / Message.");
-      return;
-    }
-    if (!mediaUrl.trim()) {
-      setErrorMsg("Please upload or choose an image for the screen.");
-      return;
-    }
-    if (bidAmount < nextMinPriceUsd) {
-      setErrorMsg(`Bid must be at least $${nextMinPriceUsd.toFixed(2)}`);
-      return;
-    }
-
+  const processTakeover = async (hash?: string) => {
     setLoading(true);
-
     try {
-      const finalTxHash = txHashInput.trim() || `tx_${paymentMethod.toLowerCase()}_${Date.now()}`;
+      const finalTxHash = (hash || txHashInput).trim() || `tx_${paymentMethod.toLowerCase()}_${Date.now()}`;
 
       const res = await fetch("/api/takeover", {
         method: "POST",
@@ -194,6 +238,30 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+
+    if (!nickname.trim()) {
+      setErrorMsg("Please enter your King Nickname.");
+      return;
+    }
+    if (!tagline.trim()) {
+      setErrorMsg("Please enter your Tagline / Message.");
+      return;
+    }
+    if (!mediaUrl.trim()) {
+      setErrorMsg("Please upload or choose an image for the screen.");
+      return;
+    }
+    if (bidAmount < nextMinPriceUsd) {
+      setErrorMsg(`Bid must be at least $${nextMinPriceUsd.toFixed(2)}`);
+      return;
+    }
+
+    await processTakeover();
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md p-3 sm:p-4">
       <div className="min-h-full flex items-start sm:items-center justify-center py-6 sm:py-10">
@@ -218,7 +286,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               DETHRONE THE CURRENT KING
             </h2>
             <p className="text-xs sm:text-sm text-gray-400 mt-1">
-              Minimum required to rule: <strong className="text-emerald-400 font-bold">${nextMinPriceUsd.toFixed(2)}</strong>. You hold the screen until outbid!
+              Minimum bid to rule: <strong className="text-emerald-400 font-bold">${nextMinPriceUsd.toFixed(2)}</strong>. You hold the screen until outbid!
             </p>
           </div>
 
@@ -488,13 +556,46 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                 </button>
               </div>
 
+              {/* 1-CLICK INSTANT WEB3 BUTTON */}
+              {paymentMethod === "EVM" && (
+                <div className="p-3 bg-gradient-to-r from-blue-950/60 to-purple-950/60 border border-blue-500/40 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-white font-bold flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <span>Instant 1-Click Pay</span>
+                    </span>
+                    <span className="text-[10px] text-blue-300">Opens MetaMask / TrustWallet</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleDirectWeb3Pay}
+                    disabled={walletConnecting || loading}
+                    className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+                  >
+                    {walletConnecting ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>OPENING WALLET APP...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Wallet className="w-4 h-4" />
+                        <span>PAY ${bidAmount.toFixed(2)} WITH WALLET APP</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
               {/* EVM Deposit Address Box */}
               {paymentMethod === "EVM" && (
                 <div className="p-3.5 bg-blue-950/40 border border-blue-800/60 rounded-xl text-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-blue-300 font-bold flex items-center gap-1.5">
                       <Wallet className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Send ${bidAmount.toFixed(2)} USDT / ETH to:</span>
+                      <span>Or Manual Transfer to Address:</span>
                     </span>
                     <span className="text-[10px] text-gray-400">Base, ETH, BSC, Polygon</span>
                   </div>
@@ -519,7 +620,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                       type="text"
                       value={txHashInput}
                       onChange={(e) => setTxHashInput(e.target.value)}
-                      placeholder="0x... paste your transaction hash"
+                      placeholder="0x... paste transaction hash if sent manually"
                       className="w-full bg-black/90 border border-cyber-border rounded-lg px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-400 font-mono"
                     />
                   </div>
@@ -580,12 +681,12 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               {loading ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>VERIFYING & CLAIMING THRONE...</span>
+                  <span>CLAIMING THE THRONE...</span>
                 </>
               ) : (
                 <>
                   <Flame className="w-5 h-5 fill-black" />
-                  <span>CLAIM THRONE FOR ${bidAmount.toFixed(2)}</span>
+                  <span>CONFIRM & CLAIM THRONE FOR ${bidAmount.toFixed(2)}</span>
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}
