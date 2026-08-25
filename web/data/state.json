@@ -1,144 +1,33 @@
 {
   "currentKing": {
-    "nickname": "👑 The $1,000,000 Emperor",
-    "tagline": "GOAL REACHED! The world's first $1,000,000 living digital monument is conquered!",
-    "link": "https://king-of-the-screen.vercel.app",
-    "mediaUrl": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1200&auto=format&fit=crop&q=80",
+    "nickname": "👑 Sovereign Origin",
+    "tagline": "The world's most contested digital screen is LIVE. Dethrone me to rule!",
+    "link": "https://x.com",
+    "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
     "mediaType": "image",
-    "paidAmountUsd": 1000000,
-    "paidCryptoAmount": 1000000,
-    "cryptoCurrency": "DEMO",
-    "txHash": "tx_demo_1787687381314",
+    "paidAmountUsd": 1,
+    "paidCryptoAmount": 0.005,
+    "cryptoCurrency": "SOL",
+    "txHash": "genesis_tx_001",
     "countryCode": "🌐",
-    "id": "king_1787687381314_89840",
-    "crownedAt": 1787687381314
+    "id": "king_genesis_1787687518389",
+    "crownedAt": 1787687518389
   },
-  "nextMinPriceUsd": 1100000,
+  "nextMinPriceUsd": 2,
   "stats": {
-    "totalRaisedUsd": 1652501,
-    "totalDethronements": 6,
+    "totalRaisedUsd": 1,
+    "totalDethronements": 1,
     "longestReignSeconds": 1420,
     "longestReignKing": "👑 Sovereign Origin",
     "targetGoalUsd": 1000000
   },
-  "hallOfFame": [
-    {
-      "nickname": "💎 Satoshi Nakamoto",
-      "tagline": "Chancellor on brink of second bailout for banks. $500K reign.",
-      "link": "https://bitcoin.org",
-      "mediaUrl": "https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 500000,
-      "paidCryptoAmount": 500000,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787687380801",
-      "countryCode": "🌐",
-      "id": "king_1787687380801_t0zbx",
-      "crownedAt": 1787687380801,
-      "dethronedAt": 1787687381314,
-      "reignDurationSeconds": 1
-    },
-    {
-      "nickname": "⚡ Base God",
-      "tagline": "Onchain summer never ends. $100K takeover on Base!",
-      "link": "https://base.org",
-      "mediaUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 125000,
-      "paidCryptoAmount": 125000,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787687380274",
-      "countryCode": "🌐",
-      "id": "king_1787687380274_77s1y",
-      "crownedAt": 1787687380274,
-      "dethronedAt": 1787687380801,
-      "reignDurationSeconds": 1
-    },
-    {
-      "nickname": "🐕 Doge Syndicate",
-      "tagline": "Much wow! To the moon and beyond. Dethroning the frog!",
-      "link": "https://dogecoin.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1517976487502-d17e997f8c0d?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 25000,
-      "paidCryptoAmount": 25000,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787687379755",
-      "countryCode": "🌐",
-      "id": "king_1787687379755_pdo18",
-      "crownedAt": 1787687379755,
-      "dethronedAt": 1787687380274,
-      "reignDurationSeconds": 1
-    },
-    {
-      "nickname": "🐸 PEPE Hegemony",
-      "tagline": "The frog army owns this global billboard! All hail green candles.",
-      "link": "https://pepe.vip",
-      "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 2500,
-      "paidCryptoAmount": 2500,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787687379238",
-      "countryCode": "🌐",
-      "id": "king_1787687379239_ojsw6",
-      "crownedAt": 1787687379239,
-      "dethronedAt": 1787687379755,
-      "reignDurationSeconds": 1
-    },
-    {
-      "nickname": "👑 Sovereign Origin",
-      "tagline": "The world's most contested digital screen is LIVE. Dethrone me to rule!",
-      "link": "https://x.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 1,
-      "paidCryptoAmount": 0.005,
-      "cryptoCurrency": "SOL",
-      "txHash": "genesis_tx_001",
-      "countryCode": "🌐",
-      "id": "king_genesis_1787687130383",
-      "crownedAt": 1787687130383,
-      "dethronedAt": 1787687379239,
-      "reignDurationSeconds": 248
-    }
-  ],
+  "hallOfFame": [],
   "recentEvents": [
     {
-      "id": "ev-1787687381314",
-      "type": "TAKEOVER",
-      "text": "⚡ 👑 The $1,000,000 Emperor DETHRONED the King with $1000000.00 (DEMO)!",
-      "timestamp": 1787687381314
-    },
-    {
-      "id": "ev-1787687380801",
-      "type": "TAKEOVER",
-      "text": "⚡ 💎 Satoshi Nakamoto DETHRONED the King with $500000.00 (DEMO)!",
-      "timestamp": 1787687380801
-    },
-    {
-      "id": "ev-1787687380274",
-      "type": "TAKEOVER",
-      "text": "⚡ ⚡ Base God DETHRONED the King with $125000.00 (DEMO)!",
-      "timestamp": 1787687380274
-    },
-    {
-      "id": "ev-1787687379755",
-      "type": "TAKEOVER",
-      "text": "⚡ 🐕 Doge Syndicate DETHRONED the King with $25000.00 (DEMO)!",
-      "timestamp": 1787687379755
-    },
-    {
-      "id": "ev-1787687379239",
-      "type": "TAKEOVER",
-      "text": "⚡ 🐸 PEPE Hegemony DETHRONED the King with $2500.00 (DEMO)!",
-      "timestamp": 1787687379239
-    },
-    {
-      "id": "ev-1787687130383",
+      "id": "ev-1787687518389",
       "type": "TAKEOVER",
       "text": "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
-      "timestamp": 1787687130383
+      "timestamp": 1787687518389
     }
   ],
   "walletConfig": {
