@@ -143,9 +143,13 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 The platform operators reserve the unconditional right to instantly terminate, remove, or replace any broadcast content deemed in violation of these rules, with zero refund obligation to the submitter.
               </p>
 
-              <h3 className="text-base font-bold text-white pt-2">3. DMCA Takedown Notice</h3>
+              <h3 className="text-base font-bold text-white pt-2">3. DMCA & Copyright Takedown Notice</h3>
               <p>
-                If you believe your copyrighted work has been improperly displayed, notify the operators with proof of ownership for immediate removal.
+                If you believe your copyrighted work or trademark has been improperly displayed on the billboard, contact the operator immediately at{" "}
+                <a href="mailto:kingofthescreen.official@gmail.com" className="text-yellow-400 underline font-bold">
+                  kingofthescreen.official@gmail.com
+                </a>{" "}
+                with proof of ownership for expedited takedown.
               </p>
             </div>
           )}
