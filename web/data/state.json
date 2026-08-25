@@ -1,250 +1,33 @@
 {
   "currentKing": {
-    "nickname": "Alex",
-    "tagline": "FUCK YOU",
-    "link": "https://ukr.net",
-    "mediaUrl": "/uploads/screen_1787680032975_9r20qj.png",
+    "nickname": "👑 Sovereign Origin",
+    "tagline": "The world's most contested digital screen is LIVE. Dethrone me to rule!",
+    "link": "https://x.com",
+    "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
     "mediaType": "image",
-    "paidAmountUsd": 217,
-    "paidCryptoAmount": 217,
-    "cryptoCurrency": "DEMO",
-    "txHash": "tx_demo_1787680064830",
+    "paidAmountUsd": 1,
+    "paidCryptoAmount": 0.005,
+    "cryptoCurrency": "SOL",
+    "txHash": "genesis_tx_001",
     "countryCode": "🌐",
-    "id": "king_1787680065041_ilh8y",
-    "crownedAt": 1787680065041
+    "id": "king_genesis_001",
+    "crownedAt": 1787680065000
   },
-  "nextMinPriceUsd": 250,
+  "nextMinPriceUsd": 2,
   "stats": {
-    "totalRaisedUsd": 781,
-    "totalDethronements": 11,
-    "longestReignSeconds": 720,
+    "totalRaisedUsd": 1,
+    "totalDethronements": 1,
+    "longestReignSeconds": 1420,
     "longestReignKing": "👑 Sovereign Origin",
     "targetGoalUsd": 1000000
   },
-  "hallOfFame": [
-    {
-      "nickname": "ппп",
-      "tagline": "мпкмпмкмпмпмпмкмм",
-      "mediaUrl": "/uploads/screen_1787679574309_lm2c1z.png",
-      "mediaType": "image",
-      "paidAmountUsd": 189,
-      "paidCryptoAmount": 189,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787679586000",
-      "countryCode": "🌐",
-      "id": "king_1787679586888_m676g",
-      "crownedAt": 1787679586888,
-      "dethronedAt": 1787680065041,
-      "reignDurationSeconds": 478
-    },
-    {
-      "nickname": "vgbreyery",
-      "tagline": "ervrverybybyb",
-      "mediaUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 164,
-      "paidCryptoAmount": 164,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787679387625",
-      "countryCode": "🌐",
-      "id": "king_1787679387690_n2ufn",
-      "crownedAt": 1787679387690,
-      "dethronedAt": 1787679586888,
-      "reignDurationSeconds": 199
-    },
-    {
-      "nickname": "vgbreyery",
-      "tagline": "ervrverybybyb",
-      "mediaUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 59,
-      "paidCryptoAmount": 59,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787679331029",
-      "countryCode": "🌐",
-      "id": "king_1787679331073_kfh6u",
-      "crownedAt": 1787679331073,
-      "dethronedAt": 1787679387690,
-      "reignDurationSeconds": 56
-    },
-    {
-      "nickname": "свуск",
-      "tagline": "цусцусусццу",
-      "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 49,
-      "paidCryptoAmount": 49,
-      "cryptoCurrency": "DEMO",
-      "txHash": "tx_demo_1787679294915",
-      "countryCode": "🌐",
-      "id": "king_1787679294970_r9w0x",
-      "crownedAt": 1787679294970,
-      "dethronedAt": 1787679331073,
-      "reignDurationSeconds": 36
-    },
-    {
-      "nickname": "👾 Cyber Ronin",
-      "tagline": "Glitch in the matrix. Rule forever, die never.",
-      "link": "https://github.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 44,
-      "paidCryptoAmount": 0.2933,
-      "cryptoCurrency": "SOL",
-      "txHash": "tx_sim_1787679201944",
-      "countryCode": "🌐",
-      "id": "king_1787679201960_up7dr",
-      "crownedAt": 1787679201960,
-      "dethronedAt": 1787679294970,
-      "reignDurationSeconds": 93
-    },
-    {
-      "nickname": "💎 Anonymous Whale",
-      "tagline": "I just spent $500 on this screen because I can. Try me.",
-      "link": "https://etherscan.io",
-      "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 29,
-      "paidCryptoAmount": 0.1933,
-      "cryptoCurrency": "USDT",
-      "txHash": "tx_sim_1787679198909",
-      "countryCode": "🌐",
-      "id": "king_1787679198919_yhakb",
-      "crownedAt": 1787679198919,
-      "dethronedAt": 1787679201960,
-      "reignDurationSeconds": 3
-    },
-    {
-      "nickname": "🧢 WIF with Hat",
-      "tagline": "The hat stays ON. $WIF takes the global throne! 🧢",
-      "link": "https://twitter.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 16,
-      "paidCryptoAmount": 0.1067,
-      "cryptoCurrency": "SOL",
-      "txHash": "tx_sim_1787679195881",
-      "countryCode": "🌐",
-      "id": "king_1787679195891_2j7jn",
-      "crownedAt": 1787679195891,
-      "dethronedAt": 1787679198919,
-      "reignDurationSeconds": 3
-    },
-    {
-      "nickname": "🐕 Doge Supreme",
-      "tagline": "Much wow, very screen! Dethroning frogs all day long! 🐕",
-      "link": "https://dogecoin.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1517976487502-d17e997f8c0d?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 9,
-      "paidCryptoAmount": 0.06,
-      "cryptoCurrency": "SOL",
-      "txHash": "tx_sim_1787679192855",
-      "countryCode": "🌐",
-      "id": "king_1787679192864_iurh5",
-      "crownedAt": 1787679192864,
-      "dethronedAt": 1787679195891,
-      "reignDurationSeconds": 3
-    },
-    {
-      "nickname": "🐸 $PEPE General",
-      "tagline": "The frog army owns the internet! $PEPE TO THE MOON! 🚀",
-      "link": "https://twitter.com/pepecoineth",
-      "mediaUrl": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 4,
-      "paidCryptoAmount": 0.0267,
-      "cryptoCurrency": "SOL",
-      "txHash": "tx_sim_1787679189346",
-      "countryCode": "🌐",
-      "id": "king_1787679189833_7jyri",
-      "crownedAt": 1787679189833,
-      "dethronedAt": 1787679192864,
-      "reignDurationSeconds": 3
-    },
-    {
-      "id": "genesis-king",
-      "nickname": "👑 Sovereign Origin",
-      "tagline": "The world's most contested screen has awakened. Dethrone me to rule!",
-      "link": "https://twitter.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 1,
-      "paidCryptoAmount": 0.005,
-      "cryptoCurrency": "SOL",
-      "crownedAt": 1787678469298,
-      "txHash": "genesis_block_0001",
-      "countryCode": "🌐",
-      "dethronedAt": 1787679189833,
-      "reignDurationSeconds": 720
-    }
-  ],
+  "hallOfFame": [],
   "recentEvents": [
-    {
-      "id": "ev-1787680065041",
-      "type": "TAKEOVER",
-      "text": "⚡ Alex DETHRONED the King with $217.00 (DEMO)!",
-      "timestamp": 1787680065041
-    },
-    {
-      "id": "ev-1787679586888",
-      "type": "TAKEOVER",
-      "text": "⚡ ппп DETHRONED the King with $189.00 (DEMO)!",
-      "timestamp": 1787679586888
-    },
-    {
-      "id": "ev-1787679387690",
-      "type": "TAKEOVER",
-      "text": "⚡ vgbreyery DETHRONED the King with $164.00 (DEMO)!",
-      "timestamp": 1787679387690
-    },
-    {
-      "id": "ev-1787679331073",
-      "type": "TAKEOVER",
-      "text": "⚡ vgbreyery DETHRONED the King with $59.00 (DEMO)!",
-      "timestamp": 1787679331073
-    },
-    {
-      "id": "ev-1787679294970",
-      "type": "TAKEOVER",
-      "text": "⚡ свуск DETHRONED the King with $49.00 (DEMO)!",
-      "timestamp": 1787679294970
-    },
-    {
-      "id": "ev-1787679201960",
-      "type": "TAKEOVER",
-      "text": "⚡ 👾 Cyber Ronin DETHRONED the King with $44.00 (SOL)!",
-      "timestamp": 1787679201960
-    },
-    {
-      "id": "ev-1787679198919",
-      "type": "TAKEOVER",
-      "text": "⚡ 💎 Anonymous Whale DETHRONED the King with $29.00 (USDT)!",
-      "timestamp": 1787679198919
-    },
-    {
-      "id": "ev-1787679195891",
-      "type": "TAKEOVER",
-      "text": "⚡ 🧢 WIF with Hat DETHRONED the King with $16.00 (SOL)!",
-      "timestamp": 1787679195891
-    },
-    {
-      "id": "ev-1787679192864",
-      "type": "TAKEOVER",
-      "text": "⚡ 🐕 Doge Supreme DETHRONED the King with $9.00 (SOL)!",
-      "timestamp": 1787679192864
-    },
-    {
-      "id": "ev-1787679189833",
-      "type": "TAKEOVER",
-      "text": "⚡ 🐸 $PEPE General DETHRONED the King with $4.00 (SOL)!",
-      "timestamp": 1787679189833
-    },
     {
       "id": "ev-1",
       "type": "TAKEOVER",
-      "text": "👑 Sovereign Origin claimed the throne for $1.00",
-      "timestamp": 1787678469298
+      "text": "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
+      "timestamp": 1787680065000
     }
   ],
   "walletConfig": {

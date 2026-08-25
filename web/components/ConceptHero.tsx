@@ -26,9 +26,9 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         </h2>
 
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
-          Один экран на всю планету. Заплати, чтобы вывести свое фото, слоган и ссылку.{" "}
+          One global screen. Pay to broadcast your image, message, and link to the entire world.{" "}
           <strong className="text-yellow-400 underline decoration-yellow-500/50">
-            Ты владеешь экраном 24/7, пока тебя не свергнет следующий участник!
+            You hold the broadcast 24/7 until another challenger outbids you!
           </strong>
         </p>
       </div>
@@ -42,10 +42,10 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
               1
             </span>
             <Zap className="w-4 h-4" />
-            <span>Перебей ставку</span>
+            <span>Claim the Throne</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Загрузи свое фото/GIF, напиши дерзкий слоган и укажи ссылку на проект или соцсеть.
+            Upload your image or GIF, craft your punchy message, and attach your project or social link.
           </p>
         </div>
 
@@ -56,10 +56,10 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
               2
             </span>
             <Crown className="w-4 h-4" />
-            <span>Властвуй 24/7</span>
+            <span>Rule 24/7 Worldwide</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Никаких 60 секунд. Экран транслирует твой контент бесконечно, пока кто-то не заплатит больше.
+            No 60-second limit. You hold the global live broadcast indefinitely until someone pays higher.
           </p>
         </div>
 
@@ -70,10 +70,10 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
               3
             </span>
             <Trophy className="w-4 h-4" />
-            <span>Войди в историю</span>
+            <span>Etched in History</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Время твоего правления и сумма навсегда увековечиваются в Зале Славы монархов интернета.
+            Your total reign duration and spent amount are permanently archived in the Graveyard of Kings.
           </p>
         </div>
       </div>
@@ -82,14 +82,14 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-cyber-border/60">
         <div className="flex items-center gap-2 text-xs text-emerald-400">
           <ShieldCheck className="w-4 h-4 flex-shrink-0" />
-          <span>Прямой прием Base / Ethereum / USDT / Demo • Без посредников</span>
+          <span>Direct non-custodial Base / Ethereum / USDT / Demo payments • No intermediaries</span>
         </div>
 
         <button
           onClick={onOpenTakeover}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-black font-black px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-colors shadow-[0_0_20px_rgba(234,179,8,0.5)]"
         >
-          <span>ЗАХВАТИТЬ ЭКРАН ОТ ${nextMinPriceUsd.toFixed(2)}</span>
+          <span>CLAIM THRONE FROM ${nextMinPriceUsd.toFixed(2)}</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
