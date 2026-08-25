@@ -1,20 +1,27 @@
 /**
- * Zero-cost On-Chain Blockchain Transaction Verification Engine
- * Queries public RPC nodes (Base, Ethereum, BSC, Polygon, Solana) to verify
- * that payments were genuinely broadcasted on-chain to the target recipient.
+ * High-Availability Zero-Cost On-Chain Blockchain Transaction Verification Engine
+ * Multi-RPC Fallback Architecture for Base, Ethereum, Polygon, BSC, and Solana.
  */
 
 const EVM_RPC_ENDPOINTS = [
-  "https://mainnet.base.org", // Primary: Base Mainnet (fastest & lowest fee)
-  "https://eth.llamarpc.com", // Ethereum Mainnet
+  "https://mainnet.base.org", // Primary Base Mainnet (sub-cent gas)
+  "https://base.publicnode.com", // Base Fallback 1
+  "https://base.llamarpc.com", // Base Fallback 2
+  "https://1rpc.io/base", // Base Fallback 3
+  "https://eth.llamarpc.com", // Ethereum Mainnet Primary
+  "https://ethereum.publicnode.com", // Ethereum Fallback
   "https://polygon-rpc.com", // Polygon PoS
   "https://binance.llamarpc.com", // BSC Mainnet
   "https://arbitrum.llamarpc.com", // Arbitrum One
 ];
 
-const SOLANA_RPC_ENDPOINT = "https://api.mainnet-beta.solana.com";
+const SOLANA_RPC_ENDPOINTS = [
+  "https://api.mainnet-beta.solana.com",
+  "https://solana-mainnet.rpc.extrnode.com",
+  "https://rpc.ankr.com/solana",
+];
 
-// In-memory set of used transaction hashes to strictly prevent replay attacks
+// Anti-Replay Cache (In-Memory Set)
 const usedTxHashes = new Set<string>();
 
 export interface TxVerificationResult {
@@ -23,6 +30,29 @@ export interface TxVerificationResult {
   sender?: string;
   recipient?: string;
   valueEth?: number;
+}
+
+/**
+ * Fast RPC fetcher with 3500ms timeout per endpoint
+ */
+async function fetchWithTimeout(url: string, body: any, timeoutMs: number = 3500) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    clearTimeout(timeoutId);
+    return await res.json();
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
 }
 
 /**
@@ -44,7 +74,7 @@ export async function verifyEvmTransaction(
     };
   }
 
-  // Prevent replay attacks
+  // Prevent double-spend replay attacks
   if (usedTxHashes.has(cleanHash.toLowerCase())) {
     return {
       valid: false,
@@ -52,53 +82,41 @@ export async function verifyEvmTransaction(
     };
   }
 
-  // Check each RPC endpoint until transaction is found
+  // Iterate through redundant RPC endpoints
   for (const rpcUrl of EVM_RPC_ENDPOINTS) {
     try {
-      const response = await fetch(rpcUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getTransactionByHash",
-          params: [cleanHash],
-          id: 1,
-        }),
-        cache: "no-store",
+      const txData = await fetchWithTimeout(rpcUrl, {
+        jsonrpc: "2.0",
+        method: "eth_getTransactionByHash",
+        params: [cleanHash],
+        id: 1,
       });
 
-      const data = await response.json();
-      const tx = data?.result;
+      const tx = txData?.result;
 
       if (tx && tx.hash) {
-        // Fetch receipt to confirm execution success
-        const receiptRes = await fetch(rpcUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "eth_getTransactionReceipt",
-            params: [cleanHash],
-            id: 2,
-          }),
-          cache: "no-store",
+        // Fetch receipt to confirm successful on-chain execution
+        const receiptData = await fetchWithTimeout(rpcUrl, {
+          jsonrpc: "2.0",
+          method: "eth_getTransactionReceipt",
+          params: [cleanHash],
+          id: 2,
         });
 
-        const receiptData = await receiptRes.json();
         const receipt = receiptData?.result;
 
         if (!receipt || receipt.status !== "0x1") {
           return {
             valid: false,
-            reason: "Transaction was found but failed or is still pending on-chain.",
+            reason: "Transaction was found on-chain but status is not successful (failed or still pending).",
           };
         }
 
-        // Check if direct ETH/native transfer matches recipient
+        // Check native transfer recipient
         const toAddress = (tx.to || "").toLowerCase();
         const isDirectRecipient = toAddress === cleanRecipient;
 
-        // Check if ERC-20 Transfer event (e.g. USDT, USDC) is in logs
+        // Check ERC-20 Transfer event (USDT, USDC, etc.)
         // ERC20 Transfer topic: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
         const isErc20Transfer = (receipt.logs || []).some((log: any) => {
           const topics = log.topics || [];
@@ -112,11 +130,11 @@ export async function verifyEvmTransaction(
         if (!isDirectRecipient && !isErc20Transfer) {
           return {
             valid: false,
-            reason: `Transaction recipient does not match deposit address ${expectedRecipient}.`,
+            reason: `Transaction recipient does not match destination wallet ${expectedRecipient}.`,
           };
         }
 
-        // Record hash to prevent reuse
+        // Mark as used to prevent replays
         usedTxHashes.add(cleanHash.toLowerCase());
 
         return {
@@ -126,19 +144,19 @@ export async function verifyEvmTransaction(
         };
       }
     } catch (e) {
-      // Continue to next RPC
+      // Endpoint timed out or errored, try next RPC in pool
       continue;
     }
   }
 
   return {
     valid: false,
-    reason: "Transaction not found on Base, Ethereum, BSC, or Polygon mainnets. Please make sure the transfer was sent and broadcasted.",
+    reason: "Transaction not found across Base, Ethereum, BSC, or Polygon networks. Please verify the transaction succeeded in your wallet.",
   };
 }
 
 /**
- * Verifies a Solana transaction signature
+ * Verifies a Solana transaction signature with redundant RPCs
  */
 export async function verifySolanaTransaction(
   signature: string,
@@ -147,37 +165,33 @@ export async function verifySolanaTransaction(
   const cleanSig = signature.trim();
 
   if (cleanSig.length < 64) {
-    return { valid: false, reason: "Invalid Solana transaction signature length." };
+    return { valid: false, reason: "Invalid Solana transaction signature format." };
   }
 
   if (usedTxHashes.has(cleanSig.toLowerCase())) {
-    return { valid: false, reason: "This Solana signature has already been used." };
+    return { valid: false, reason: "This Solana transaction has already been used." };
   }
 
-  try {
-    const res = await fetch(SOLANA_RPC_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+  for (const rpcUrl of SOLANA_RPC_ENDPOINTS) {
+    try {
+      const data = await fetchWithTimeout(rpcUrl, {
         jsonrpc: "2.0",
         id: 1,
         method: "getTransaction",
         params: [cleanSig, { encoding: "jsonParsed", maxSupportedTransactionVersion: 0 }],
-      }),
-      cache: "no-store",
-    });
+      });
 
-    const data = await res.json();
-    if (data?.result && !data.result.meta?.err) {
-      usedTxHashes.add(cleanSig.toLowerCase());
-      return { valid: true };
+      if (data?.result && !data.result.meta?.err) {
+        usedTxHashes.add(cleanSig.toLowerCase());
+        return { valid: true };
+      }
+    } catch (e) {
+      continue;
     }
-  } catch (e) {
-    // Solana RPC error
   }
 
   return {
     valid: false,
-    reason: "Solana transaction not found or unconfirmed.",
+    reason: "Solana transaction signature could not be verified on-chain. Please verify finality on Solscan.",
   };
 }
