@@ -60,7 +60,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   const [mediaUrl, setMediaUrl] = useState(MEME_PRESETS[0].url);
   const [imageSourceTab, setImageSourceTab] = useState<"UPLOAD" | "URL" | "PRESETS">("UPLOAD");
   const [bidAmount, setBidAmount] = useState<number>(nextMinPriceUsd);
-  const [paymentMethod, setPaymentMethod] = useState<"DEMO" | "EVM" | "SOLANA">("DEMO");
+  const [paymentMethod, setPaymentMethod] = useState<"EVM" | "SOLANA">("EVM");
   const [txHashInput, setTxHashInput] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -233,12 +233,9 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     setErrorMsg(null);
 
     try {
-      const isDemo = paymentMethod === "DEMO";
-      const finalTxHash = isDemo
-        ? `tx_demo_${Date.now()}`
-        : (hash || txHashInput).trim();
+      const finalTxHash = (hash || txHashInput).trim();
 
-      if (!isDemo && !finalTxHash) {
+      if (!finalTxHash) {
         throw new Error(
           `Please send $${bidAmount.toFixed(2)} to ${walletConfig.evmAddress} and paste your transaction hash below.`
         );
@@ -254,7 +251,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
           mediaUrl,
           mediaType: "image",
           paidAmountUsd: bidAmount,
-          cryptoCurrency: isDemo ? "DEMO" : (paymentMethod === "SOLANA" ? "SOL" : "USDT"),
+          cryptoCurrency: paymentMethod === "SOLANA" ? "SOL" : "USDT",
           paidCryptoAmount: paymentMethod === "SOLANA" ? Number((bidAmount / 150).toFixed(4)) : bidAmount,
           txHash: finalTxHash,
         }),
@@ -562,64 +559,39 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               </div>
             </div>
 
-            {/* PAYMENT METHOD SELECTOR WITH DEMO MODE */}
+            {/* REAL CRYPTO PAYMENT METHOD SELECTOR */}
             <div className="space-y-3 pt-2">
               <label className="block text-xs text-gray-300 font-bold flex items-center justify-between">
-                <span>PAYMENT METHOD</span>
-                <span className="text-[10px] text-emerald-400">Instant Demo active</span>
+                <span>SELECT CRYPTO PAYMENT NETWORK</span>
+                <span className="text-[10px] text-emerald-400">Direct non-custodial</span>
               </label>
 
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("DEMO")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${
-                    paymentMethod === "DEMO"
-                      ? "bg-emerald-500/20 border-emerald-400 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                      : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <span className="text-xs sm:text-sm">⚡ 1-Click Demo</span>
-                  <span className="text-[9px] sm:text-[10px] text-gray-400 font-normal">Test Mode ($0)</span>
-                </button>
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("EVM")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
                     paymentMethod === "EVM"
                       ? "bg-blue-500/20 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
                       : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
                   }`}
                 >
-                  <span className="text-xs sm:text-sm">🔷 Base / USDT</span>
-                  <span className="text-[9px] sm:text-[10px] text-gray-400 font-normal">Real Crypto</span>
+                  <span className="text-sm">🔷 Base / USDT / ETH</span>
+                  <span className="text-[10px] text-gray-400 font-normal">Sub-cent fee on Base</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("SOLANA")}
-                  className={`p-2.5 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center justify-center gap-1 ${
+                  className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
                     paymentMethod === "SOLANA"
                       ? "bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.3)]"
                       : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
                   }`}
                 >
-                  <span className="text-xs sm:text-sm">🟣 Solana Pay</span>
-                  <span className="text-[9px] sm:text-[10px] text-gray-400 font-normal">Real SOL</span>
+                  <span className="text-sm">🟣 Solana (SOL)</span>
+                  <span className="text-[10px] text-gray-400 font-normal">Fast 400ms finality</span>
                 </button>
               </div>
-
-              {/* DEMO MODE EXPLAINER */}
-              {paymentMethod === "DEMO" && (
-                <div className="p-3 bg-emerald-950/40 border border-emerald-500/40 rounded-xl text-xs space-y-1">
-                  <div className="text-emerald-300 font-bold flex items-center gap-1.5">
-                    <Zap className="w-4 h-4 text-emerald-400" />
-                    <span>Instant Demo Mode Active</span>
-                  </div>
-                  <p className="text-[11px] text-gray-300">
-                    Click the button below to instantly claim the screen and test all visual features without spending cryptocurrency.
-                  </p>
-                </div>
-              )}
 
               {/* 1-CLICK INSTANT WEB3 BUTTON FOR EVM */}
               {paymentMethod === "EVM" && (
@@ -757,12 +729,12 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               {loading ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>CLAIMING THE THRONE...</span>
+                  <span>VERIFYING ON BLOCKCHAIN...</span>
                 </>
               ) : (
                 <>
                   <Flame className="w-5 h-5 fill-black" />
-                  <span>CLAIM THRONE FOR ${bidAmount.toFixed(2)}</span>
+                  <span>CONFIRM & CLAIM THRONE FOR ${bidAmount.toFixed(2)}</span>
                   <ArrowRight className="w-5 h-5" />
                 </>
               )}

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       countryCode,
     } = body;
 
-    // Basic validation
+    // 1. Basic validation
     if (!nickname || typeof nickname !== "string" || nickname.trim().length === 0) {
       return NextResponse.json({ error: "Nickname is required." }, { status: 400 });
     }
@@ -48,40 +48,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isDemo = cryptoCurrency === "DEMO";
+    // 2. Strict On-Chain Transaction Verification (No Demo bypass allowed in production)
+    if (!txHash || typeof txHash !== "string" || txHash.startsWith("tx_demo") || txHash.startsWith("tx_evm_") || txHash.startsWith("tx_solana_")) {
+      return NextResponse.json(
+        {
+          error: `Please complete the crypto payment to ${state.walletConfig.evmAddress} and provide the real on-chain transaction hash (txHash).`,
+        },
+        { status: 400 }
+      );
+    }
 
-    // On-Chain Transaction Verification (bypassed only in DEMO mode)
-    if (!isDemo) {
-      if (!txHash || typeof txHash !== "string" || txHash.startsWith("tx_demo") || txHash.startsWith("tx_evm_") || txHash.startsWith("tx_solana_")) {
+    const isSolana = cryptoCurrency === "SOL";
+    if (isSolana) {
+      const solVerify = await verifySolanaTransaction(txHash, state.walletConfig.solanaAddress);
+      if (!solVerify.valid) {
         return NextResponse.json(
-          {
-            error: `Please complete the crypto payment to ${state.walletConfig.evmAddress} and provide the real on-chain transaction hash (txHash).`,
-          },
+          { error: solVerify.reason || "Solana transaction could not be verified on-chain." },
           { status: 400 }
         );
       }
-
-      const isSolana = cryptoCurrency === "SOL";
-      if (isSolana) {
-        const solVerify = await verifySolanaTransaction(txHash, state.walletConfig.solanaAddress);
-        if (!solVerify.valid) {
-          return NextResponse.json(
-            { error: solVerify.reason || "Solana transaction could not be verified on-chain." },
-            { status: 400 }
-          );
-        }
-      } else {
-        const evmVerify = await verifyEvmTransaction(txHash, state.walletConfig.evmAddress, cleanAmount);
-        if (!evmVerify.valid) {
-          return NextResponse.json(
-            { error: evmVerify.reason || `EVM transaction not verified for address ${state.walletConfig.evmAddress}.` },
-            { status: 400 }
-          );
-        }
+    } else {
+      const evmVerify = await verifyEvmTransaction(txHash, state.walletConfig.evmAddress, cleanAmount);
+      if (!evmVerify.valid) {
+        return NextResponse.json(
+          { error: evmVerify.reason || `EVM transaction not verified for address ${state.walletConfig.evmAddress}.` },
+          { status: 400 }
+        );
       }
     }
 
-    // Safety / AI Moderation check
+    // 3. Safety & AI Content Moderation check
     const modResult = await moderateContent(`${nickname} - ${tagline}`, mediaUrl);
     if (!modResult.allowed) {
       return NextResponse.json(
@@ -92,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedLink = normalizeUrl(link);
 
-    // Execute dethronement
+    // 4. Execute verified dethronement
     const result = executeDethronement({
       nickname: nickname.trim().slice(0, 30),
       tagline: tagline.trim().slice(0, 140),
@@ -100,9 +96,9 @@ export async function POST(req: NextRequest) {
       mediaUrl: mediaUrl?.trim() || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
       mediaType: mediaType === "gif" ? "gif" : "image",
       paidAmountUsd: cleanAmount,
-      paidCryptoAmount: Number(paidCryptoAmount) || cleanAmount,
-      cryptoCurrency: isDemo ? "DEMO" : (cryptoCurrency || "USDT"),
-      txHash: isDemo ? `tx_demo_${Date.now()}` : txHash.trim(),
+      paidCryptoAmount: Number(paidCryptoAmount) || (cleanAmount / 150),
+      cryptoCurrency: cryptoCurrency || "USDT",
+      txHash: txHash.trim(),
       countryCode: countryCode || "🌐",
     });
 
