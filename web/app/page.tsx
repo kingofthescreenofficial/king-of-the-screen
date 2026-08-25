@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { AppState } from "@/lib/types";
 import { TheScreen } from "@/components/TheScreen";
+import { ConceptHero } from "@/components/ConceptHero";
 import { MillionGoal } from "@/components/MillionGoal";
 import { TakeoverModal } from "@/components/TakeoverModal";
 import { HallOfFame } from "@/components/HallOfFame";
@@ -10,7 +11,7 @@ import { LiveAudio } from "@/components/LiveAudio";
 import { ShareCard } from "@/components/ShareCard";
 import { LiveViewerBadge } from "@/components/LiveViewerBadge";
 import { LegalModal } from "@/components/LegalModal";
-import { Crown, Flame, Info, Scale } from "lucide-react";
+import { Crown, Flame, Info } from "lucide-react";
 
 export default function HomePage() {
   const [state, setState] = useState<AppState | null>(null);
@@ -102,6 +103,12 @@ export default function HomePage() {
           </div>
         </header>
 
+        {/* PROMINENT CONCEPT EXPLAINER HERO (INSTANT UNDERSTANDING) */}
+        <ConceptHero
+          onOpenTakeover={() => setIsTakeoverOpen(true)}
+          nextMinPriceUsd={state.nextMinPriceUsd}
+        />
+
         {/* The Central Screen Component */}
         <TheScreen
           king={state.currentKing}
@@ -129,31 +136,6 @@ export default function HomePage() {
           hallOfFame={state.hallOfFame}
           recentEvents={state.recentEvents}
         />
-
-        {/* How It Works Explainer Box */}
-        <div className="w-full max-w-5xl mx-auto my-8 bg-black/40 border border-cyber-border rounded-2xl p-6 font-mono text-xs text-gray-400 space-y-4">
-          <div className="flex items-center gap-2 text-white font-bold text-sm">
-            <Info className="w-4 h-4 text-cyan-400" />
-            <span>HOW THE GLOBAL AUCTION WORKS</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-gray-300">
-            <div className="bg-cyber-card/50 p-3.5 rounded-xl border border-cyber-border">
-              <strong className="text-yellow-400 block mb-1">1. Take the Throne</strong>
-              Pay the required minimum bid in Solana (SOL), Base/USDT, or Demo mode to broadcast your message, link, and visual.
-            </div>
-
-            <div className="bg-cyber-card/50 p-3.5 rounded-xl border border-cyber-border">
-              <strong className="text-purple-400 block mb-1">2. Rule Until Dethroned</strong>
-              There is NO 60-second limit. You hold the screen 24/7 across the global feed until another challenger outbids you.
-            </div>
-
-            <div className="bg-cyber-card/50 p-3.5 rounded-xl border border-cyber-border">
-              <strong className="text-emerald-400 block mb-1">3. Immortality in Hall of Fame</strong>
-              When dethroned, your total reign duration and spent amount are permanently etched into the Graveyard of Kings.
-            </div>
-          </div>
-        </div>
 
         {/* COMPREHENSIVE LEGAL & COMPLIANCE FOOTER */}
         <footer className="text-center text-[11px] font-mono text-gray-500 pt-8 pb-12 border-t border-cyber-border/40 space-y-3">
