@@ -2,15 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { AppState } from "@/lib/types";
-import { ShieldAlert, RefreshCw, Trash2, CheckCircle2, Lock, ArrowLeft, Eye } from "lucide-react";
+import { ShieldAlert, RefreshCw, Trash2, CheckCircle2, Lock, ArrowLeft, Eye, KeyRound } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminPage() {
-  const [secret, setSecret] = useState("king_admin_purge_secret_2026");
+  const [secret, setSecret] = useState("");
   const [state, setState] = useState<AppState | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Load saved secret from local browser storage on owner's device
+  useEffect(() => {
+    const saved = localStorage.getItem("kots_admin_secret");
+    if (saved) setSecret(saved);
+  }, []);
 
   const fetchState = async () => {
     try {
@@ -28,7 +34,17 @@ export default function AdminPage() {
     fetchState();
   }, []);
 
+  const handleSecretChange = (val: string) => {
+    setSecret(val);
+    localStorage.setItem("kots_admin_secret", val);
+  };
+
   const handleTakedown = async () => {
+    if (!secret.trim()) {
+      setError("Please enter your secret admin password first.");
+      return;
+    }
+
     if (!confirm("Are you sure you want to execute an EMERGENCY TAKEDOWN and reset the screen?")) {
       return;
     }
@@ -38,16 +54,16 @@ export default function AdminPage() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/admin/takedown?secret=${encodeURIComponent(secret)}`, {
+      const res = await fetch(`/api/admin/takedown?secret=${encodeURIComponent(secret.trim())}`, {
         method: "POST",
       });
 
       const data = await res.json();
 
       if (!res.ok || data.error) {
-        setError(data.error || "Failed to execute takedown. Check admin secret.");
+        setError(data.error || "Failed to execute takedown. Invalid secret password.");
       } else {
-        setMessage("✓ Emergency takedown executed successfully! The screen has been reset.");
+        setMessage("✓ Emergency takedown executed successfully! The screen has been reset to Genesis.");
         setState(data.state);
       }
     } catch (err: any) {
@@ -77,18 +93,21 @@ export default function AdminPage() {
           </Link>
         </div>
 
-        {/* Password / Secret Field */}
+        {/* Private Password / Secret Key Box */}
         <div className="p-4 bg-black/60 border border-cyber-border rounded-xl space-y-2 text-xs">
-          <label className="block text-gray-300 font-bold flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-yellow-400" />
-            <span>Admin Secret Key:</span>
+          <label className="block text-gray-300 font-bold flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <KeyRound className="w-4 h-4 text-yellow-400" />
+              <span>Admin Secret Password:</span>
+            </span>
+            <span className="text-[10px] text-gray-500">Only you know this password</span>
           </label>
           <input
             type="password"
             value={secret}
-            onChange={(e) => setSecret(e.target.value)}
-            placeholder="Enter admin secret..."
-            className="w-full bg-black/90 border border-cyber-border rounded-lg px-3 py-2 text-white font-mono focus:outline-none focus:border-red-500"
+            onChange={(e) => handleSecretChange(e.target.value)}
+            placeholder="Enter your private admin password..."
+            className="w-full bg-black/90 border border-cyber-border rounded-lg px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-red-500 text-sm"
           />
         </div>
 
@@ -167,7 +186,7 @@ export default function AdminPage() {
                 )}
               </button>
               <p className="text-[10px] text-gray-500 text-center mt-2">
-                Instantly replaces offensive text and images with neutral Genesis King across all global browsers.
+                Requires the correct private admin password. Unauthorized requests are blocked with HTTP 401.
               </p>
             </div>
           </div>
