@@ -97,7 +97,81 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     setTimeout(() => setCopiedAddress(false), 2000);
   };
 
-  // 1-Click In-Browser Web3 Payment (MetaMask, TrustWallet, Rabby, Coinbase)
+  // Client-side instant image compression (Resizes huge 15MB mobile photos to ~150KB for instant display)
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      // If GIF, keep original data URL for animation
+      if (file.type === "image/gif") {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const maxDim = 1200;
+          let { width, height } = img;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL("image/jpeg", 0.82);
+          resolve(compressed);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle local file upload with instant client-side optimization
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+    setErrorMsg(null);
+    setIsUploading(true);
+
+    try {
+      const compressedDataUrl = await compressImage(file);
+      setMediaUrl(compressedDataUrl);
+    } catch (err: any) {
+      setErrorMsg("Failed to process image. Please try another photo or use a link.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFileUpload(e.target.files[0]);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  };
+
+  // 1-Click In-Browser Web3 Payment
   const handleDirectWeb3Pay = async () => {
     setErrorMsg(null);
 
@@ -121,11 +195,10 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         const accounts = await provider.request({ method: "eth_requestAccounts" });
         const userAccount = accounts[0];
 
-        // Approximate ETH value (assuming ~$2500 per ETH for micro-gas or Base transfer)
-        // For sub-dollar microbids: value in wei
+        // Approximate ETH value
         const ethPriceApprox = 2500;
         const ethAmount = bidAmount / ethPriceApprox;
-        const weiHex = "0x" + BigInt(Math.floor(ethAmount * 1e18)).toString(16);
+        const weiHex = "0x" + BigInt(Math.max(1, Math.floor(ethAmount * 1e18))).toString(16);
 
         const txHash = await provider.request({
           method: "eth_sendTransaction",
@@ -140,12 +213,11 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
 
         if (txHash) {
           setTxHashInput(txHash);
-          // Auto submit takeover with real on-chain hash!
           await processTakeover(txHash);
         }
       } catch (err: any) {
         if (err.code === 4001) {
-          setErrorMsg("Transaction was rejected by user.");
+          setErrorMsg("Transaction was rejected in your wallet.");
         } else {
           setErrorMsg(err.message || "Failed to trigger wallet transaction.");
         }
@@ -153,58 +225,24 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         setWalletConnecting(false);
       }
     } else {
-      // Mobile wallet deep linking fallback
-      const currentUrl = encodeURIComponent("https://king-of-the-screen.vercel.app");
-      const metaMaskUrl = `https://metamask.app.link/dapp/king-of-the-screen.vercel.app`;
+      // Direct mobile user to open in MetaMask dApp browser or show manual transfer
+      const metaMaskUrl = "https://metamask.app.link/dapp/king-of-the-screen.vercel.app";
       window.open(metaMaskUrl, "_blank");
-    }
-  };
-
-  // Handle local file upload
-  const handleFileUpload = async (file: File) => {
-    if (!file) return;
-    setErrorMsg(null);
-    setIsUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok || data.error) {
-        throw new Error(data.error || "Upload failed");
-      }
-
-      setMediaUrl(data.url);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Failed to upload image. Please try again or paste a link.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFileUpload(e.target.files[0]);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileUpload(e.dataTransfer.files[0]);
     }
   };
 
   const processTakeover = async (hash?: string) => {
     setLoading(true);
+    setErrorMsg(null);
+
     try {
-      const finalTxHash = (hash || txHashInput).trim() || `tx_${paymentMethod.toLowerCase()}_${Date.now()}`;
+      const finalTxHash = (hash || txHashInput).trim();
+
+      if (!finalTxHash) {
+        throw new Error(
+          `Please send $${bidAmount.toFixed(2)} to ${walletConfig.evmAddress} and paste your transaction hash below.`
+        );
+      }
 
       const res = await fetch("/api/takeover", {
         method: "POST",
@@ -222,17 +260,26 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         }),
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        const text = await res.text().catch(() => "");
+        if (text.includes("Too Large")) {
+          throw new Error("Uploaded image is too large. Please select a smaller photo.");
+        }
+        throw new Error("Server communication error. Please try again.");
+      }
 
       if (!res.ok || data.error) {
-        setErrorMsg(data.error || "Takeover failed. Try again.");
+        setErrorMsg(data.error || "Takeover failed. Please verify your transaction.");
       } else {
         triggerConfetti();
         onSuccess(data.state);
         onClose();
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || "Network error occurred.");
+      setErrorMsg(err?.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
@@ -383,7 +430,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                 </div>
               </div>
 
-              {/* TAB 1: Local File Upload */}
+              {/* TAB 1: Local File Upload with Auto-Optimization */}
               {imageSourceTab === "UPLOAD" && (
                 <div
                   onDragOver={(e) => e.preventDefault()}
@@ -401,7 +448,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   {isUploading ? (
                     <div className="flex items-center gap-2 text-yellow-400 text-xs py-2">
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Uploading image to server...</span>
+                      <span>Optimizing photo for instant broadcast...</span>
                     </div>
                   ) : (
                     <>
@@ -411,7 +458,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                           Tap to select photo / GIF from device
                         </span>
                         <span className="text-[11px] text-gray-500">
-                          PNG, JPG, GIF, WebP (up to 15MB)
+                          Auto-optimized for instant full HD display
                         </span>
                       </div>
                     </>
@@ -462,10 +509,10 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-bold text-emerald-400 block">
-                      ✓ Image selected for the screen
+                      ✓ Image ready for global billboard
                     </span>
                     <span className="text-[11px] text-gray-500 truncate block">
-                      {mediaUrl.startsWith("data:") ? "Custom uploaded image" : mediaUrl}
+                      {mediaUrl.startsWith("data:") ? "Optimized photo from device" : mediaUrl}
                     </span>
                   </div>
                   <button
@@ -557,7 +604,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                       <Zap className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                       <span>Instant 1-Click Pay</span>
                     </span>
-                    <span className="text-[10px] text-blue-300">Opens MetaMask / TrustWallet</span>
+                    <span className="text-[10px] text-blue-300">MetaMask / Rabby / TrustWallet</span>
                   </div>
 
                   <button
@@ -569,12 +616,12 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     {walletConnecting ? (
                       <>
                         <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>OPENING WALLET APP...</span>
+                        <span>CONFIRMING IN WALLET...</span>
                       </>
                     ) : (
                       <>
                         <Wallet className="w-4 h-4" />
-                        <span>PAY ${bidAmount.toFixed(2)} WITH WALLET APP</span>
+                        <span>PAY ${bidAmount.toFixed(2)} IN WALLET</span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </>
                     )}
@@ -607,13 +654,13 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
 
                   <div>
                     <label className="block text-[11px] text-gray-400 mb-1">
-                      Transaction Hash (txHash) / Proof (Optional):
+                      Transaction Hash (txHash) / Receipt:
                     </label>
                     <input
                       type="text"
                       value={txHashInput}
                       onChange={(e) => setTxHashInput(e.target.value)}
-                      placeholder="0x... paste transaction hash if sent manually"
+                      placeholder="0x... paste your confirmed transaction hash"
                       className="w-full bg-black/90 border border-cyber-border rounded-lg px-3 py-2 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-blue-400 font-mono"
                     />
                   </div>
@@ -645,7 +692,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
 
                   <div>
                     <label className="block text-[11px] text-gray-400 mb-1">
-                      Solana Signature / txHash (Optional):
+                      Solana Signature / txHash:
                     </label>
                     <input
                       type="text"
@@ -685,7 +732,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
               {loading ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
-                  <span>CLAIMING THE THRONE...</span>
+                  <span>VERIFYING ON BLOCKCHAIN...</span>
                 </>
               ) : (
                 <>
