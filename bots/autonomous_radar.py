@@ -20,7 +20,7 @@ RPCS_TO_CHECK = [
     {"name": "Base RPC Primary", "url": "https://mainnet.base.org", "body": {"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}},
     {"name": "Base RPC PublicNode", "url": "https://base.publicnode.com", "body": {"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}},
     {"name": "Solana RPC Primary", "url": "https://api.mainnet-beta.solana.com", "body": {"jsonrpc":"2.0","method":"getHealth","params":[],"id":1}},
-    {"name": "Ethereum LlamaRPC", "url": "https://eth.llamarpc.com", "body": {"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}},
+    {"name": "Ethereum PublicNode", "url": "https://ethereum.publicnode.com", "body": {"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}},
 ]
 
 last_king_id = None

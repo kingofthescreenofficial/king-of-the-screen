@@ -8,8 +8,9 @@ const EVM_RPC_ENDPOINTS = [
   "https://base.publicnode.com", // Base Fallback 1
   "https://base.llamarpc.com", // Base Fallback 2
   "https://1rpc.io/base", // Base Fallback 3
-  "https://eth.llamarpc.com", // Ethereum Mainnet Primary
-  "https://ethereum.publicnode.com", // Ethereum Fallback
+  "https://ethereum.publicnode.com", // Ethereum Mainnet Primary
+  "https://rpc.ankr.com/eth", // Ethereum Fallback 1
+  "https://1rpc.io/eth", // Ethereum Fallback 2
   "https://polygon-rpc.com", // Polygon PoS
   "https://binance.llamarpc.com", // BSC Mainnet
   "https://arbitrum.llamarpc.com", // Arbitrum One

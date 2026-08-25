@@ -1,1 +1,6 @@
 {"timestamp": "2026-08-25T20:01:17.456871", "event_type": "SENTINEL_START", "details": {"currentKing": "\ud83d\udc51 Sovereign Origin", "price": 1, "totalRaised": 1, "nextMin": 2}}
+{"timestamp": "2026-08-25T20:17:34.450777+00:00", "event_type": "SENTINEL_ONLINE", "details": {"currentKing": "\ud83d\udc51 Sovereign Origin", "price": 1, "totalRaised": 1, "nextMin": 2, "apiLatencyMs": 478}}
+{"timestamp": "2026-08-25T20:19:57.509534+00:00", "event_type": "RPC_DEGRADED", "details": {"rpc": "Ethereum LlamaRPC", "status": 521}}
+{"timestamp": "2026-08-25T20:22:39.770277+00:00", "event_type": "RPC_DEGRADED", "details": {"rpc": "Ethereum LlamaRPC", "status": 521}}
+{"timestamp": "2026-08-25T20:25:22.352343+00:00", "event_type": "RPC_DEGRADED", "details": {"rpc": "Ethereum LlamaRPC", "status": 521}}
+{"timestamp": "2026-08-25T20:28:00.080384+00:00", "event_type": "RPC_DEGRADED", "details": {"rpc": "Ethereum LlamaRPC", "status": 521}}
