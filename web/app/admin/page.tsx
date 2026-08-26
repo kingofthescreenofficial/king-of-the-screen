@@ -45,6 +45,14 @@ export default function AdminPage() {
 
     const savedNft = localStorage.getItem("kots_nft_address");
     if (savedNft) setNftAddress(savedNft);
+
+    // Auto-detect existing wallet session (Rabby/MetaMask)
+    if (typeof window !== "undefined" && (window as any).ethereum) {
+      const eth = (window as any).ethereum;
+      if (eth.selectedAddress) {
+        setAccount(eth.selectedAddress);
+      }
+    }
   }, []);
 
   const fetchState = async () => {
@@ -64,12 +72,22 @@ export default function AdminPage() {
   }, []);
 
   const connectWallet = async () => {
+    setError(null);
+    setMessage(null);
+
     if (typeof window !== "undefined" && (window as any).ethereum) {
       try {
         const provider = new ethers.BrowserProvider((window as any).ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
         
-        // Auto-switch to Base network (Chain ID 8453)
+        if (!accounts || accounts.length === 0) {
+          throw new Error("No accounts found in wallet");
+        }
+
+        const userAddr = accounts[0];
+        setAccount(userAddr);
+
+        // Try to switch to Base network (Chain ID 8453)
         try {
           await (window as any).ethereum.request({
             method: "wallet_switchEthereumChain",
@@ -93,10 +111,14 @@ export default function AdminPage() {
         }
 
         const network = await provider.getNetwork();
-        setAccount(accounts[0]);
         setChainId(Number(network.chainId));
+        setMessage(`Connected wallet: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`);
       } catch (err: any) {
-        setError(err.message || "Failed to connect wallet");
+        if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
+          setError("Подключение было отменено в кошельке. Нажмите «Connect Wallet» и подтвердите запрос.");
+        } else {
+          setError(err.message || "Failed to connect wallet");
+        }
       }
     } else {
       setError("MetaMask / Rabby wallet extension not found in browser");
@@ -104,14 +126,21 @@ export default function AdminPage() {
   };
 
   const deployToken = async () => {
-    if (!account) await connectWallet();
-    setIsDeployingToken(true);
     setError(null);
     setMessage(null);
 
     try {
+      if (typeof window === "undefined" || !(window as any).ethereum) {
+        throw new Error("Wallet not found");
+      }
+
       const provider = new ethers.BrowserProvider((window as any).ethereum);
       const signer = await provider.getSigner();
+      const currentAddress = await signer.getAddress();
+      setAccount(currentAddress);
+
+      setIsDeployingToken(true);
+      setMessage("Подтвердите транзакцию создания токена $KING в вашем кошельке...");
 
       const factory = new ethers.ContractFactory(
         compiledContracts.KingToken.abi,
@@ -119,30 +148,41 @@ export default function AdminPage() {
         signer
       );
 
-      setMessage("Please confirm transaction in your wallet to deploy $KING ERC-20...");
-      const contract = await factory.deploy(account);
+      const contract = await factory.deploy(currentAddress);
+      setMessage("Транзакция отправлена в Base блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
       const deployedAddr = await contract.getAddress();
       setTokenAddress(deployedAddr);
       localStorage.setItem("kots_token_address", deployedAddr);
-      setMessage(`✓ $KING Token successfully deployed on-chain to: ${deployedAddr}`);
+      setMessage(`🎉 УСПЕШНО! Токен $KING развернут на Base: ${deployedAddr}`);
     } catch (err: any) {
-      setError(err.message || "Token deployment failed");
+      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
+        setError("Транзакция была отклонена в кошельке.");
+      } else {
+        setError(err.message || "Token deployment failed");
+      }
     } finally {
       setIsDeployingToken(false);
     }
   };
 
   const deployNFT = async () => {
-    if (!account) await connectWallet();
-    setIsDeployingNFT(true);
     setError(null);
     setMessage(null);
 
     try {
+      if (typeof window === "undefined" || !(window as any).ethereum) {
+        throw new Error("Wallet not found");
+      }
+
       const provider = new ethers.BrowserProvider((window as any).ethereum);
       const signer = await provider.getSigner();
+      const currentAddress = await signer.getAddress();
+      setAccount(currentAddress);
+
+      setIsDeployingNFT(true);
+      setMessage("Подтвердите транзакцию развертывания NFT-контракта в кошельке...");
 
       const factory = new ethers.ContractFactory(
         compiledContracts.KingGenesisNFT.abi,
@@ -150,56 +190,67 @@ export default function AdminPage() {
         signer
       );
 
-      setMessage("Please confirm transaction in your wallet to deploy Genesis NFT Contract...");
       const contract = await factory.deploy();
+      setMessage("Транзакция отправлена в Base блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
       const deployedAddr = await contract.getAddress();
       setNftAddress(deployedAddr);
       localStorage.setItem("kots_nft_address", deployedAddr);
-      setMessage(`✓ Genesis 1-of-25 NFT Contract deployed on-chain to: ${deployedAddr}`);
+      setMessage(`🎉 УСПЕШНО! Genesis NFT контракт развернут на Base: ${deployedAddr}`);
     } catch (err: any) {
-      setError(err.message || "NFT deployment failed");
+      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
+        setError("Транзакция была отклонена в кошельке.");
+      } else {
+        setError(err.message || "NFT deployment failed");
+      }
     } finally {
       setIsDeployingNFT(false);
     }
   };
 
   const airdropToHoku = async () => {
-    if (!account) await connectWallet();
-    if (!nftAddress && !tokenAddress) {
-      setError("Please deploy Token or NFT contract first.");
-      return;
-    }
-
-    setIsAirdropping(true);
     setError(null);
     setMessage(null);
 
     try {
+      if (typeof window === "undefined" || !(window as any).ethereum) {
+        throw new Error("Wallet not found");
+      }
+
+      if (!nftAddress && !tokenAddress) {
+        setError("Сначала разверните контракт токена $KING или NFT выше!");
+        return;
+      }
+
       const provider = new ethers.BrowserProvider((window as any).ethereum);
       const signer = await provider.getSigner();
 
       const hokuEvmWallet = "0x36f1bba134797da5ec5caf9ed4634903980ca305";
+      setIsAirdropping(true);
 
       if (nftAddress) {
-        setMessage("Minting Genesis Relic #1 to King on-chain...");
+        setMessage("Минтим Genesis NFT #1 на адрес Короля...");
         const nftContract = new ethers.Contract(nftAddress, compiledContracts.KingGenesisNFT.abi, signer);
         const tx = await nftContract.mintGenesisRelic(hokuEvmWallet, "https://king-of-the-screen.vercel.app/api/nft/1");
         await tx.wait();
-        setMessage(`✓ Genesis Relic #1 officially minted to ${hokuEvmWallet}! TxHash: ${tx.hash}`);
+        setMessage(`🎉 Genesis NFT #1 успешно заминчен! TxHash: ${tx.hash}`);
       }
 
       if (tokenAddress) {
-        setMessage("Transferring 25,000 $KING tokens on-chain...");
+        setMessage("Переводим 25,000 $KING на адрес Короля...");
         const tokenContract = new ethers.Contract(tokenAddress, compiledContracts.KingToken.abi, signer);
         const amount = ethers.parseEther("25000");
         const tx = await tokenContract.transfer(hokuEvmWallet, amount);
         await tx.wait();
-        setMessage(`✓ 25,000 $KING tokens transferred on-chain! TxHash: ${tx.hash}`);
+        setMessage(`🎉 25,000 $KING успешно зачислены Королю! TxHash: ${tx.hash}`);
       }
     } catch (err: any) {
-      setError(err.message || "Airdrop execution failed");
+      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
+        setError("Транзакция отправки наград была отклонена в кошельке.");
+      } else {
+        setError(err.message || "Airdrop execution failed");
+      }
     } finally {
       setIsAirdropping(false);
     }
@@ -221,14 +272,15 @@ export default function AdminPage() {
           <div className="flex items-center gap-2">
             {account ? (
               <span className="text-xs px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full font-bold">
-                Wallet: {account.slice(0, 6)}...{account.slice(-4)} (Chain {chainId})
+                Wallet: {account.slice(0, 6)}...{account.slice(-4)}
               </span>
             ) : (
               <button
                 onClick={connectWallet}
-                className="text-xs px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold transition-colors"
+                className="text-xs px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold transition-colors flex items-center gap-1.5"
               >
-                Connect Wallet
+                <Wallet className="w-3.5 h-3.5" />
+                <span>Connect Wallet</span>
               </button>
             )}
           </div>
@@ -248,13 +300,13 @@ export default function AdminPage() {
         {/* Status Messages */}
         {message && (
           <div className="p-4 bg-emerald-950/80 border border-emerald-500 text-emerald-300 text-xs rounded-xl flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-            <span className="break-all">{message}</span>
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-400" />
+            <span className="break-all font-bold">{message}</span>
           </div>
         )}
         {error && (
           <div className="p-4 bg-red-950/80 border border-red-500 text-red-300 text-xs rounded-xl flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+            <ShieldAlert className="w-5 h-5 flex-shrink-0 text-red-400" />
             <span className="break-all">{error}</span>
           </div>
         )}
@@ -295,7 +347,7 @@ export default function AdminPage() {
                 <button
                   onClick={deployToken}
                   disabled={isDeployingToken}
-                  className="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]"
                 >
                   {isDeployingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Coins className="w-4 h-4" />}
                   <span>DEPLOY $KING TOKEN TO BASE</span>
@@ -326,7 +378,7 @@ export default function AdminPage() {
                 <button
                   onClick={deployNFT}
                   disabled={isDeployingNFT}
-                  className="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-black text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
                 >
                   {isDeployingNFT ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Gem className="w-4 h-4" />}
                   <span>DEPLOY GENESIS NFT CONTRACT</span>
@@ -354,7 +406,7 @@ export default function AdminPage() {
             <button
               onClick={airdropToHoku}
               disabled={isAirdropping}
-              className="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 text-black font-black text-xs rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 transition-all"
+              className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 text-black font-black text-xs rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 transition-all"
             >
               {isAirdropping ? (
                 <>
