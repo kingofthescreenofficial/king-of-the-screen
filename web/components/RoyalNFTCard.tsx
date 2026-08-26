@@ -35,12 +35,6 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
     window.open(url, "_blank");
   };
 
-  // If user used default stock image, showcase the official 3D royal crown emblem
-  const displayImage =
-    king.mediaUrl && !king.mediaUrl.includes("unsplash.com/photo-1618005182384")
-      ? king.mediaUrl
-      : "/king_token_logo.jpg";
-
   return (
     <div className="relative max-w-sm w-full mx-auto p-1 bg-gradient-to-b from-yellow-300 via-amber-500 to-purple-600 rounded-3xl shadow-[0_0_50px_rgba(234,179,8,0.5)] font-mono text-white transition-all hover:scale-[1.02] duration-300">
       <div
@@ -67,7 +61,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
         {/* NFT Artwork Frame (Cyberpunk Gold Bevel) */}
         <div className="relative w-full aspect-square rounded-2xl overflow-hidden border-2 border-yellow-400/70 bg-black shadow-[0_0_25px_rgba(0,0,0,0.8)] group">
           <img
-            src={displayImage}
+            src={king.mediaUrl}
             alt={king.nickname}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />

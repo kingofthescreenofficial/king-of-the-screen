@@ -16,11 +16,6 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
     const [isNFTModalOpen, setIsNFTModalOpen] = useState(false);
     const hasActiveKing = Boolean(king && king.paidAmountUsd > 0);
 
-    const displayImage =
-      king.mediaUrl && !king.mediaUrl.includes("unsplash.com/photo-1618005182384")
-        ? king.mediaUrl
-        : "/king_token_logo.jpg";
-
     return (
       <div className="relative w-full max-w-5xl mx-auto my-4 font-mono">
         {/* Outer Cyberpunk Neon Glow Frame */}
@@ -32,7 +27,7 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
                 {/* Background Ambient Glow & Blur */}
                 <div
                   className="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110 pointer-events-none"
-                  style={{ backgroundImage: `url(${displayImage})` }}
+                  style={{ backgroundImage: `url(${king.mediaUrl})` }}
                 />
 
                 {/* Main Full Uncropped Foreground Image (Clickable) */}
@@ -45,14 +40,14 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
                     title={`Open ${king.link}`}
                   >
                     <img
-                      src={displayImage}
+                      src={king.mediaUrl}
                       alt={king.nickname}
                       className="max-h-[340px] sm:max-h-[480px] w-auto max-w-full object-contain rounded-lg shadow-2xl group-hover/img:brightness-105"
                     />
                   </a>
                 ) : (
                   <img
-                    src={displayImage}
+                    src={king.mediaUrl}
                     alt={king.nickname}
                     className="relative z-10 max-h-[340px] sm:max-h-[480px] w-auto max-w-full object-contain rounded-lg shadow-2xl"
                   />
