@@ -30,6 +30,7 @@ export default function AdminPage() {
   // Web3 Deployment State
   const [account, setAccount] = useState<string | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
+  const [networkName, setNetworkName] = useState<string>("EVM");
   const [tokenAddress, setTokenAddress] = useState<string>("");
   const [nftAddress, setNftAddress] = useState<string>("");
   const [isDeployingToken, setIsDeployingToken] = useState(false);
@@ -46,7 +47,6 @@ export default function AdminPage() {
     const savedNft = localStorage.getItem("kots_nft_address");
     if (savedNft) setNftAddress(savedNft);
 
-    // Auto-detect existing wallet session (Rabby/MetaMask)
     if (typeof window !== "undefined" && (window as any).ethereum) {
       const eth = (window as any).ethereum;
       if (eth.selectedAddress) {
@@ -87,32 +87,19 @@ export default function AdminPage() {
         const userAddr = accounts[0];
         setAccount(userAddr);
 
-        // Try to switch to Base network (Chain ID 8453)
-        try {
-          await (window as any).ethereum.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0x2105" }],
-          });
-        } catch (switchError: any) {
-          if (switchError.code === 4902) {
-            await (window as any).ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: "0x2105",
-                  chainName: "Base Mainnet",
-                  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-                  rpcUrls: ["https://mainnet.base.org"],
-                  blockExplorerUrls: ["https://basescan.org"],
-                },
-              ],
-            });
-          }
-        }
-
         const network = await provider.getNetwork();
-        setChainId(Number(network.chainId));
-        setMessage(`Connected wallet: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`);
+        const cid = Number(network.chainId);
+        setChainId(cid);
+
+        let netName = "EVM Network";
+        if (cid === 56) netName = "BNB Smart Chain (BSC)";
+        else if (cid === 8453) netName = "Base Mainnet";
+        else if (cid === 1) netName = "Ethereum Mainnet";
+        else if (cid === 137) netName = "Polygon PoS";
+        else if (cid === 42161) netName = "Arbitrum One";
+        setNetworkName(netName);
+
+        setMessage(`Connected wallet: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)} on ${netName}`);
       } catch (err: any) {
         if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
           setError("Подключение было отменено в кошельке. Нажмите «Connect Wallet» и подтвердите запрос.");
@@ -140,7 +127,7 @@ export default function AdminPage() {
       setAccount(currentAddress);
 
       setIsDeployingToken(true);
-      setMessage("Подтвердите транзакцию создания токена $KING в вашем кошельке...");
+      setMessage(`Подтвердите создание $KING в вашем кошельке (${networkName})...`);
 
       const factory = new ethers.ContractFactory(
         compiledContracts.KingToken.abi,
@@ -149,13 +136,13 @@ export default function AdminPage() {
       );
 
       const contract = await factory.deploy(currentAddress);
-      setMessage("Транзакция отправлена в Base блокчейн! Ожидание подтверждения блока...");
+      setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
       const deployedAddr = await contract.getAddress();
       setTokenAddress(deployedAddr);
       localStorage.setItem("kots_token_address", deployedAddr);
-      setMessage(`🎉 УСПЕШНО! Токен $KING развернут на Base: ${deployedAddr}`);
+      setMessage(`🎉 УСПЕШНО! Токен $KING развернут на ${networkName}: ${deployedAddr}`);
     } catch (err: any) {
       if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
         setError("Транзакция была отклонена в кошельке.");
@@ -182,7 +169,7 @@ export default function AdminPage() {
       setAccount(currentAddress);
 
       setIsDeployingNFT(true);
-      setMessage("Подтвердите транзакцию развертывания NFT-контракта в кошельке...");
+      setMessage(`Подтвердите развертывание NFT-контракта в кошельке (${networkName})...`);
 
       const factory = new ethers.ContractFactory(
         compiledContracts.KingGenesisNFT.abi,
@@ -191,13 +178,13 @@ export default function AdminPage() {
       );
 
       const contract = await factory.deploy();
-      setMessage("Транзакция отправлена в Base блокчейн! Ожидание подтверждения блока...");
+      setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
       const deployedAddr = await contract.getAddress();
       setNftAddress(deployedAddr);
       localStorage.setItem("kots_nft_address", deployedAddr);
-      setMessage(`🎉 УСПЕШНО! Genesis NFT контракт развернут на Base: ${deployedAddr}`);
+      setMessage(`🎉 УСПЕШНО! Genesis NFT контракт развернут на ${networkName}: ${deployedAddr}`);
     } catch (err: any) {
       if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
         setError("Транзакция была отклонена в кошельке.");
@@ -272,7 +259,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-2">
             {account ? (
               <span className="text-xs px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full font-bold">
-                Wallet: {account.slice(0, 6)}...{account.slice(-4)}
+                {networkName}: {account.slice(0, 6)}...{account.slice(-4)}
               </span>
             ) : (
               <button
@@ -293,7 +280,7 @@ export default function AdminPage() {
             <span>COMMAND CENTER & ON-CHAIN DEPLOYER</span>
           </h1>
           <p className="text-xs text-gray-400">
-            Deploy real $KING ERC-20 tokens and 1-of-25 Genesis NFTs to Base / EVM in 1 click.
+            Deploy real $KING tokens and 1-of-25 Genesis NFTs to BNB Chain / Base / EVM in 1 click.
           </p>
         </div>
 
@@ -316,26 +303,26 @@ export default function AdminPage() {
           <div className="border-b border-cyber-border pb-3">
             <h2 className="text-base font-bold text-white flex items-center gap-2">
               <Zap className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-              <span>1-CLICK ON-CHAIN ASSETS DEPLOYMENT (BASE / EVM)</span>
+              <span>1-CLICK ON-CHAIN ASSETS DEPLOYMENT ({networkName.toUpperCase()})</span>
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">
-              Gas fee on Base: ~$0.01 per contract.
+              Gas fee on {networkName}: ~$0.01 - $0.03 per contract.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 1. $KING Token (ERC-20) */}
+            {/* 1. $KING Token (ERC-20 / BEP-20) */}
             <div className="bg-black/60 border border-cyber-border rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-yellow-400 flex items-center gap-1.5">
                   <Coins className="w-4 h-4 text-yellow-400" />
-                  <span>$KING TOKEN (ERC-20)</span>
+                  <span>$KING TOKEN (BEP-20 / ERC-20)</span>
                 </span>
                 <span className="text-[10px] text-gray-500">1,000,000,000 Cap</span>
               </div>
 
               <p className="text-[11px] text-gray-400 leading-relaxed">
-                Deploys the official King of the Screen ERC-20 contract with 1 billion supply minted to your wallet.
+                Deploys the official King of the Screen contract with 1 billion supply minted to your wallet on {networkName}.
               </p>
 
               {tokenAddress ? (
@@ -350,23 +337,23 @@ export default function AdminPage() {
                   className="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]"
                 >
                   {isDeployingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Coins className="w-4 h-4" />}
-                  <span>DEPLOY $KING TOKEN TO BASE</span>
+                  <span>DEPLOY $KING TOKEN</span>
                 </button>
               )}
             </div>
 
-            {/* 2. Genesis 1-of-25 NFT (ERC-721) */}
+            {/* 2. Genesis 1-of-25 NFT (ERC-721 / BEP-721) */}
             <div className="bg-black/60 border border-cyber-border rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-purple-400 flex items-center gap-1.5">
                   <Gem className="w-4 h-4 text-purple-400" />
-                  <span>GENESIS 1-OF-25 NFT (ERC-721)</span>
+                  <span>GENESIS 1-OF-25 NFT</span>
                 </span>
                 <span className="text-[10px] text-gray-500">Max 25 Relics</span>
               </div>
 
               <p className="text-[11px] text-gray-400 leading-relaxed">
-                Deploys the official ERC-721 smart contract connected to our dynamic metadata endpoint.
+                Deploys the official NFT smart contract connected to our dynamic metadata endpoint.
               </p>
 
               {nftAddress ? (
@@ -400,7 +387,7 @@ export default function AdminPage() {
             </div>
 
             <p className="text-xs text-gray-300">
-              Sends <strong>25,000 $KING</strong> and mints <strong>Genesis Relic NFT #1</strong> directly to the King's wallet on Base!
+              Sends <strong>25,000 $KING</strong> and mints <strong>Genesis Relic NFT #1</strong> directly to the King's wallet on {networkName}!
             </p>
 
             <button
@@ -411,7 +398,7 @@ export default function AdminPage() {
               {isAirdropping ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>TRANSACTING ON BASE BLOCKCHAIN...</span>
+                  <span>TRANSACTING ON {networkName.toUpperCase()}...</span>
                 </>
               ) : (
                 <>
