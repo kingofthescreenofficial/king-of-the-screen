@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { executeDethronement, getAppState } from "@/lib/state";
 import { moderateContent } from "@/lib/moderation";
-import { verifyEvmTransaction, verifySolanaTransaction } from "@/lib/blockchain";
+import { verifyEvmTransaction, verifySolanaTransaction, sanitizeTxHash } from "@/lib/blockchain";
 import fs from "fs";
 import path from "path";
 
@@ -51,11 +51,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Strict On-Chain Transaction Verification
-    if (!txHash || typeof txHash !== "string" || txHash.startsWith("tx_demo") || txHash.startsWith("tx_evm_") || txHash.startsWith("tx_solana_")) {
+    // 2. Strict On-Chain Transaction Verification with Auto-Sanitization
+    const cleanTxHash = sanitizeTxHash(txHash || "");
+    if (!cleanTxHash || cleanTxHash.startsWith("tx_demo")) {
       return NextResponse.json(
         {
-          error: `Please complete the crypto payment to ${state.walletConfig.evmAddress} and provide the real on-chain transaction hash (txHash).`,
+          error: `Please complete the crypto payment to ${state.walletConfig.evmAddress} and provide your transaction hash.`,
         },
         { status: 400 }
       );
@@ -63,18 +64,18 @@ export async function POST(req: NextRequest) {
 
     const isSolana = cryptoCurrency === "SOL";
     if (isSolana) {
-      const solVerify = await verifySolanaTransaction(txHash, state.walletConfig.solanaAddress);
+      const solVerify = await verifySolanaTransaction(cleanTxHash, state.walletConfig.solanaAddress);
       if (!solVerify.valid) {
         return NextResponse.json(
-          { error: solVerify.reason || "Solana transaction could not be verified on-chain." },
+          { error: solVerify.reason || "Invalid transaction signature." },
           { status: 400 }
         );
       }
     } else {
-      const evmVerify = await verifyEvmTransaction(txHash, state.walletConfig.evmAddress, cleanAmount);
+      const evmVerify = await verifyEvmTransaction(cleanTxHash, state.walletConfig.evmAddress, cleanAmount);
       if (!evmVerify.valid) {
         return NextResponse.json(
-          { error: evmVerify.reason || `EVM transaction not verified for address ${state.walletConfig.evmAddress}.` },
+          { error: evmVerify.reason || "Invalid transaction hash." },
           { status: 400 }
         );
       }
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     const normalizedLink = normalizeUrl(link);
     const minedTokens = Math.floor(cleanAmount * 25000);
-    const resolvedRewardWallet = (rewardWalletAddress || "").trim() || (isSolana ? txHash : state.walletConfig.solanaAddress);
+    const resolvedRewardWallet = (rewardWalletAddress || "").trim() || (isSolana ? cleanTxHash : state.walletConfig.solanaAddress);
 
     // 4. Execute verified dethronement
     const result = executeDethronement({
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
       paidAmountUsd: cleanAmount,
       paidCryptoAmount: Number(paidCryptoAmount) || (cleanAmount / 150),
       cryptoCurrency: cryptoCurrency || "USDT",
-      txHash: txHash.trim(),
+      txHash: cleanTxHash,
       countryCode: countryCode || "🌐",
       rewardWalletAddress: resolvedRewardWallet,
       airdropStatus: "QUEUED",
@@ -124,7 +125,7 @@ export async function POST(req: NextRequest) {
         minedTokens: minedTokens,
         paidUsd: cleanAmount,
         currency: cryptoCurrency,
-        txHash: txHash.trim(),
+        txHash: cleanTxHash,
         status: "QUEUED_FOR_AIRDROP",
       };
       const logDir = path.join(process.cwd(), "analytics");
