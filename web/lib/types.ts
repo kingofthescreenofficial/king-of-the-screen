@@ -15,6 +15,15 @@ export interface King {
   countryCode?: string;
 }
 
+export interface TokenConfig {
+  ticker: string;
+  name: string;
+  contractAddress: string;
+  pumpFunUrl: string;
+  dexScreenerUrl: string;
+  totalSupply: number;
+}
+
 export interface AppState {
   currentKing: King;
   nextMinPriceUsd: number;
@@ -37,4 +46,5 @@ export interface AppState {
     evmAddress: string;
     usdtTrc20Address: string;
   };
+  tokenConfig?: TokenConfig;
 }

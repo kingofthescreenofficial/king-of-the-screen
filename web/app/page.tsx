@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { AppState } from "@/lib/types";
 import { TheScreen } from "@/components/TheScreen";
 import { ConceptHero } from "@/components/ConceptHero";
+import { TokenBanner } from "@/components/TokenBanner";
 import { MillionGoal } from "@/components/MillionGoal";
 import { TakeoverModal } from "@/components/TakeoverModal";
 import { HallOfFame } from "@/components/HallOfFame";
@@ -103,6 +104,9 @@ export default function HomePage() {
           </div>
         </header>
 
+        {/* 👑 OFFICIAL $KING TOKEN BANNER WITH CA & TRADE LINKS */}
+        <TokenBanner tokenConfig={state.tokenConfig} />
+
         {/* PROMINENT CONCEPT EXPLAINER HERO (INSTANT UNDERSTANDING) */}
         <ConceptHero
           onOpenTakeover={() => setIsTakeoverOpen(true)}
@@ -138,63 +142,81 @@ export default function HomePage() {
         />
 
         {/* COMPREHENSIVE LEGAL & COMPLIANCE FOOTER */}
-        <footer className="text-center text-[11px] font-mono text-gray-500 pt-8 pb-12 border-t border-cyber-border/40 space-y-3">
-          <div className="flex flex-wrap items-center justify-center gap-4 text-gray-400 text-xs">
-            <button
-              onClick={() => openLegal("TOS")}
-              className="hover:text-yellow-400 underline transition-colors"
-            >
-              Terms of Service
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => openLegal("DISCLAIMER")}
-              className="hover:text-yellow-400 underline transition-colors"
-            >
-              Financial Disclaimer
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => openLegal("DMCA")}
-              className="hover:text-yellow-400 underline transition-colors"
-            >
-              DMCA & Safety Policy
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => openLegal("PRIVACY")}
-              className="hover:text-yellow-400 underline transition-colors"
-            >
-              Privacy Policy
-            </button>
+        <footer className="border-t border-cyber-border/80 pt-8 pb-12 text-xs text-gray-500 font-mono">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-gray-300 font-bold">
+                <Crown className="w-4 h-4 text-yellow-400" />
+                <span>KING OF THE SCREEN (2026)</span>
+              </div>
+              <p className="text-[11px] text-gray-500">
+                A high-velocity decentralized digital art monument & social experiment.
+              </p>
+              <p className="text-[11px] text-gray-500">
+                Official Contact:{" "}
+                <a
+                  href="mailto:kingofthescreen.official@gmail.com"
+                  className="text-gray-400 hover:text-yellow-400 underline"
+                >
+                  kingofthescreen.official@gmail.com
+                </a>
+              </p>
+            </div>
+
+            {/* Legal Documents Quick-Switch Links */}
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[11px]">
+              <button
+                onClick={() => openLegal("TOS")}
+                className="hover:text-yellow-400 transition-colors underline"
+              >
+                Terms of Service
+              </button>
+              <span className="text-gray-700">•</span>
+              <button
+                onClick={() => openLegal("DISCLAIMER")}
+                className="hover:text-yellow-400 transition-colors underline"
+              >
+                Platform Disclaimer
+              </button>
+              <span className="text-gray-700">•</span>
+              <button
+                onClick={() => openLegal("DMCA")}
+                className="hover:text-yellow-400 transition-colors underline"
+              >
+                DMCA & Content Takedown
+              </button>
+              <span className="text-gray-700">•</span>
+              <button
+                onClick={() => openLegal("PRIVACY")}
+                className="hover:text-yellow-400 transition-colors underline"
+              >
+                Privacy Policy
+              </button>
+            </div>
           </div>
 
-          <p className="max-w-2xl mx-auto text-[10px] text-gray-600 leading-relaxed">
-            LEGAL NOTICE: King of the Screen is an interactive digital advertising billboard and live social art performance. 
-            All submitted micro-payments are strictly final and non-refundable fees for real-time digital billboard broadcast time. 
-            This service does not constitute investment advice, profit sharing, lotteries, or securities.
-          </p>
-
-          <p className="text-[10px] text-gray-600">
-            © 2026 KING OF THE SCREEN. All rights reserved.
-          </p>
+          <div className="mt-6 pt-4 border-t border-cyber-border/40 text-[10px] text-gray-600 text-center leading-relaxed">
+            Disclaimer: King of the Screen is an entertainment and advertising broadcast platform. Fees paid for billboard time and token distributions are non-refundable micropayments. Content is user-submitted and moderated in accordance with our Terms.
+          </div>
         </footer>
       </div>
 
-      {/* Takeover Modal */}
+      {/* The Takeover Modal */}
       <TakeoverModal
         isOpen={isTakeoverOpen}
         onClose={() => setIsTakeoverOpen(false)}
         nextMinPriceUsd={state.nextMinPriceUsd}
         walletConfig={state.walletConfig}
-        onSuccess={(newState) => setState(newState)}
+        onSuccess={(updatedState) => {
+          setState(updatedState);
+        }}
       />
 
-      {/* Legal & Compliance Modal */}
+      {/* Interactive Safe Harbor Legal Modal */}
       <LegalModal
         isOpen={isLegalOpen}
-        onClose={() => setIsLegalOpen(false)}
         defaultTab={legalTab}
+        onClose={() => setIsLegalOpen(false)}
       />
     </main>
   );

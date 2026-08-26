@@ -45,6 +45,14 @@ export const DEFAULT_STATE: AppState = {
     evmAddress: process.env.EVM_WALLET_ADDRESS || "0x36f1bba134797da5ec5caf9ed4634903980ca305",
     usdtTrc20Address: process.env.USDT_TRC20_ADDRESS || "0x36f1bba134797da5ec5caf9ed4634903980ca305",
   },
+  tokenConfig: {
+    ticker: "KING",
+    name: "King of the Screen",
+    contractAddress: "5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
+    pumpFunUrl: "https://pump.fun/coin/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
+    dexScreenerUrl: "https://dexscreener.com/solana/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
+    totalSupply: 1000000000,
+  },
 };
 
 // In-memory runtime state for fast serverless responses
