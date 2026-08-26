@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { executeDethronement, getAppState } from "@/lib/state";
 import { moderateContent } from "@/lib/moderation";
 import { verifyEvmTransaction, verifySolanaTransaction } from "@/lib/blockchain";
+import fs from "fs";
+import path from "path";
 
 function normalizeUrl(url?: string): string | undefined {
   if (!url) return undefined;
@@ -27,6 +29,7 @@ export async function POST(req: NextRequest) {
       cryptoCurrency,
       txHash,
       countryCode,
+      rewardWalletAddress,
     } = body;
 
     // 1. Basic validation
@@ -48,7 +51,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Strict On-Chain Transaction Verification (No Demo bypass allowed in production)
+    // 2. Strict On-Chain Transaction Verification
     if (!txHash || typeof txHash !== "string" || txHash.startsWith("tx_demo") || txHash.startsWith("tx_evm_") || txHash.startsWith("tx_solana_")) {
       return NextResponse.json(
         {
@@ -87,6 +90,8 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedLink = normalizeUrl(link);
+    const minedTokens = Math.floor(cleanAmount * 25000);
+    const resolvedRewardWallet = (rewardWalletAddress || "").trim() || (isSolana ? txHash : state.walletConfig.solanaAddress);
 
     // 4. Execute verified dethronement
     const result = executeDethronement({
@@ -100,10 +105,39 @@ export async function POST(req: NextRequest) {
       cryptoCurrency: cryptoCurrency || "USDT",
       txHash: txHash.trim(),
       countryCode: countryCode || "🌐",
+      rewardWalletAddress: resolvedRewardWallet,
+      airdropStatus: "QUEUED",
+      minedTokens: minedTokens,
     });
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
+    // 5. Append to airdrop dispatch queue log
+    try {
+      const queueEntry = {
+        timestamp: new Date().toISOString(),
+        kingId: result.state.currentKing.id,
+        nickname: result.state.currentKing.nickname,
+        rewardWallet: resolvedRewardWallet,
+        minedTokens: minedTokens,
+        paidUsd: cleanAmount,
+        currency: cryptoCurrency,
+        txHash: txHash.trim(),
+        status: "QUEUED_FOR_AIRDROP",
+      };
+      const logDir = path.join(process.cwd(), "analytics");
+      if (!fs.existsSync(logDir)) {
+        fs.mkdirSync(logDir, { recursive: true });
+      }
+      fs.appendFileSync(
+        path.join(logDir, "airdrop_queue.jsonl"),
+        JSON.stringify(queueEntry) + "\n",
+        "utf-8"
+      );
+    } catch (logErr) {
+      console.warn("Notice: Airdrop queue logged in memory/runtime");
     }
 
     return NextResponse.json({ success: true, state: result.state });

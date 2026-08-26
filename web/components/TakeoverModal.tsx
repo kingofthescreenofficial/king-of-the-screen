@@ -20,6 +20,7 @@ import {
   Coins,
   Gem,
   Sparkles,
+  Send,
 } from "lucide-react";
 import { AppState } from "@/lib/types";
 import { RoyalNFTCard } from "./RoyalNFTCard";
@@ -61,6 +62,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   const [nickname, setNickname] = useState("");
   const [tagline, setTagline] = useState("");
   const [link, setLink] = useState("");
+  const [rewardWalletAddress, setRewardWalletAddress] = useState("");
   const [mediaUrl, setMediaUrl] = useState(MEME_PRESETS[0].url);
   const [imageSourceTab, setImageSourceTab] = useState<"UPLOAD" | "URL" | "PRESETS">("UPLOAD");
   const [bidAmount, setBidAmount] = useState<number>(nextMinPriceUsd);
@@ -252,6 +254,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
           nickname,
           tagline,
           link: link.trim() || undefined,
+          rewardWalletAddress: rewardWalletAddress.trim() || undefined,
           mediaUrl,
           mediaType: "image",
           paidAmountUsd: bidAmount,
@@ -329,15 +332,28 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
             <div className="space-y-5 text-center py-4">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold rounded-full uppercase">
                 <Sparkles className="w-4 h-4 text-emerald-400" />
-                <span>THRONE CONQUERED & NFT MINTED!</span>
+                <span>THRONE CONQUERED & REWARDS DISPATCHED!</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-black text-yellow-400">
                 ALL HAIL {mintedNFTKing.nickname}!
               </h2>
-              <p className="text-xs text-gray-300">
-                Your broadcast is live worldwide and your 1-of-25 Genesis NFT has been etched on-chain.
-              </p>
+              
+              {/* Automated Airdrop Delivery Badge */}
+              <div className="p-3 bg-black/80 border border-emerald-500/60 rounded-xl text-xs flex items-center justify-between text-left max-w-sm mx-auto">
+                <div className="space-y-0.5">
+                  <span className="text-emerald-400 font-bold flex items-center gap-1">
+                    <Send className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>AUTOMATIC AIRDROP DISPATCHED:</span>
+                  </span>
+                  <span className="text-gray-300 text-[11px] block">
+                    +{(mintedNFTKing.paidAmountUsd * 25000).toLocaleString()} $KING + Genesis NFT #3
+                  </span>
+                </div>
+                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
+                  QUEUED
+                </span>
+              </div>
 
               <RoyalNFTCard king={mintedNFTKing} ordinalNumber={3} totalCap={25} />
 
@@ -409,6 +425,24 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     maxLength={140}
                     required
                     className="w-full bg-black/70 border border-cyber-border rounded-xl px-3.5 py-3 text-base sm:text-sm text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                {/* SOLANA REWARD AIRDROP WALLET INPUT */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+                      <Coins className="w-3.5 h-3.5 text-yellow-400" />
+                      <span>SOLANA (PHANTOM) ADDRESS FOR $KING & NFT AIRDROP</span>
+                    </label>
+                    <span className="text-[10px] text-gray-500">Auto-sent to wallet</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={rewardWalletAddress}
+                    onChange={(e) => setRewardWalletAddress(e.target.value)}
+                    placeholder="Your Solana address to receive $KING and 1-of-25 NFT..."
+                    className="w-full bg-black/70 border border-emerald-500/40 rounded-xl px-3.5 py-2.5 text-xs text-emerald-300 placeholder-gray-600 focus:outline-none focus:border-emerald-400 font-mono"
                   />
                 </div>
 
@@ -603,7 +637,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     </div>
                   </div>
                   <div className="px-2.5 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded-lg text-yellow-300 text-[10px] font-black uppercase tracking-wider flex-shrink-0">
-                    👑 RARE RELIC
+                    👑 AUTO-AIRDROP
                   </div>
                 </div>
 

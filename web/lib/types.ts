@@ -13,6 +13,9 @@ export interface King {
   reignDurationSeconds?: number;
   txHash?: string;
   countryCode?: string;
+  rewardWalletAddress?: string;
+  airdropStatus?: "QUEUED" | "DELIVERED" | "SENT";
+  minedTokens?: number;
 }
 
 export interface TokenConfig {
