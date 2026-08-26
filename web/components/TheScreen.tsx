@@ -1,8 +1,8 @@
 "use client";
 
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { King } from "@/lib/types";
-import { Crown, Flame, ExternalLink, Globe, ArrowUpRight, Award, Gem, Sparkles, X } from "lucide-react";
+import { Crown, Flame, Globe, ArrowUpRight, Gem, X } from "lucide-react";
 import { RoyalNFTCard } from "./RoyalNFTCard";
 
 interface TheScreenProps {
@@ -15,6 +15,23 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
   ({ king, nextMinPriceUsd, onOpenTakeover }) => {
     const [isNFTModalOpen, setIsNFTModalOpen] = useState(false);
     const hasActiveKing = Boolean(king && king.paidAmountUsd > 0);
+
+    // Prevent background scrolling and enable Escape key to close modal
+    useEffect(() => {
+      if (isNFTModalOpen) {
+        document.body.style.overflow = "hidden";
+        const handleKeyDown = (e: KeyboardEvent) => {
+          if (e.key === "Escape") setIsNFTModalOpen(false);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+          document.body.style.overflow = "unset";
+          window.removeEventListener("keydown", handleKeyDown);
+        };
+      } else {
+        document.body.style.overflow = "unset";
+      }
+    }, [isNFTModalOpen]);
 
     return (
       <div className="relative w-full max-w-5xl mx-auto my-4 font-mono">
@@ -146,19 +163,31 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
           </div>
         </div>
 
-        {/* Modal: View 3D Holographic NFT Relic */}
+        {/* Modal: View 3D Holographic NFT Relic (Full Scrollable Overlay + Always Visible Close Buttons) */}
         {isNFTModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-            <div className="relative w-full max-w-sm">
-              <button
-                type="button"
-                onClick={() => setIsNFTModalOpen(false)}
-                className="absolute -top-3 -right-3 z-20 p-2 bg-black border border-yellow-500 text-yellow-400 rounded-full hover:bg-yellow-500 hover:text-black transition-colors"
-                aria-label="Close NFT Preview"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              <RoyalNFTCard king={king} ordinalNumber={1} totalCap={25} />
+          <div
+            className="fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md p-3 sm:p-6 flex flex-col items-center justify-start sm:justify-center min-h-screen"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsNFTModalOpen(false);
+            }}
+          >
+            {/* Persistent Fixed Floating Close Button */}
+            <button
+              type="button"
+              onClick={() => setIsNFTModalOpen(false)}
+              className="fixed top-4 right-4 z-[60] p-2.5 bg-black/80 hover:bg-yellow-500 hover:text-black border border-yellow-500/80 text-yellow-400 rounded-full shadow-2xl transition-all"
+              aria-label="Close NFT Preview"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="relative w-full max-w-sm my-auto">
+              <RoyalNFTCard
+                king={king}
+                ordinalNumber={1}
+                totalCap={25}
+                onClose={() => setIsNFTModalOpen(false)}
+              />
             </div>
           </div>
         )}

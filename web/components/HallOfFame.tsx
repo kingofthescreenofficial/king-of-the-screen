@@ -155,19 +155,28 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({ hallOfFame, recentEvents
 
       {/* NFT Modal Popup when clicking 'View NFT' */}
       {selectedNFTKing && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md p-4 flex items-center justify-center">
-          <div className="relative w-full max-w-sm">
-            <button
-              type="button"
-              onClick={() => setSelectedNFTKing(null)}
-              className="absolute -top-3 -right-3 p-2 bg-black text-gray-300 hover:text-white rounded-full border border-yellow-500 z-10"
-            >
-              <X className="w-4 h-4" />
-            </button>
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md p-3 sm:p-6 flex flex-col items-center justify-start sm:justify-center min-h-screen"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedNFTKing(null);
+          }}
+        >
+          {/* Persistent Floating Close Button */}
+          <button
+            type="button"
+            onClick={() => setSelectedNFTKing(null)}
+            className="fixed top-4 right-4 z-[60] p-2.5 bg-black/80 hover:bg-yellow-500 hover:text-black border border-yellow-500/80 text-yellow-400 rounded-full shadow-2xl transition-all"
+            aria-label="Close NFT Preview"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <div className="relative w-full max-w-sm my-auto">
             <RoyalNFTCard
               king={selectedNFTKing.king}
               ordinalNumber={selectedNFTKing.index}
               totalCap={25}
+              onClose={() => setSelectedNFTKing(null)}
             />
           </div>
         </div>
