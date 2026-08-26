@@ -68,6 +68,30 @@ export default function AdminPage() {
       try {
         const provider = new ethers.BrowserProvider((window as any).ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
+        
+        // Auto-switch to Base network (Chain ID 8453)
+        try {
+          await (window as any).ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x2105" }],
+          });
+        } catch (switchError: any) {
+          if (switchError.code === 4902) {
+            await (window as any).ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x2105",
+                  chainName: "Base Mainnet",
+                  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+                  rpcUrls: ["https://mainnet.base.org"],
+                  blockExplorerUrls: ["https://basescan.org"],
+                },
+              ],
+            });
+          }
+        }
+
         const network = await provider.getNetwork();
         setAccount(accounts[0]);
         setChainId(Number(network.chainId));
