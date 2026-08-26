@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { memo, useState } from "react";
 import { King } from "@/lib/types";
-import { ReignTimer } from "./ReignTimer";
-import { Crown, ExternalLink, Flame, Globe, ArrowUpRight } from "lucide-react";
+import { Crown, Flame, ExternalLink, Globe, ArrowUpRight, Award, Gem, Sparkles, X } from "lucide-react";
+import { RoyalNFTCard } from "./RoyalNFTCard";
 
 interface TheScreenProps {
   king: King;
@@ -11,42 +11,28 @@ interface TheScreenProps {
   onOpenTakeover: () => void;
 }
 
-export const TheScreen: React.FC<TheScreenProps> = React.memo(
+export const TheScreen: React.FC<TheScreenProps> = memo(
   ({ king, nextMinPriceUsd, onOpenTakeover }) => {
+    const [isNFTModalOpen, setIsNFTModalOpen] = useState(false);
+    const hasActiveKing = Boolean(king && king.paidAmountUsd > 0);
+
+    const displayImage =
+      king.mediaUrl && !king.mediaUrl.includes("unsplash.com/photo-1618005182384")
+        ? king.mediaUrl
+        : "/king_token_logo.jpg";
+
     return (
-      <div className="relative w-full max-w-5xl mx-auto my-4 group font-mono">
-        {/* Outer Glow Frame (Static) */}
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-yellow-500/30 via-emerald-500/20 to-purple-600/30 blur-md opacity-75" />
-
-        {/* Main Screen Container */}
-        <div className="relative bg-[#0d0d15] border-2 border-yellow-500/70 rounded-2xl overflow-hidden shadow-2xl">
-          {/* Top Ticker Header */}
-          <div className="bg-black/90 px-4 py-2.5 border-b border-yellow-500/30 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
-            <div className="flex items-center gap-2 text-yellow-400 font-bold tracking-wider">
-              <Crown className="w-5 h-5 text-yellow-400" />
-              <span className="text-glow-gold uppercase">CURRENT MONARCH OF THE INTERNET</span>
-            </div>
-
-            <div className="flex items-center gap-4 text-gray-300">
-              {/* Isolated Live Reign Timer */}
-              <ReignTimer crownedAt={king.crownedAt} />
-
-              {/* Paid Amount */}
-              <div className="flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full text-emerald-400 font-bold text-sm">
-                <span>${king.paidAmountUsd.toFixed(2)}</span>
-                <span className="text-[11px] text-gray-400 font-normal">({king.cryptoCurrency})</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Center Media Showcase - 100% Full Uncropped Image */}
-          <div className="relative w-full min-h-[360px] sm:min-h-[480px] max-h-[620px] bg-[#050508] flex items-center justify-center overflow-hidden p-2 sm:p-4">
-            {king.mediaUrl ? (
+      <div className="relative w-full max-w-5xl mx-auto my-4 font-mono">
+        {/* Outer Cyberpunk Neon Glow Frame */}
+        <div className="relative bg-cyber-card border-2 border-yellow-500/80 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.35)] transition-all">
+          {/* Main Visual Display Container */}
+          <div className="relative w-full min-h-[320px] sm:min-h-[460px] bg-black flex items-center justify-center overflow-hidden">
+            {hasActiveKing ? (
               <>
-                {/* Blurred Ambient Background Backdrop */}
+                {/* Background Ambient Glow & Blur */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center filter blur-2xl opacity-25 scale-110 pointer-events-none"
-                  style={{ backgroundImage: `url(${king.mediaUrl})` }}
+                  className="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110 pointer-events-none"
+                  style={{ backgroundImage: `url(${displayImage})` }}
                 />
 
                 {/* Main Full Uncropped Foreground Image (Clickable) */}
@@ -59,14 +45,14 @@ export const TheScreen: React.FC<TheScreenProps> = React.memo(
                     title={`Open ${king.link}`}
                   >
                     <img
-                      src={king.mediaUrl}
+                      src={displayImage}
                       alt={king.nickname}
                       className="max-h-[340px] sm:max-h-[480px] w-auto max-w-full object-contain rounded-lg shadow-2xl group-hover/img:brightness-105"
                     />
                   </a>
                 ) : (
                   <img
-                    src={king.mediaUrl}
+                    src={displayImage}
                     alt={king.nickname}
                     className="relative z-10 max-h-[340px] sm:max-h-[480px] w-auto max-w-full object-contain rounded-lg shadow-2xl"
                   />
@@ -82,24 +68,26 @@ export const TheScreen: React.FC<TheScreenProps> = React.memo(
 
           {/* HERO PROMINENT KING INFO & MESSAGE SECTION */}
           <div className="bg-[#11111c] border-t-2 border-yellow-500/40 p-5 sm:p-8 space-y-5">
-            {/* Top Line: Sender Nickname + Crown Badge */}
+            {/* Top Line: Sender Nickname + Crown Badge + NFT Button */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyber-border/60 pb-3">
               <div className="flex items-center gap-3">
                 <span className="text-2xl sm:text-4xl font-black text-white tracking-wide text-glow-gold flex items-center gap-2">
                   👑 {king.nickname}
                 </span>
                 <span className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black font-black text-xs sm:text-sm px-3 py-1 rounded-md uppercase tracking-wider shadow-[0_0_10px_rgba(250,204,21,0.5)]">
-                  Active Monarch
+                  Active Monarch #1
                 </span>
               </div>
 
-              {/* Price Badge */}
-              <div className="text-right">
-                <span className="text-xs text-gray-400 block uppercase">Throne Claimed For</span>
-                <span className="text-lg sm:text-2xl font-black text-emerald-400 font-mono">
-                  ${king.paidAmountUsd.toFixed(2)}
-                </span>
-              </div>
+              {/* View 1-of-25 NFT Relic Quick Button */}
+              <button
+                type="button"
+                onClick={() => setIsNFTModalOpen(true)}
+                className="px-3.5 py-1.5 bg-gradient-to-r from-purple-900/60 to-yellow-900/60 hover:from-purple-800 hover:to-yellow-800 border border-yellow-500/60 hover:border-yellow-400 text-yellow-300 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.3)] transition-all active:scale-95"
+              >
+                <Gem className="w-4 h-4 text-purple-400" />
+                <span>VIEW 1-OF-25 NFT RELIC</span>
+              </button>
             </div>
 
             {/* MAIN MESSAGE (HUGE & DOMINANT) */}
@@ -162,6 +150,23 @@ export const TheScreen: React.FC<TheScreenProps> = React.memo(
             </div>
           </div>
         </div>
+
+        {/* Modal: View 3D Holographic NFT Relic */}
+        {isNFTModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <div className="relative w-full max-w-sm">
+              <button
+                type="button"
+                onClick={() => setIsNFTModalOpen(false)}
+                className="absolute -top-3 -right-3 z-20 p-2 bg-black border border-yellow-500 text-yellow-400 rounded-full hover:bg-yellow-500 hover:text-black transition-colors"
+                aria-label="Close NFT Preview"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <RoyalNFTCard king={king} ordinalNumber={1} totalCap={25} />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
