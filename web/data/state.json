@@ -1,56 +1,33 @@
 {
   "currentKing": {
-    "nickname": "🐸 Lord PEPE of Base",
-    "tagline": "Nobody can dethrone the frog army. Try to take this screen for $4!",
-    "link": "https://x.com",
+    "nickname": "👑 The Genesis Throne",
+    "tagline": "The throne is empty. Be the very first King in history to claim this screen for $1.00!",
+    "link": "https://king-of-the-screen.vercel.app",
     "mediaUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
     "mediaType": "image",
-    "paidAmountUsd": 3,
-    "paidCryptoAmount": 0.0012,
-    "cryptoCurrency": "ETH",
-    "txHash": "0x7a3f891b2c4d5e6f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f",
+    "paidAmountUsd": 0,
+    "paidCryptoAmount": 0,
+    "cryptoCurrency": "SOL",
+    "txHash": "genesis_origin",
     "countryCode": "🌐",
-    "id": "king_pepe_ignite_001",
-    "crownedAt": 1787693700000
+    "id": "genesis_throne_origin",
+    "crownedAt": 1787680000000
   },
-  "nextMinPriceUsd": 4,
+  "nextMinPriceUsd": 1,
   "stats": {
-    "totalRaisedUsd": 4,
-    "totalDethronements": 2,
-    "longestReignSeconds": 8120,
-    "longestReignKing": "👑 Sovereign Origin",
+    "totalRaisedUsd": 0,
+    "totalDethronements": 0,
+    "longestReignSeconds": 0,
+    "longestReignKing": "None",
     "targetGoalUsd": 1000000
   },
-  "hallOfFame": [
-    {
-      "nickname": "👑 Sovereign Origin",
-      "tagline": "The world's most contested digital screen is LIVE. Dethrone me to rule!",
-      "link": "https://x.com",
-      "mediaUrl": "https://images.unsplash.com/photo-1517976487502-d17e997f8c0d?w=1200&auto=format&fit=crop&q=80",
-      "mediaType": "image",
-      "paidAmountUsd": 1,
-      "paidCryptoAmount": 0.005,
-      "cryptoCurrency": "SOL",
-      "txHash": "genesis_tx_001",
-      "countryCode": "🌐",
-      "id": "king_genesis_001",
-      "crownedAt": 1787680065000,
-      "dethronedAt": 1787693700000,
-      "reignDurationSeconds": 8120
-    }
-  ],
+  "hallOfFame": [],
   "recentEvents": [
     {
-      "id": "ev-pepe-001",
+      "id": "ev-genesis-001",
       "type": "TAKEOVER",
-      "text": "⚡ 🐸 Lord PEPE of Base DETHRONED the King with $3.00 (ETH)! Next bid: $4.00",
-      "timestamp": 1787693700000
-    },
-    {
-      "id": "ev-1",
-      "type": "TAKEOVER",
-      "text": "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
-      "timestamp": 1787680065000
+      "text": "👑 The Genesis Throne is waiting for Monarch #1 ($1.00)! Rule the screen to mine $KING.",
+      "timestamp": 1787680000000
     }
   ],
   "walletConfig": {
