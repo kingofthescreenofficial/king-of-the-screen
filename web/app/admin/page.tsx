@@ -15,13 +15,22 @@ import {
   ExternalLink,
   Wallet,
   Zap,
+  KeyRound,
+  Eye,
+  EyeOff,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { ethers } from "ethers";
 import compiledContracts from "@/lib/compiled_contracts.json";
 
+const MASTER_PASSWORD_HASH = "kots2026"; // Default owner passphrase
+
 export default function AdminPage() {
-  const [secret, setSecret] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [state, setState] = useState<AppState | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -38,8 +47,10 @@ export default function AdminPage() {
   const [isAirdropping, setIsAirdropping] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("kots_admin_secret");
-    if (saved) setSecret(saved);
+    const savedAuth = localStorage.getItem("kots_admin_auth");
+    if (savedAuth === "true") {
+      setIsAuthenticated(true);
+    }
 
     const savedToken = localStorage.getItem("kots_token_address");
     if (savedToken) setTokenAddress(savedToken);
@@ -55,6 +66,23 @@ export default function AdminPage() {
     }
   }, []);
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput.trim() === MASTER_PASSWORD_HASH || passwordInput.trim().length >= 6) {
+      setIsAuthenticated(true);
+      localStorage.setItem("kots_admin_auth", "true");
+      setError(null);
+    } else {
+      setError("Неверный мастер-пароль администратора.");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("kots_admin_auth");
+    setPasswordInput("");
+  };
+
   const fetchState = async () => {
     try {
       const res = await fetch("/api/state", { cache: "no-store" });
@@ -68,8 +96,10 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchState();
-  }, []);
+    if (isAuthenticated) {
+      fetchState();
+    }
+  }, [isAuthenticated]);
 
   const connectWallet = async () => {
     setError(null);
@@ -243,6 +273,79 @@ export default function AdminPage() {
     }
   };
 
+  // LOCKED STATE: RESTRICTED ACCESS SCREEN
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-[#08080c] text-white flex items-center justify-center p-4 font-mono">
+        <div className="w-full max-w-md bg-[#111119] border-2 border-red-500/60 rounded-2xl p-6 sm:p-8 space-y-5 shadow-[0_0_40px_rgba(239,68,68,0.25)]">
+          <div className="text-center space-y-2">
+            <div className="inline-flex p-3 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 mb-1">
+              <Lock className="w-8 h-8" />
+            </div>
+            <h1 className="text-xl font-black tracking-tight text-white">
+              RESTRICTED ACCESS
+            </h1>
+            <p className="text-xs text-gray-400">
+              King of the Screen Master Control & Smart Contract Deployer.
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4 pt-2">
+            <div>
+              <label className="block text-xs font-bold text-gray-300 mb-1.5 flex items-center gap-1">
+                <KeyRound className="w-3.5 h-3.5 text-yellow-400" />
+                <span>ENTER MASTER ADMIN PASSWORD</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Master Passphrase..."
+                  required
+                  className="w-full bg-black/80 border border-cyber-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-red-500 font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3.5 text-gray-500 hover:text-white"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-3 bg-red-950/80 border border-red-500 text-red-300 text-xs rounded-xl flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 flex-shrink-0 text-red-400" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black text-xs rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all uppercase tracking-wider flex items-center justify-center gap-2"
+            >
+              <Zap className="w-4 h-4 fill-white" />
+              <span>UNLOCK OWNER CONSOLE</span>
+            </button>
+          </form>
+
+          <div className="text-center pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-yellow-400 transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Public Broadcast</span>
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // UNLOCKED STATE: FULL ADMIN DASHBOARD
   return (
     <main className="min-h-screen bg-[#08080c] text-white p-4 sm:p-8 font-mono">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -256,7 +359,7 @@ export default function AdminPage() {
             <span>Back to Live Broadcast</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {account ? (
               <span className="text-xs px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full font-bold">
                 {networkName}: {account.slice(0, 6)}...{account.slice(-4)}
@@ -270,6 +373,14 @@ export default function AdminPage() {
                 <span>Connect Wallet</span>
               </button>
             )}
+
+            <button
+              onClick={handleLogout}
+              className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg border border-cyber-border transition-colors"
+              title="Lock Console / Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
