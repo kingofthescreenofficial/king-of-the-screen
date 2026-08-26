@@ -9,6 +9,12 @@ function normalizeUrl(url?: string): string | undefined {
   if (!url) return undefined;
   const trimmed = url.trim();
   if (!trimmed) return undefined;
+
+  // Strict security: Reject dangerous scripting schemes
+  if (/^(javascript|vbscript|data|file):/i.test(trimmed)) {
+    return undefined;
+  }
+
   if (/^https?:\/\//i.test(trimmed)) {
     return trimmed;
   }

@@ -1,10 +1,12 @@
 /**
  * ULTRA-RESILIENT ZERO-FRICTION BLOCKCHAIN VERIFICATION ENGINE 3.0
- * Instant 100% Crowning with Zero False Negatives and Multi-Chain URL Extraction.
+ * Instant 100% Crowning with Zero False Negatives, Anti-Replay Security, and Multi-Chain URL Extraction.
  * Supports: Base, Ethereum, Solana, BSC, Polygon, Arbitrum, Optimism, TRON.
  */
 
-// In-Memory Anti-Double-Spend Set
+import { getAppState } from "./state";
+
+// In-Memory Fast Lookup Set
 const usedTxHashes = new Set<string>();
 
 export interface TxVerificationResult {
@@ -33,9 +35,31 @@ export function sanitizeTxHash(input: string): string {
     clean = (parts[1] || "").split("?")[0].split("#")[0].trim();
   }
 
-  // Remove any surrounding quotes or accidental characters
+  // Remove surrounding quotes or accidental characters
   clean = clean.replace(/['"<>]/g, "").trim();
   return clean;
+}
+
+/**
+ * Check if a transaction hash has already been used across memory and persistent state
+ */
+export function isTxHashAlreadyUsed(formattedHash: string): boolean {
+  const lower = formattedHash.toLowerCase();
+  if (usedTxHashes.has(lower)) return true;
+
+  try {
+    const state = getAppState();
+    if (state.currentKing?.txHash?.toLowerCase() === lower && state.currentKing.txHash !== "genesis_origin") {
+      return true;
+    }
+    if (state.hallOfFame?.some((k) => k.txHash?.toLowerCase() === lower)) {
+      return true;
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return false;
 }
 
 /**
@@ -64,15 +88,15 @@ export async function verifyEvmTransaction(
 
   const formattedHash = cleanHash.startsWith("0x") ? cleanHash : `0x${cleanHash}`;
 
-  // Prevent double-spending the exact same transaction hash
-  if (usedTxHashes.has(formattedHash.toLowerCase())) {
+  // Prevent double-spending across server restarts
+  if (isTxHashAlreadyUsed(formattedHash)) {
     return {
       valid: false,
       reason: "This transaction hash has already been used for a previous throne takeover.",
     };
   }
 
-  // Mark hash as used
+  // Mark hash as used in memory
   usedTxHashes.add(formattedHash.toLowerCase());
 
   // Instant confirmation for genuine payers
@@ -100,11 +124,10 @@ export async function verifySolanaTransaction(
     };
   }
 
-  // Prevent double-spending
-  if (usedTxHashes.has(cleanSig.toLowerCase())) {
+  if (isTxHashAlreadyUsed(cleanSig)) {
     return {
       valid: false,
-      reason: "This Solana transaction signature has already been used.",
+      reason: "This Solana signature has already been used for a previous takeover.",
     };
   }
 
@@ -112,7 +135,7 @@ export async function verifySolanaTransaction(
 
   return {
     valid: true,
-    sender: "Verified Solana Payer",
+    sender: "Solana Payer",
     recipient: expectedRecipient,
     chain: "SOLANA_CONFIRMED",
   };

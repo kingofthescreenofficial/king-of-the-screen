@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 /**
  * @title King of the Screen 1-of-25 Genesis NFT Relics
  * @dev Ultra-exclusive digital crown relics awarded to the 25 Genesis Kings who rule the screen.
- * Strictly limited to exactly 25 on-chain tokens in history.
+ * Strictly limited to exactly 25 on-chain tokens in history. Fully ERC-721 and OpenSea compatible.
  */
 contract KingGenesisNFT {
     string public constant name = "King of the Screen Genesis Relics";
@@ -85,5 +85,12 @@ contract KingGenesisNFT {
         delete getApproved[tokenId];
 
         emit Transfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId) external pure returns (bool) {
+        return
+            interfaceId == 0x01ffc9a7 || // ERC165
+            interfaceId == 0x80ac58cd || // ERC721
+            interfaceId == 0x5b5e139f;   // ERC721Metadata
     }
 }

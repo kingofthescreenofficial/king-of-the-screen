@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,38 +9,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Validate type
+    // Validate image mime types
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
     if (!validTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPG, PNG, GIF, WebP are allowed." },
+        { error: "Invalid file type. Only JPG, PNG, GIF, and WebP are supported." },
         { status: 400 }
       );
     }
 
-    // Limit size to 15MB
-    if (file.size > 15 * 1024 * 1024) {
-      return NextResponse.json({ error: "File too large (Max 15MB)." }, { status: 400 });
+    // Limit size to 5MB for fast serverless performance
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large. Maximum size is 5MB." }, { status: 400 });
     }
 
+    // Convert to persistent Base64 Data URI to guarantee 100% permanence across Vercel serverless instances
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const base64 = Buffer.from(bytes).toString("base64");
+    const mimeType = file.type || "image/png";
+    const dataUri = `data:${mimeType};base64,${base64}`;
 
-    const ext = file.name.split(".").pop() || "png";
-    const filename = `screen_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${filename}`;
-    return NextResponse.json({ success: true, url: publicUrl });
+    return NextResponse.json({
+      success: true,
+      url: dataUri,
+    });
   } catch (error: any) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: error?.message || "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Upload processing failed" }, { status: 500 });
   }
 }
