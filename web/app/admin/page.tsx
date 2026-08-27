@@ -24,7 +24,7 @@ import Link from "next/link";
 import { ethers } from "ethers";
 import compiledContracts from "@/lib/compiled_contracts.json";
 
-const MASTER_PASSWORD_HASH = "kots2026"; // Default owner passphrase
+const MASTER_PASSWORD_HASH = "kots2026";
 
 export default function AdminPage() {
   const [passwordInput, setPasswordInput] = useState("");
@@ -165,7 +165,7 @@ export default function AdminPage() {
         signer
       );
 
-      const contract = await factory.deploy({ gasPrice: 1000000000n });
+      const contract = await factory.deploy();
       setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
@@ -207,7 +207,7 @@ export default function AdminPage() {
         signer
       );
 
-      const contract = await factory.deploy({ gasPrice: 1000000000n });
+      const contract = await factory.deploy();
       setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
@@ -504,7 +504,7 @@ export default function AdminPage() {
             <button
               onClick={airdropToHoku}
               disabled={isAirdropping}
-              className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 text-black font-black text-xs rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 transition-all"
+              className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 text-black font-black text-xs rounded-xl shadow-[0_0_20px_rgba(160,185,129,0.4)] flex items-center justify-center gap-2 transition-all"
             >
               {isAirdropping ? (
                 <>

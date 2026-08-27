@@ -19,6 +19,8 @@ const input = {
       enabled: true,
       runs: 200
     },
+    // CRITICAL: evmVersion "paris" is required for BNB Smart Chain (BSC) to avoid PUSH0 (0x5f) opcode errors!
+    evmVersion: 'paris',
     outputSelection: {
       '*': {
         '*': ['abi', 'evm.bytecode']
@@ -27,7 +29,7 @@ const input = {
   }
 };
 
-console.log('Compiling Solidity contracts with solc optimizer...');
+console.log('Compiling Solidity contracts with EVM Version: paris (BSC Compatible)...');
 const output = JSON.parse(solc.compile(JSON.stringify(input)));
 
 if (output.errors) {
@@ -49,4 +51,4 @@ const compiled = {
 
 fs.mkdirSync(path.dirname(outputFile), { recursive: true });
 fs.writeFileSync(outputFile, JSON.stringify(compiled, null, 2), 'utf8');
-console.log('✓ Successfully compiled contracts to:', outputFile);
+console.log('✓ Successfully compiled BSC-compatible contracts to:', outputFile);

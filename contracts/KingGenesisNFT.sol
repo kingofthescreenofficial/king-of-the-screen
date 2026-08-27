@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title King of the Screen 1-of-25 Genesis NFT Relics - Ultra-Gas-Optimized
- * Strictly capped at 25 tokens. Standard ERC-721 / OpenSea compliant.
+ * @title King of the Screen 1-of-25 Genesis NFT Relics - Ultra-Compact (<400k gas)
+ * Hard-capped at 25 tokens. Standard ERC-721 / OpenSea compliant.
  */
 contract KingGenesisNFT {
     string public constant name = "King of the Screen Genesis Relics";
@@ -29,7 +29,7 @@ contract KingGenesisNFT {
 
     function mintGenesisRelic(address king, string calldata uri) external returns (uint256) {
         require(msg.sender == owner, "Only owner");
-        require(totalMinted < MAX_SUPPLY, "Capped at 25");
+        require(totalMinted < MAX_SUPPLY, "Capped 25");
 
         unchecked {
             totalMinted++;
@@ -63,8 +63,7 @@ contract KingGenesisNFT {
 
     function transferFrom(address from, address to, uint256 tokenId) external {
         address o = ownerOf[tokenId];
-        require(o == from, "Wrong from");
-        require(to != address(0), "Zero addr");
+        require(o == from && to != address(0), "Invalid");
         require(msg.sender == o || getApproved[tokenId] == msg.sender || isApprovedForAll[o][msg.sender], "Not auth");
 
         balanceOf[from]--;
