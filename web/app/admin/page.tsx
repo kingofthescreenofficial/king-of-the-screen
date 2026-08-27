@@ -46,6 +46,22 @@ export default function AdminPage() {
   const [isDeployingNFT, setIsDeployingNFT] = useState(false);
   const [isAirdropping, setIsAirdropping] = useState(false);
 
+  // Get active Ethereum provider (resolves conflicts between MetaMask and Phantom)
+  const getEthereumProvider = () => {
+    if (typeof window === "undefined") return null;
+    const eth = (window as any).ethereum;
+    if (!eth) return null;
+
+    if (eth.providers && Array.isArray(eth.providers)) {
+      const metamask = eth.providers.find((p: any) => p.isMetaMask && !p.isPhantom);
+      if (metamask) return metamask;
+      const rabby = eth.providers.find((p: any) => p.isRabby);
+      if (rabby) return rabby;
+      return eth.providers[0];
+    }
+    return eth;
+  };
+
   useEffect(() => {
     const savedAuth = localStorage.getItem("kots_admin_auth");
     if (savedAuth === "true") {
@@ -58,11 +74,9 @@ export default function AdminPage() {
     const savedNft = localStorage.getItem("kots_nft_address");
     if (savedNft) setNftAddress(savedNft);
 
-    if (typeof window !== "undefined" && (window as any).ethereum) {
-      const eth = (window as any).ethereum;
-      if (eth.selectedAddress) {
-        setAccount(eth.selectedAddress);
-      }
+    const eth = getEthereumProvider();
+    if (eth && eth.selectedAddress) {
+      setAccount(eth.selectedAddress);
     }
   }, []);
 
@@ -105,40 +119,47 @@ export default function AdminPage() {
     setError(null);
     setMessage(null);
 
-    if (typeof window !== "undefined" && (window as any).ethereum) {
-      try {
-        const provider = new ethers.BrowserProvider((window as any).ethereum);
-        const accounts = await provider.send("eth_requestAccounts", []);
-        
-        if (!accounts || accounts.length === 0) {
-          throw new Error("No accounts found in wallet");
-        }
+    const eth = getEthereumProvider();
+    if (!eth) {
+      setError("Web3 кошелек (MetaMask / Rabby) не найден в браузере.");
+      return;
+    }
 
-        const userAddr = accounts[0];
-        setAccount(userAddr);
-
-        const network = await provider.getNetwork();
-        const cid = Number(network.chainId);
-        setChainId(cid);
-
-        let netName = "EVM Network";
-        if (cid === 56) netName = "BNB Smart Chain (BSC)";
-        else if (cid === 8453) netName = "Base Mainnet";
-        else if (cid === 1) netName = "Ethereum Mainnet";
-        else if (cid === 137) netName = "Polygon PoS";
-        else if (cid === 42161) netName = "Arbitrum One";
-        setNetworkName(netName);
-
-        setMessage(`Connected wallet: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)} on ${netName}`);
-      } catch (err: any) {
-        if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
-          setError("Подключение было отменено в кошельке. Нажмите «Connect Wallet» и подтвердите запрос.");
-        } else {
-          setError(err.message || "Failed to connect wallet");
-        }
+    try {
+      const provider = new ethers.BrowserProvider(eth);
+      
+      // Try silent check first if already authorized
+      let accounts = await provider.send("eth_accounts", []);
+      if (!accounts || accounts.length === 0) {
+        accounts = await provider.send("eth_requestAccounts", []);
       }
-    } else {
-      setError("MetaMask / Rabby wallet extension not found in browser");
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error("Не удалось получить адрес кошелька.");
+      }
+
+      const userAddr = accounts[0];
+      setAccount(userAddr);
+
+      const network = await provider.getNetwork();
+      const cid = Number(network.chainId);
+      setChainId(cid);
+
+      let netName = "EVM Network";
+      if (cid === 56) netName = "BNB Smart Chain (BSC)";
+      else if (cid === 8453) netName = "Base Mainnet";
+      else if (cid === 1) netName = "Ethereum Mainnet";
+      else if (cid === 137) netName = "Polygon PoS";
+      else if (cid === 42161) netName = "Arbitrum One";
+      setNetworkName(netName);
+
+      setMessage(`✓ Подключен кошелек: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)} (${netName})`);
+    } catch (err: any) {
+      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
+        setError("Подключение было отменено в окне кошелька. Откройте расширение MetaMask/Rabby и подтвердите вход.");
+      } else {
+        setError(err.message || "Ошибка подключения кошелька");
+      }
     }
   };
 
@@ -146,12 +167,14 @@ export default function AdminPage() {
     setError(null);
     setMessage(null);
 
-    try {
-      if (typeof window === "undefined" || !(window as any).ethereum) {
-        throw new Error("Wallet not found");
-      }
+    const eth = getEthereumProvider();
+    if (!eth) {
+      setError("Кошелек не найден.");
+      return;
+    }
 
-      const provider = new ethers.BrowserProvider((window as any).ethereum);
+    try {
+      const provider = new ethers.BrowserProvider(eth);
       const signer = await provider.getSigner();
       const currentAddress = await signer.getAddress();
       setAccount(currentAddress);
@@ -188,12 +211,14 @@ export default function AdminPage() {
     setError(null);
     setMessage(null);
 
-    try {
-      if (typeof window === "undefined" || !(window as any).ethereum) {
-        throw new Error("Wallet not found");
-      }
+    const eth = getEthereumProvider();
+    if (!eth) {
+      setError("Кошелек не найден.");
+      return;
+    }
 
-      const provider = new ethers.BrowserProvider((window as any).ethereum);
+    try {
+      const provider = new ethers.BrowserProvider(eth);
       const signer = await provider.getSigner();
       const currentAddress = await signer.getAddress();
       setAccount(currentAddress);
@@ -230,17 +255,19 @@ export default function AdminPage() {
     setError(null);
     setMessage(null);
 
+    const eth = getEthereumProvider();
+    if (!eth) {
+      setError("Кошелек не найден.");
+      return;
+    }
+
+    if (!nftAddress && !tokenAddress) {
+      setError("Сначала разверните контракт токена $KING или NFT выше!");
+      return;
+    }
+
     try {
-      if (typeof window === "undefined" || !(window as any).ethereum) {
-        throw new Error("Wallet not found");
-      }
-
-      if (!nftAddress && !tokenAddress) {
-        setError("Сначала разверните контракт токена $KING или NFT выше!");
-        return;
-      }
-
-      const provider = new ethers.BrowserProvider((window as any).ethereum);
+      const provider = new ethers.BrowserProvider(eth);
       const signer = await provider.getSigner();
 
       const hokuEvmWallet = "0x36f1bba134797da5ec5caf9ed4634903980ca305";
@@ -417,7 +444,7 @@ export default function AdminPage() {
               <span>1-CLICK ON-CHAIN ASSETS DEPLOYMENT ({networkName.toUpperCase()})</span>
             </h2>
             <p className="text-xs text-gray-400 mt-0.5">
-              Gas fee on {networkName}: ~$0.01 - $0.03 per contract.
+              Gas fee on {networkName}: ~$0.15 - $0.25 per contract.
             </p>
           </div>
 
