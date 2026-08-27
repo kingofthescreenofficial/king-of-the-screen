@@ -16,12 +16,13 @@ export async function GET(
     );
 
     const targetKing = allKings[ordinal - 1] || state.currentKing;
+    const imageUrl = `https://king-of-the-screen.vercel.app/api/nft/${ordinal}/image`;
 
     const metadata = {
       name: `King of the Screen — Genesis Monarch #${ordinal} of 25`,
       symbol: "KINGNFT",
       description: `Official 1-of-25 Genesis Digital Relic awarded for ruling the world's most contested $1,000,000 digital screen. Monarch: ${targetKing.nickname}.`,
-      image: targetKing.mediaUrl || "https://king-of-the-screen.vercel.app/king_token_logo.jpg",
+      image: imageUrl,
       external_url: "https://king-of-the-screen.vercel.app",
       attributes: [
         {
@@ -52,14 +53,14 @@ export async function GET(
       properties: {
         files: [
           {
-            uri: targetKing.mediaUrl || "https://king-of-the-screen.vercel.app/king_token_logo.jpg",
-            type: "image/jpeg",
+            uri: imageUrl,
+            type: "image/png",
           },
         ],
         category: "image",
         creators: [
           {
-            address: state.walletConfig.solanaAddress,
+            address: "0x36f1bBa134797da5Ec5CaF9ed4634903980CA305",
             share: 100,
           },
         ],
@@ -69,7 +70,7 @@ export async function GET(
     return NextResponse.json(metadata, {
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
       },
     });
   } catch (error) {
