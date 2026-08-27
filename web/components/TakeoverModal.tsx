@@ -66,7 +66,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   const [mediaUrl, setMediaUrl] = useState(MEME_PRESETS[0].url);
   const [imageSourceTab, setImageSourceTab] = useState<"UPLOAD" | "URL" | "PRESETS">("UPLOAD");
   const [bidAmount, setBidAmount] = useState<number>(nextMinPriceUsd);
-  const [paymentMethod, setPaymentMethod] = useState<"EVM" | "SOLANA">("EVM");
+  const [paymentMethod, setPaymentMethod] = useState<"EVM" | "SOLANA">("SOLANA");
   const [txHashInput, setTxHashInput] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -651,18 +651,6 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   <div className="grid grid-cols-2 gap-2.5">
                     <button
                       type="button"
-                      onClick={() => setPaymentMethod("EVM")}
-                      className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
-                        paymentMethod === "EVM"
-                          ? "bg-blue-500/20 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-                          : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      <span className="text-sm">🔷 Base / USDT / ETH</span>
-                      <span className="text-[10px] text-gray-400 font-normal">Sub-cent fee on Base</span>
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => setPaymentMethod("SOLANA")}
                       className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
                         paymentMethod === "SOLANA"
@@ -670,8 +658,20 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                           : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
                       }`}
                     >
-                      <span className="text-sm">🟣 Solana (SOL)</span>
-                      <span className="text-[10px] text-gray-400 font-normal">Fast 400ms finality</span>
+                      <span className="text-sm">🟣 Solana (Phantom / SOL)</span>
+                      <span className="text-[10px] text-purple-300/80 font-normal">Fast 400ms • Pump.fun</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("EVM")}
+                      className={`p-3 rounded-xl border text-xs font-bold transition-all text-center flex flex-col items-center gap-1 ${
+                        paymentMethod === "EVM"
+                          ? "bg-blue-500/20 border-blue-400 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                          : "bg-black/40 border-cyber-border text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      <span className="text-sm">🔷 Base / BSC / USDT</span>
+                      <span className="text-[10px] text-gray-400 font-normal">Multi-Chain EVM</span>
                     </button>
                   </div>
 
