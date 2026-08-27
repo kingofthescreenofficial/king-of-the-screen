@@ -14,9 +14,7 @@
     "crownedAt": 1787753367000,
     "rewardWalletAddress": "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo",
     "airdropStatus": "DELIVERED_ON_CHAIN",
-    "minedTokens": 25000,
-    "tokenAirdropTxHash": "0x64ccbf4308a7e21c9d1f4a097ed54408ced7f57af51cc1ca85b9f49febe623d4",
-    "nftMintTxHash": "0x7a828182731ab9681ec958f3d6ca131134bb6b4dd7d758afff4bef9525bc6376"
+    "minedTokens": 25000
   },
   "nextMinPriceUsd": 2,
   "stats": {
@@ -31,7 +29,7 @@
     {
       "id": "ev-hoku-001",
       "type": "TAKEOVER",
-      "text": "👑 Hoku claimed the throne with $1.00 (USDT)! Message: forever KING",
+      "text": "👑 Hoku claimed the throne with $1.00! Message: forever KING",
       "timestamp": 1787753367000
     }
   ],
@@ -41,12 +39,12 @@
     "usdtTrc20Address": "0x36f1bba134797da5ec5caf9ed4634903980ca305"
   },
   "tokenConfig": {
-    "ticker": "KING",
+    "ticker": "KOTS",
     "name": "King of the Screen",
-    "contractAddress": "0x2d394Fb23f00544C724601e9a774bC928656E4Da",
-    "nftContractAddress": "0x896cd4e967Abca1820201f1f34161829fD8D6616",
-    "bscScanUrl": "https://bscscan.com/token/0x2d394Fb23f00544C724601e9a774bC928656E4Da",
-    "dexScreenerUrl": "https://dexscreener.com/bsc/0x2d394Fb23f00544C724601e9a774bC928656E4Da",
+    "contractAddress": "HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
+    "pumpFunUrl": "https://pump.fun/coin/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
+    "dexScreenerUrl": "https://dexscreener.com/solana/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
+    "solscanUrl": "https://solscan.io/token/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
     "totalSupply": 1000000000
   }
 }

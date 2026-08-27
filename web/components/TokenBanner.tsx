@@ -26,8 +26,8 @@ export const TokenBanner: React.FC<TokenBannerProps> = ({ tokenConfig }) => {
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="w-11 h-11 rounded-xl overflow-hidden border border-yellow-500/60 bg-black flex-shrink-0 relative shadow-[0_0_15px_rgba(234,179,8,0.4)]">
             <img
-              src="/king_token_logo.jpg"
-              alt="KING Token"
+              src="/kots_logo.jpg"
+              alt="KOTS Token"
               className="w-full h-full object-cover"
             />
             <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />

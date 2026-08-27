@@ -49,11 +49,11 @@ export const DEFAULT_STATE: AppState = {
     usdtTrc20Address: process.env.USDT_TRC20_ADDRESS || "0x36f1bba134797da5ec5caf9ed4634903980ca305",
   },
   tokenConfig: {
-    ticker: "KING",
+    ticker: "KOTS",
     name: "King of the Screen",
-    contractAddress: "5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
-    pumpFunUrl: "https://pump.fun/coin/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
-    dexScreenerUrl: "https://dexscreener.com/solana/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
+    contractAddress: "HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
+    pumpFunUrl: "https://pump.fun/coin/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
+    dexScreenerUrl: "https://dexscreener.com/solana/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
     totalSupply: 1000000000,
   },
 };
