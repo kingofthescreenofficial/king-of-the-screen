@@ -2,16 +2,15 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title King of the Screen 1-of-25 Genesis NFT Relics
- * @dev Ultra-exclusive digital crown relics awarded to the 25 Genesis Kings who rule the screen.
- * Strictly limited to exactly 25 on-chain tokens in history. Fully ERC-721 and OpenSea compatible.
+ * @title King of the Screen 1-of-25 Genesis NFT Relics - Ultra-Gas-Optimized
+ * Strictly capped at 25 tokens. Standard ERC-721 / OpenSea compliant.
  */
 contract KingGenesisNFT {
     string public constant name = "King of the Screen Genesis Relics";
     string public constant symbol = "KINGNFT";
     uint256 public constant MAX_SUPPLY = 25;
 
-    address public owner;
+    address public immutable owner;
     uint256 public totalMinted;
 
     mapping(uint256 => address) public ownerOf;
@@ -23,44 +22,38 @@ contract KingGenesisNFT {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
-    event MonarchCrowned(uint256 indexed tokenId, address indexed king, string uri);
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner");
-        _;
-    }
 
     constructor() {
         owner = msg.sender;
     }
 
-    function mintGenesisRelic(address king, string calldata uri) external onlyOwner returns (uint256) {
-        require(totalMinted < MAX_SUPPLY, "All 25 Genesis Relics have been claimed");
-        require(king != address(0), "Invalid king address");
+    function mintGenesisRelic(address king, string calldata uri) external returns (uint256) {
+        require(msg.sender == owner, "Only owner");
+        require(totalMinted < MAX_SUPPLY, "Capped at 25");
 
-        totalMinted++;
-        uint256 newTokenId = totalMinted;
+        unchecked {
+            totalMinted++;
+        }
+        uint256 tid = totalMinted;
 
-        ownerOf[newTokenId] = king;
+        ownerOf[tid] = king;
         balanceOf[king]++;
-        _tokenURIs[newTokenId] = uri;
+        _tokenURIs[tid] = uri;
 
-        emit Transfer(address(0), king, newTokenId);
-        emit MonarchCrowned(newTokenId, king, uri);
-
-        return newTokenId;
+        emit Transfer(address(0), king, tid);
+        return tid;
     }
 
     function tokenURI(uint256 tokenId) external view returns (string memory) {
-        require(ownerOf[tokenId] != address(0), "Token does not exist");
+        require(ownerOf[tokenId] != address(0), "No token");
         return _tokenURIs[tokenId];
     }
 
     function approve(address to, uint256 tokenId) external {
-        address tokenOwner = ownerOf[tokenId];
-        require(msg.sender == tokenOwner || isApprovedForAll[tokenOwner][msg.sender], "Not authorized");
+        address o = ownerOf[tokenId];
+        require(msg.sender == o || isApprovedForAll[o][msg.sender], "Not auth");
         getApproved[tokenId] = to;
-        emit Approval(tokenOwner, to, tokenId);
+        emit Approval(o, to, tokenId);
     }
 
     function setApprovalForAll(address operator, bool approved) external {
@@ -68,16 +61,11 @@ contract KingGenesisNFT {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public {
-        address tokenOwner = ownerOf[tokenId];
-        require(tokenOwner == from, "Wrong from address");
-        require(to != address(0), "Invalid recipient");
-        require(
-            msg.sender == tokenOwner ||
-            getApproved[tokenId] == msg.sender ||
-            isApprovedForAll[tokenOwner][msg.sender],
-            "Not authorized"
-        );
+    function transferFrom(address from, address to, uint256 tokenId) external {
+        address o = ownerOf[tokenId];
+        require(o == from, "Wrong from");
+        require(to != address(0), "Zero addr");
+        require(msg.sender == o || getApproved[tokenId] == msg.sender || isApprovedForAll[o][msg.sender], "Not auth");
 
         balanceOf[from]--;
         balanceOf[to]++;
@@ -88,9 +76,6 @@ contract KingGenesisNFT {
     }
 
     function supportsInterface(bytes4 interfaceId) external pure returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165
-            interfaceId == 0x80ac58cd || // ERC721
-            interfaceId == 0x5b5e139f;   // ERC721Metadata
+        return interfaceId == 0x01ffc9a7 || interfaceId == 0x80ac58cd || interfaceId == 0x5b5e139f;
     }
 }

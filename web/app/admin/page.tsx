@@ -165,7 +165,7 @@ export default function AdminPage() {
         signer
       );
 
-      const contract = await factory.deploy(currentAddress);
+      const contract = await factory.deploy({ gasPrice: 1000000000n });
       setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
@@ -207,7 +207,7 @@ export default function AdminPage() {
         signer
       );
 
-      const contract = await factory.deploy();
+      const contract = await factory.deploy({ gasPrice: 1000000000n });
       setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
       await contract.waitForDeployment();
 
