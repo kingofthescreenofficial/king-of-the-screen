@@ -13,8 +13,10 @@
     "id": "king_hoku_001",
     "crownedAt": 1787753367000,
     "rewardWalletAddress": "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo",
-    "airdropStatus": "QUEUED",
-    "minedTokens": 25000
+    "airdropStatus": "DELIVERED_ON_CHAIN",
+    "minedTokens": 25000,
+    "tokenAirdropTxHash": "0x64ccbf4308a7e21c9d1f4a097ed54408ced7f57af51cc1ca85b9f49febe623d4",
+    "nftMintTxHash": "0x7a828182731ab9681ec958f3d6ca131134bb6b4dd7d758afff4bef9525bc6376"
   },
   "nextMinPriceUsd": 2,
   "stats": {
@@ -41,9 +43,10 @@
   "tokenConfig": {
     "ticker": "KING",
     "name": "King of the Screen",
-    "contractAddress": "5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
-    "pumpFunUrl": "https://pump.fun/coin/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
-    "dexScreenerUrl": "https://dexscreener.com/solana/5VvfhW4w8NmHR7oEWQkgB461n3SjaSSss3cCPencpump",
+    "contractAddress": "0x2d394Fb23f00544C724601e9a774bC928656E4Da",
+    "nftContractAddress": "0x896cd4e967Abca1820201f1f34161829fD8D6616",
+    "bscScanUrl": "https://bscscan.com/token/0x2d394Fb23f00544C724601e9a774bC928656E4Da",
+    "dexScreenerUrl": "https://dexscreener.com/bsc/0x2d394Fb23f00544C724601e9a774bC928656E4Da",
     "totalSupply": 1000000000
   }
 }

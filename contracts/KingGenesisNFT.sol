@@ -2,15 +2,15 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title King of the Screen 1-of-25 Genesis NFT Relics - Ultra-Compact (<400k gas)
- * Hard-capped at 25 tokens. Standard ERC-721 / OpenSea compliant.
+ * @title King of the Screen 1-of-25 Genesis NFT Relics
+ * Strictly capped at 25 tokens. Standard ERC-721 / OpenSea compliant.
  */
 contract KingGenesisNFT {
     string public constant name = "King of the Screen Genesis Relics";
     string public constant symbol = "KINGNFT";
     uint256 public constant MAX_SUPPLY = 25;
 
-    address public immutable owner;
+    address public owner;
     uint256 public totalMinted;
 
     mapping(uint256 => address) public ownerOf;
