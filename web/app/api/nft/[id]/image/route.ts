@@ -18,8 +18,8 @@ export async function GET(
     const nickname = (king.nickname || "Genesis King").replace(/[<>&"]/g, "");
     const tagline = (king.tagline || "forever KING").replace(/[<>&"]/g, "");
     const tribute = `$${(king.paidAmountUsd || 1).toFixed(2)} USD`;
-    const tokens = `+${((king.paidAmountUsd || 1) * 25000).toLocaleString()} $KING`;
-    const tokenId = `KING-GENESIS-#${ordinal.toString().padStart(2, "0")}`;
+    const tokens = `+${((king.paidAmountUsd || 1) * 25000).toLocaleString()} $KOTS`;
+    const tokenId = `KOTS-GENESIS-#${ordinal.toString().padStart(2, "0")}`;
 
     const svg = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>

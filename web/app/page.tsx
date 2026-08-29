@@ -104,7 +104,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* 👑 OFFICIAL $KING TOKEN BANNER WITH CA & TRADE LINKS */}
+        {/* 👑 OFFICIAL $KOTS TOKEN BANNER WITH CA & TRADE LINKS */}
         <TokenBanner tokenConfig={state.tokenConfig} />
 
         {/* PROMINENT CONCEPT EXPLAINER HERO (INSTANT UNDERSTANDING) */}

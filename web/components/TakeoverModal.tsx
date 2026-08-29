@@ -347,7 +347,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     <span>AUTOMATIC AIRDROP DISPATCHED:</span>
                   </span>
                   <span className="text-gray-300 text-[11px] block">
-                    +{(mintedNFTKing.paidAmountUsd * 25000).toLocaleString()} $KING + Genesis NFT #3
+                    +{(mintedNFTKing.paidAmountUsd * 25000).toLocaleString()} $KOTS + Genesis NFT #3
                   </span>
                 </div>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
@@ -433,7 +433,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
                       <Coins className="w-3.5 h-3.5 text-yellow-400" />
-                      <span>SOLANA (PHANTOM) ADDRESS FOR $KING & NFT AIRDROP</span>
+                      <span>SOLANA (PHANTOM) ADDRESS FOR $KOTS & NFT AIRDROP</span>
                     </label>
                     <span className="text-[10px] text-gray-500">Auto-sent to wallet</span>
                   </div>
@@ -441,7 +441,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     type="text"
                     value={rewardWalletAddress}
                     onChange={(e) => setRewardWalletAddress(e.target.value)}
-                    placeholder="Your Solana address to receive $KING and 1-of-25 NFT..."
+                    placeholder="Your Solana address to receive $KOTS and 1-of-25 NFT..."
                     className="w-full bg-black/70 border border-emerald-500/40 rounded-xl px-3.5 py-2.5 text-xs text-emerald-300 placeholder-gray-600 focus:outline-none focus:border-emerald-400 font-mono"
                   />
                 </div>
@@ -629,7 +629,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   <div className="space-y-0.5">
                     <div className="text-emerald-400 font-black flex items-center gap-1.5 text-xs sm:text-sm">
                       <Coins className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span>MINING: +{(bidAmount * 25000).toLocaleString()} $KING</span>
+                      <span>MINING: +{(bidAmount * 25000).toLocaleString()} $KOTS</span>
                     </div>
                     <div className="text-[11px] text-gray-400 flex items-center gap-1">
                       <Gem className="w-3 h-3 text-purple-400" />
@@ -816,7 +816,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   ) : (
                     <>
                       <Flame className="w-5 h-5 fill-black" />
-                      <span>CLAIM THRONE & MINE $KING (${bidAmount.toFixed(2)})</span>
+                      <span>CLAIM THRONE & MINE $KOTS (${bidAmount.toFixed(2)})</span>
                       <ArrowRight className="w-5 h-5" />
                     </>
                   )}

@@ -34,7 +34,7 @@
     }
   ],
   "walletConfig": {
-    "solanaAddress": "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU",
+    "solanaAddress": "EkgfzyrqfTZB8Er3XPSYn6nVmtTv4hvCo3F9Drkd62Aq",
     "evmAddress": "0x36f1bba134797da5ec5caf9ed4634903980ca305",
     "usdtTrc20Address": "0x36f1bba134797da5ec5caf9ed4634903980ca305"
   },

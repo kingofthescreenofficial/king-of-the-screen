@@ -180,7 +180,7 @@ export default function AdminPage() {
       setAccount(currentAddress);
 
       setIsDeployingToken(true);
-      setMessage(`Подтвердите создание $KING в вашем кошельке (${networkName})...`);
+      setMessage(`Подтвердите создание $KOTS в вашем кошельке (${networkName})...`);
 
       const factory = new ethers.ContractFactory(
         compiledContracts.KingToken.abi,
@@ -195,7 +195,7 @@ export default function AdminPage() {
       const deployedAddr = await contract.getAddress();
       setTokenAddress(deployedAddr);
       localStorage.setItem("kots_token_address", deployedAddr);
-      setMessage(`🎉 УСПЕШНО! Токен $KING развернут на ${networkName}: ${deployedAddr}`);
+      setMessage(`🎉 УСПЕШНО! Токен $KOTS развернут на ${networkName}: ${deployedAddr}`);
     } catch (err: any) {
       if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
         setError("Транзакция была отклонена в кошельке.");
@@ -262,7 +262,7 @@ export default function AdminPage() {
     }
 
     if (!nftAddress && !tokenAddress) {
-      setError("Сначала разверните контракт токена $KING или NFT выше!");
+      setError("Сначала разверните контракт токена $KOTS или NFT выше!");
       return;
     }
 
@@ -282,12 +282,12 @@ export default function AdminPage() {
       }
 
       if (tokenAddress) {
-        setMessage("Переводим 25,000 $KING на адрес Короля...");
+        setMessage("Переводим 25,000 $KOTS на адрес Короля...");
         const tokenContract = new ethers.Contract(tokenAddress, compiledContracts.KingToken.abi, signer);
         const amount = ethers.parseEther("25000");
         const tx = await tokenContract.transfer(hokuEvmWallet, amount);
         await tx.wait();
-        setMessage(`🎉 25,000 $KING успешно зачислены Королю! TxHash: ${tx.hash}`);
+        setMessage(`🎉 25,000 $KOTS успешно зачислены Королю! TxHash: ${tx.hash}`);
       }
     } catch (err: any) {
       if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
@@ -418,7 +418,7 @@ export default function AdminPage() {
             <span>COMMAND CENTER & ON-CHAIN DEPLOYER</span>
           </h1>
           <p className="text-xs text-gray-400">
-            Deploy real $KING tokens and 1-of-25 Genesis NFTs to BNB Chain / Base / EVM in 1 click.
+            Deploy real $KOTS tokens and 1-of-25 Genesis NFTs to BNB Chain / Base / EVM in 1 click.
           </p>
         </div>
 
@@ -449,12 +449,12 @@ export default function AdminPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 1. $KING Token (ERC-20 / BEP-20) */}
+            {/* 1. $KOTS Token (ERC-20 / BEP-20) */}
             <div className="bg-black/60 border border-cyber-border rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-yellow-400 flex items-center gap-1.5">
                   <Coins className="w-4 h-4 text-yellow-400" />
-                  <span>$KING TOKEN (BEP-20 / ERC-20)</span>
+                  <span>$KOTS TOKEN (BEP-20 / ERC-20)</span>
                 </span>
                 <span className="text-[10px] text-gray-500">1,000,000,000 Cap</span>
               </div>
@@ -475,7 +475,7 @@ export default function AdminPage() {
                   className="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]"
                 >
                   {isDeployingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Coins className="w-4 h-4" />}
-                  <span>DEPLOY $KING TOKEN</span>
+                  <span>DEPLOY $KOTS TOKEN</span>
                 </button>
               )}
             </div>
@@ -525,7 +525,7 @@ export default function AdminPage() {
             </div>
 
             <p className="text-xs text-gray-300">
-              Sends <strong>25,000 $KING</strong> and mints <strong>Genesis Relic NFT #1</strong> directly to the King's wallet on {networkName}!
+              Sends <strong>25,000 $KOTS</strong> and mints <strong>Genesis Relic NFT #1</strong> directly to the King's wallet on {networkName}!
             </p>
 
             <button

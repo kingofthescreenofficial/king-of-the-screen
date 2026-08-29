@@ -20,7 +20,7 @@ export async function GET(
 
     const metadata = {
       name: `King of the Screen — Genesis Monarch #${ordinal} of 25`,
-      symbol: "KINGNFT",
+      symbol: "KOTSNFT",
       description: `Official 1-of-25 Genesis Digital Relic awarded for ruling the world's most contested $1,000,000 digital screen. Monarch: ${targetKing.nickname}.`,
       image: imageUrl,
       external_url: "https://king-of-the-screen.vercel.app",

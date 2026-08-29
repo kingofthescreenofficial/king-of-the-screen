@@ -23,13 +23,13 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         </div>
 
         <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-          THE $1M THRONE: RULE, <span className="text-emerald-400">MINE $KING</span> & CLAIM YOUR <span className="text-yellow-400">1-OF-25 NFT</span>
+          THE $1M THRONE: RULE, <span className="text-emerald-400">MINE $KOTS</span> & CLAIM YOUR <span className="text-yellow-400">1-OF-25 NFT</span>
         </h2>
 
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
           One global screen. Pay to broadcast your image & link worldwide.{" "}
           <strong className="text-emerald-400">
-            Every King automatically mines $KING tokens and mints a historical 1-of-25 Genesis NFT!
+            Every King automatically mines $KOTS tokens and mints a historical 1-of-25 Genesis NFT!
           </strong>
         </p>
       </div>
@@ -57,10 +57,10 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
               2
             </span>
             <Coins className="w-4 h-4" />
-            <span>Mine $KING Memecoin</span>
+            <span>Mine $KOTS Memecoin</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            100% of the $KING supply is mined by Kings before the $1M cap. Early Kings mine the biggest allocations!
+            100% of the $KOTS supply is mined by Kings before the $1M cap. Early Kings mine the biggest allocations!
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
           onClick={onOpenTakeover}
           className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black text-sm uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.5)] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
         >
-          <span>CLAIM THRONE & MINE $KING (${nextMinPriceUsd.toFixed(2)})</span>
+          <span>CLAIM THRONE & MINE $KOTS (${nextMinPriceUsd.toFixed(2)})</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
