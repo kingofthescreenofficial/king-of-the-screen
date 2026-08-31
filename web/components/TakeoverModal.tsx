@@ -327,7 +327,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     <span>AUTOMATIC AIRDROP DISPATCHED:</span>
                   </span>
                   <span className="text-gray-300 text-[11px] block">
-                    +{(mintedNFTKing.paidAmountUsd * 25000).toLocaleString()} $KOTS + Genesis NFT #3
+                    +{(mintedNFTKing.paidAmountUsd * 900).toLocaleString()} $KOTS + Genesis NFT #3
                   </span>
                 </div>
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-bold text-[10px]">
@@ -335,7 +335,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                 </span>
               </div>
 
-              <RoyalNFTCard king={mintedNFTKing} ordinalNumber={3} totalCap={25} />
+              <RoyalNFTCard king={mintedNFTKing} ordinalNumber={3} totalCap={100} />
 
               <button
                 type="button"

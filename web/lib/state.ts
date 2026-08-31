@@ -24,7 +24,7 @@ export const DEFAULT_STATE: AppState = {
     crownedAt: 1787753367000,
     rewardWalletAddress: "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo",
     airdropStatus: "QUEUED",
-    minedTokens: 25000,
+    minedTokens: 900,
   },
   nextMinPriceUsd: 2,
   stats: {
@@ -104,10 +104,8 @@ export function calculateNextPrice(currentPriceUsd: number): number {
     return currentPriceUsd + 1;
   } else if (currentPriceUsd < 100) {
     return currentPriceUsd + 5;
-  } else if (currentPriceUsd < 1000) {
-    return Math.round(currentPriceUsd * 1.15); // +15%
   } else {
-    return Math.round(currentPriceUsd * 1.10); // +10%
+    return Math.round(currentPriceUsd * 1.10); // +10% exactly to hit $1,059,358 at 100 Kings
   }
 }
 

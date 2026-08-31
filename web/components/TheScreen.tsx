@@ -91,7 +91,7 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
                 </span>
               </div>
 
-              {/* View 1-of-25 NFT Relic Quick Button */}
+              {/* View 1-of-100 NFT Relic Quick Button */}
               <button
                 type="button"
                 onClick={() => setIsNFTModalOpen(true)}

@@ -6,15 +6,15 @@ import { Crown, Sparkles, Share2, ShieldCheck, Flame, Award, Gem, X } from "luci
 
 interface RoyalNFTCardProps {
   king: King;
-  ordinalNumber?: number; // e.g. 1 of 25
-  totalCap?: number; // 25
+  ordinalNumber?: number; // e.g. 1 of 100
+  totalCap?: number; // 100
   onClose?: () => void;
 }
 
 export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
   king,
   ordinalNumber = 1,
-  totalCap = 25,
+  totalCap = 100,
   onClose,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -30,7 +30,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
   };
 
   const shareToTwitter = () => {
-    const text = `👑 I AM OFFICIALLY CROWNED AS GENESIS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\n💎 Rule: Held the global $1,000,000 screen & mined 25,000 $KOTS tokens.\n\nVerify on-chain relic: https://king-of-the-screen.vercel.app/api/nft/${ordinalNumber}\n\n#KingOfTheScreen #Solana #Base #NFT`;
+    const text = `👑 I AM OFFICIALLY CROWNED AS GENESIS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\n💎 Rule: Held the global $1,000,000 screen & mined a proportional share of \$KOTS tokens.\n\nVerify on-chain relic: https://king-of-the-screen.vercel.app/api/nft/${ordinalNumber}\n\n#KingOfTheScreen #Solana #Base #NFT`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
   };
@@ -55,7 +55,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
           <div className="flex items-center gap-1.5">
             <div className="flex items-center gap-1 text-[10px] px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 rounded-full font-bold">
               <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>1-OF-25 RELIC</span>
+              <span>1-OF-100 RELIC</span>
             </div>
 
             {onClose && (
@@ -117,7 +117,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
             <span className="text-[9px] text-gray-400 block uppercase font-bold">$KOTS MINED</span>
             <span className="font-bold text-emerald-400 flex items-center gap-1 mt-0.5">
               <Flame className="w-3 h-3 text-emerald-400 fill-emerald-400" />
-              <span className="text-[10px] sm:text-[11px]">+{((king.paidAmountUsd || 1) * 25000).toLocaleString()} $KOTS</span>
+              <span className="text-[10px] sm:text-[11px]">+{((king.paidAmountUsd || 1) * 900).toLocaleString()} $KOTS</span>
             </span>
           </div>
         </div>

@@ -44,7 +44,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({ hallOfFame, recentEvents
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-cyber-border pb-4 mb-4">
         <div className="flex items-center gap-2 text-gold-400 font-bold text-base sm:text-lg">
           <Trophy className="w-5 h-5 text-yellow-400" />
-          <span>GRAVEYARD OF KINGS & 1-OF-25 NFT RELICS</span>
+          <span>GRAVEYARD OF KINGS & 1-OF-100 NFT RELICS</span>
         </div>
 
         <div className="flex items-center gap-1.5 bg-black/60 p-1 rounded-xl border border-cyber-border text-xs">
@@ -175,7 +175,7 @@ export const HallOfFame: React.FC<HallOfFameProps> = ({ hallOfFame, recentEvents
             <RoyalNFTCard
               king={selectedNFTKing.king}
               ordinalNumber={selectedNFTKing.index}
-              totalCap={25}
+              totalCap={100}
               onClose={() => setSelectedNFTKing(null)}
             />
           </div>

@@ -23,7 +23,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         </div>
 
         <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-          THE $1M THRONE: RULE, <span className="text-emerald-400">MINE $KOTS</span> & CLAIM YOUR <span className="text-yellow-400">1-OF-25 NFT</span>
+          THE $1M THRONE: RULE, <span className="text-emerald-400">MINE $KOTS</span> & CLAIM YOUR <span className="text-yellow-400">1-OF-100 NFT</span>
         </h2>
 
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
