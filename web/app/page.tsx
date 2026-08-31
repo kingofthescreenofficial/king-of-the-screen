@@ -12,15 +12,32 @@ import { LiveAudio } from "@/components/LiveAudio";
 import { ShareCard } from "@/components/ShareCard";
 import { LiveViewerBadge } from "@/components/LiveViewerBadge";
 import { LegalModal } from "@/components/LegalModal";
-import { Crown, Flame, Info } from "lucide-react";
+import { Crown, Flame, Info, Smartphone } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function HomePage() {
+    const { publicKey } = useWallet();
   const [state, setState] = useState<AppState | null>(null);
+  const [isMobileExternal, setIsMobileExternal] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const hasSolana = typeof window !== 'undefined' && ('solana' in window || 'phantom' in window);
+    if (isMobile && !hasSolana) {
+      setIsMobileExternal(true);
+    }
+  }, []);
   const [isTakeoverOpen, setIsTakeoverOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState<"TOS" | "DISCLAIMER" | "DMCA" | "PRIVACY">("TOS");
   const [lastEventId, setLastEventId] = useState<string | null>(null);
   const lastStateHashRef = useRef<string>("");
+
+  
+
 
   // Poll state every 2.5s for instant sync
   const fetchState = async () => {
@@ -103,6 +120,26 @@ export default function HomePage() {
             </button>
           </div>
         </header>
+
+        {/* Global Wallet Connect (Web3 Standard) */}
+        <div className="flex justify-end items-center -mt-4 mb-4">
+           <div className="w-full sm:w-auto flex justify-center sm:justify-end wallet-button-large">
+              {mounted && isMobileExternal ? (
+                <a 
+                  href="https://phantom.app/ul/browse/https%3A%2F%2Fkingofthescreen.fun?ref=https%3A%2F%2Fkingofthescreen.fun"
+                  className="flex items-center justify-center transition-all hover:bg-purple-500 active:scale-95"
+                  style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", width: "100%", color: "white", textDecoration: "none" }}
+                >
+                  CONNECT WALLET
+                </a>
+              ) : (
+                <WalletMultiButton style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", width: "100%", justifyContent: "center" }}>
+                  {!publicKey ? "CONNECT WALLET" : undefined}
+                </WalletMultiButton>
+              )}
+           </div>
+        </div>
+
 
         {/* 👑 OFFICIAL $KOTS TOKEN BANNER WITH CA & TRADE LINKS */}
         <TokenBanner tokenConfig={state.tokenConfig} />

@@ -5,6 +5,10 @@
  */
 
 import { getAppState } from "./state";
+import { Connection, PublicKey } from "@solana/web3.js";
+
+const RPC_URL = "https://solana-rpc.publicnode.com";
+const solConnection = new Connection(RPC_URL, "confirmed");
 
 // In-Memory Fast Lookup Set
 const usedTxHashes = new Set<string>();
@@ -113,30 +117,55 @@ export async function verifyEvmTransaction(
  */
 export async function verifySolanaTransaction(
   rawSignature: string,
-  expectedRecipient: string
+  expectedRecipient: string,
+  expectedAmountUsd?: number
 ): Promise<TxVerificationResult> {
   const cleanSig = sanitizeTxHash(rawSignature);
 
   if (!cleanSig || cleanSig.length < 32) {
-    return {
-      valid: false,
-      reason: "Invalid transaction signature format.",
-    };
+    return { valid: false, reason: "Invalid transaction signature format." };
   }
 
   if (isTxHashAlreadyUsed(cleanSig)) {
-    return {
-      valid: false,
-      reason: "This Solana signature has already been used for a previous takeover.",
-    };
+    return { valid: false, reason: "This Solana signature has already been used." };
   }
 
-  usedTxHashes.add(cleanSig.toLowerCase());
+  try {
+    const tx = await solConnection.getParsedTransaction(cleanSig, { maxSupportedTransactionVersion: 0, commitment: "confirmed" });
+    if (!tx) {
+      return { valid: false, reason: "Transaction not found on Solana mainnet. Wait a few seconds or check the hash." };
+    }
 
-  return {
-    valid: true,
-    sender: "Solana Payer",
-    recipient: expectedRecipient,
-    chain: "SOLANA_CONFIRMED",
-  };
+    // Very basic validation: just ensure the treasury received SOME sol in this tx.
+    // To prevent 0 SOL spam or using other people's unrelated transactions.
+    let foundTransfer = false;
+    const recipientPubkey = expectedRecipient;
+    
+    // Check if any instruction is a transfer to our treasury
+    if (tx.meta && tx.meta.postBalances && tx.meta.preBalances) {
+       const accountKeys = tx.transaction.message.accountKeys.map(k => k.pubkey.toString());
+       const recipientIndex = accountKeys.indexOf(recipientPubkey);
+       
+       if (recipientIndex !== -1) {
+          const preBalance = tx.meta.preBalances[recipientIndex];
+          const postBalance = tx.meta.postBalances[recipientIndex];
+          const receivedLamports = postBalance - preBalance;
+          
+          if (receivedLamports > 0) {
+             foundTransfer = true;
+          }
+       }
+    }
+
+    if (!foundTransfer) {
+      return { valid: false, reason: "Transaction did not send SOL to the Treasury wallet." };
+    }
+
+    usedTxHashes.add(cleanSig.toLowerCase());
+    return { valid: true, sender: "Solana Payer", recipient: expectedRecipient, chain: "SOLANA_CONFIRMED" };
+
+  } catch (err: any) {
+    console.error("Solana RPC error:", err.message);
+    return { valid: false, reason: "Error verifying transaction with Solana network." };
+  }
 }

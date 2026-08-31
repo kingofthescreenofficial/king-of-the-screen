@@ -115,13 +115,19 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
   const state = getAppState();
   const now = Date.now();
 
-  // Validate bid amount
+  // Validate bid amount with a strict 60-second grace window for race conditions
   if (newKingData.paidAmountUsd < state.nextMinPriceUsd) {
-    return {
-      success: false,
-      state,
-      error: `Bid too low! Minimum required: $${state.nextMinPriceUsd}. You sent: $${newKingData.paidAmountUsd}`,
-    };
+    const isTied = newKingData.paidAmountUsd >= state.currentKing.paidAmountUsd;
+    const isRecent = (now - state.currentKing.crownedAt) < 60000; // 60 seconds max
+    
+    if (!(isTied && isRecent)) {
+      return {
+        success: false,
+        state,
+        error: `Bid too low! Minimum required: ${state.nextMinPriceUsd}. You sent: ${newKingData.paidAmountUsd}`,
+      };
+    }
+    console.log("Race condition averted, accepting tied bid within 60s window.");
   }
 
   // 1. Archive current king

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { WalletContextProvider } from "../components/WalletContextProvider";
 
 export const metadata: Metadata = {
   title: "KING OF THE SCREEN | The $1,000,000 Global Live Canvas",
@@ -20,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#08080c] text-gray-100 selection:bg-yellow-500 selection:text-black">
-        {children}
+        <WalletContextProvider>{children}</WalletContextProvider>
       </body>
     </html>
   );

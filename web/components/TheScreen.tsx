@@ -98,7 +98,7 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
                 className="px-3.5 py-1.5 bg-gradient-to-r from-purple-900/60 to-yellow-900/60 hover:from-purple-800 hover:to-yellow-800 border border-yellow-500/60 hover:border-yellow-400 text-yellow-300 text-xs font-black rounded-xl flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.3)] transition-all active:scale-95"
               >
                 <Gem className="w-4 h-4 text-purple-400" />
-                <span>VIEW 1-OF-25 NFT RELIC</span>
+                <span>VIEW 1-OF-100 NFT RELIC</span>
               </button>
             </div>
 
@@ -185,7 +185,7 @@ export const TheScreen: React.FC<TheScreenProps> = memo(
               <RoyalNFTCard
                 king={king}
                 ordinalNumber={1}
-                totalCap={25}
+                totalCap={100}
                 onClose={() => setIsNFTModalOpen(false)}
               />
             </div>

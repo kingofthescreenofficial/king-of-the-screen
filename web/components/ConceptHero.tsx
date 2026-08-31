@@ -29,52 +29,52 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
           One global screen. Pay to broadcast your image & link worldwide.{" "}
           <strong className="text-emerald-400">
-            Every King automatically mines $KOTS tokens and mints a historical 1-of-25 Genesis NFT!
+            Every King automatically mines $KOTS tokens and mints a historical 1-of-100 Genesis NFT!
           </strong>
         </p>
       </div>
 
-      {/* 3 Step Visual Flow */}
+      {/* 3 Step Actionable Flow */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 my-6">
         {/* Step 1 */}
-        <div className="bg-black/60 border border-cyber-border/80 hover:border-yellow-500/60 p-4 rounded-xl space-y-2 transition-colors">
-          <div className="flex items-center gap-2 text-yellow-400 font-bold text-sm">
-            <span className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center text-xs font-black border border-yellow-500/40">
+        <div className="bg-black/60 border border-cyber-border/80 hover:border-purple-500/60 p-4 rounded-xl space-y-2 transition-colors">
+          <div className="flex items-center gap-2 text-purple-400 font-bold text-sm">
+            <span className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs font-black border border-purple-500/40">
               1
             </span>
-            <Crown className="w-4 h-4" />
-            <span>Rule the Global Screen</span>
+            <Zap className="w-4 h-4" />
+            <span>Connect Wallet</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Upload your photo, write your message, and broadcast to the planet 24/7 until someone outbids you.
+            Connect your Phantom wallet in the top right corner. Mobile users? Just click "Open in Phantom".
           </p>
         </div>
 
         {/* Step 2 */}
-        <div className="bg-black/60 border border-cyber-border/80 hover:border-emerald-500/60 p-4 rounded-xl space-y-2 transition-colors">
-          <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-            <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-black border border-emerald-500/40">
+        <div className="bg-black/60 border border-cyber-border/80 hover:border-yellow-500/60 p-4 rounded-xl space-y-2 transition-colors">
+          <div className="flex items-center gap-2 text-yellow-400 font-bold text-sm">
+            <span className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center text-xs font-black border border-yellow-500/40">
               2
             </span>
-            <Coins className="w-4 h-4" />
-            <span>Mine $KOTS Memecoin</span>
+            <Crown className="w-4 h-4" />
+            <span>Claim the Throne</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            100% of the $KOTS supply is mined by Kings before the $1M cap. Early Kings mine the biggest allocations!
+            Click "Claim Throne", upload your image, and write your message. It will be broadcasted globally.
           </p>
         </div>
 
         {/* Step 3 */}
-        <div className="bg-black/60 border border-cyber-border/80 hover:border-purple-500/60 p-4 rounded-xl space-y-2 transition-colors">
-          <div className="flex items-center gap-2 text-purple-400 font-bold text-sm">
-            <span className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs font-black border border-purple-500/40">
+        <div className="bg-black/60 border border-cyber-border/80 hover:border-emerald-500/60 p-4 rounded-xl space-y-2 transition-colors">
+          <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+            <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-black border border-emerald-500/40">
               3
             </span>
-            <Gem className="w-4 h-4" />
-            <span>1-of-25 Genesis NFT</span>
+            <Sparkles className="w-4 h-4" />
+            <span>Sign & Mine</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Only ~25 Kings will ever exist in history. Receive your verified permanent NFT badge to flex on X.
+            Approve the 1-click transaction. You instantly become King, mine $KOTS tokens, and get a Genesis NFT!
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-yellow-500/20">
         <div className="flex items-center gap-2 text-xs text-gray-300">
           <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <span>Non-custodial Base & Solana micro-payments</span>
+          <span>Instant 1-Click Solana micro-payments</span>
         </div>
 
         <button

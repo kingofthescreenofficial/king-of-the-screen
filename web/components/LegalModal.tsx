@@ -115,7 +115,18 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 Payments made on this site are classified strictly as <strong>advertising and billboard display fees</strong>. There is no expectation of financial return, profit sharing, dividend payment, or monetary yield of any kind.
               </p>
 
-              <h3 className="text-base font-bold text-white pt-2">2. The $1,000,000 Progress Tracker</h3>
+              <h3 className="text-base font-bold text-white pt-2">2. Token Airdrops ($KOTS) & NFTs</h3>
+              <p>
+                Any digital tokens ($KOTS) or NFTs distributed by this platform are provided strictly as a <strong>free, novelty artistic gift</strong> to users who purchase billboard space. 
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm mt-1">
+                <li>Tokens are meme-coins created purely for entertainment purposes.</li>
+                <li>They hold <strong>no intrinsic value</strong>, represent no stake or ownership in the platform, and have no guaranteed price floor.</li>
+                <li>You acknowledge you are paying for advertising space, <strong>not</strong> purchasing $KOTS tokens.</li>
+                <li>The platform is not responsible for secondary market volatility or token liquidity.</li>
+              </ul>
+
+              <h3 className="text-base font-bold text-white pt-2">3. The $1,000,000 Progress Tracker</h3>
               <p>
                 The "$1,000,000 Goal" displayed on the platform is an <strong>artistic social benchmark</strong> and fundraising counter. It is NOT a lottery jackpot, prize pool, or fund to be distributed to participants.
               </p>

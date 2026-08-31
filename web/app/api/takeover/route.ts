@@ -57,7 +57,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+
     // 2. Strict On-Chain Transaction Verification with Auto-Sanitization
+    if (mediaUrl && mediaUrl.startsWith("data:") && mediaUrl.length > 500 * 1024) {
+      return NextResponse.json({ error: "Image file is too large. Maximum size is 350KB." }, { status: 400 });
+    }
+
     const cleanTxHash = sanitizeTxHash(txHash || "");
     if (!cleanTxHash || cleanTxHash.startsWith("tx_demo")) {
       return NextResponse.json(
@@ -70,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     const isSolana = cryptoCurrency === "SOL";
     if (isSolana) {
-      const solVerify = await verifySolanaTransaction(cleanTxHash, state.walletConfig.solanaAddress);
+      const solVerify = await verifySolanaTransaction(cleanTxHash, state.walletConfig.solanaAddress, cleanAmount);
       if (!solVerify.valid) {
         return NextResponse.json(
           { error: solVerify.reason || "Invalid transaction signature." },
@@ -97,7 +102,7 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedLink = normalizeUrl(link);
-    const minedTokens = Math.floor(cleanAmount * 25000);
+    const minedTokens = Math.floor(cleanAmount * 900);
     const resolvedRewardWallet = (rewardWalletAddress || "").trim() || (isSolana ? cleanTxHash : state.walletConfig.solanaAddress);
 
     // 4. Execute verified dethronement
