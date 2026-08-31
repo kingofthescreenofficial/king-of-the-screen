@@ -46,7 +46,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
             <span>Connect Wallet</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Connect your Phantom wallet in the top right corner. Mobile users? Just click "Open in Phantom".
+            Connect your Solana wallet (like Phantom) using the button in the top right corner.
           </p>
         </div>
 
