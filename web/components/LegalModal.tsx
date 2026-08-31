@@ -104,6 +104,32 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 Any dispute, claim, or controversy arising out of your use of this platform shall be resolved exclusively by <strong>individual, binding arbitration</strong>. 
                 You explicitly waive your right to a trial by jury or to participate in any <strong>class action, collective action, or representative proceeding</strong>.
               </p>
+
+              <h3 className="text-base font-bold text-white pt-2">5. Disclaimer of Warranties ("AS IS")</h3>
+              <p>
+                THE PLATFORM IS PROVIDED <strong>"AS IS" AND "AS AVAILABLE"</strong> WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. 
+                We do not guarantee uninterrupted access, error-free operation, or the security of blockchain transactions.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">6. Force Majeure</h3>
+              <p>
+                The platform shall not be liable for delays or failures caused by blockchain network congestion, smart contract errors, Solana validator outages, third-party service disruptions, natural disasters, government actions, or other events beyond our reasonable control.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">7. OFAC Sanctions Compliance</h3>
+              <p>
+                By using this platform, you represent and warrant that you are <strong>not located in, under the control of, or a national or resident of</strong> any country or territory subject to United States sanctions administered by OFAC (including, without limitation, Iran, North Korea, Cuba, Syria, and the Crimea, Donetsk, and Luhansk regions of Ukraine).
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">8. Intellectual Property</h3>
+              <p>
+                All trademarks, logos, service marks (including "King of the Screen", the crown logo, and "$KOTS"), and all site content not submitted by users are the exclusive property of the platform operators. Unauthorized use is prohibited.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">9. Severability</h3>
+              <p>
+                If any provision of these Terms is found to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such invalidity shall not affect the remaining provisions, which shall remain in <strong>full force and effect</strong>.
+              </p>
             </div>
           )}
 
@@ -136,6 +162,12 @@ export const LegalModal: React.FC<LegalModalProps> = ({
               <h3 className="text-base font-bold text-white pt-2">3. The $1,000,000 Progress Tracker</h3>
               <p>
                 The "$1,000,000 Goal" displayed on the platform is an <strong>artistic social benchmark</strong> and fundraising counter. It is NOT a lottery jackpot, prize pool, or fund to be distributed to participants.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">4. Cryptocurrency Volatility</h3>
+              <p>
+                Payments are denominated in USD but settled in cryptocurrency (SOL). The value of SOL and $KOTS tokens may <strong>fluctuate dramatically</strong>. 
+                You acknowledge that the platform has no control over cryptocurrency market prices, and that the USD equivalent of your payment may differ at the time of blockchain confirmation.
               </p>
             </div>
           )}
@@ -176,13 +208,53 @@ export const LegalModal: React.FC<LegalModalProps> = ({
             <div className="space-y-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Lock className="w-4 h-4 text-cyan-400" />
-                1. Zero Personal Data Tracking
+                1. Data We Collect
               </h3>
               <p>
-                We do not collect names, phone numbers, passport credentials, or private information. 
+                We do not collect names, emails, phone numbers, or government-issued IDs. The following data is recorded when you use the platform:
               </p>
+              <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm">
+                <li><strong>Public wallet address</strong> (provided by your wallet extension)</li>
+                <li><strong>Blockchain transaction hash</strong> (txHash, publicly visible on-chain)</li>
+                <li><strong>User-submitted content</strong> (nickname, message, image URL, external link)</li>
+                <li><strong>IP address</strong> (transiently processed by our web server; not stored in application logs)</li>
+              </ul>
+
+              <h3 className="text-base font-bold text-white pt-2">2. How Data Is Stored</h3>
               <p>
-                Public blockchain transaction hashes (txHash) and publicly submitted aliases are recorded strictly for on-chain transparency and display history.
+                Application state (current king, hall of fame, transaction history) is stored on a virtual private server. Uploaded images are stored temporarily for display purposes. 
+                We do not operate a persistent user database and do not create user accounts or profiles.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">3. Cookies & Local Storage</h3>
+              <p>
+                This site uses browser <strong>localStorage</strong> (via the Solana Wallet Adapter) to remember your wallet connection preference. We do not use tracking cookies, analytics pixels, or advertising SDKs.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">4. Third-Party Data Sharing</h3>
+              <p>
+                Your data may be shared with the following third-party services strictly for operational purposes:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm">
+                <li><strong>Solana RPC Provider</strong> (PublicNode) — receives your wallet address and transaction data to process blockchain operations.</li>
+                <li><strong>Sightengine</strong> — receives image URLs for automated content moderation (NSFW, hate symbol detection).</li>
+                <li><strong>CoinGecko API</strong> — receives anonymized price queries (no personal data transmitted).</li>
+              </ul>
+
+              <h3 className="text-base font-bold text-white pt-2">5. Your Rights (GDPR / CCPA)</h3>
+              <p>
+                If you are a resident of the EU/EEA or California, you have the right to request access to, correction of, or deletion of your personal data. 
+                To exercise these rights, contact us at{" "}
+                <a href="mailto:kingofthescreen.official@gmail.com" className="text-yellow-400 underline font-bold">
+                  kingofthescreen.official@gmail.com
+                </a>.{" "}
+                Please note that data recorded on the Solana blockchain is immutable and cannot be deleted by us.
+              </p>
+
+              <h3 className="text-base font-bold text-white pt-2">6. Data Retention</h3>
+              <p>
+                Off-chain application data (nicknames, images, display history) is retained for the operational lifetime of the platform. 
+                On-chain data (transaction hashes, wallet addresses) is permanently recorded on the Solana blockchain and is beyond our ability to modify or delete.
               </p>
             </div>
           )}
@@ -190,7 +262,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
 
         {/* Footer Confirmation */}
         <div className="mt-6 pt-4 border-t border-cyber-border/80 flex items-center justify-between">
-          <span className="text-[11px] text-gray-500">Governed by the laws of Panama (Subject to Binding Arbitration)</span>
+          <span className="text-[11px] text-gray-500">To the extent permitted by applicable law, governed by the laws of the Republic of Panama</span>
           <button
             onClick={onClose}
             className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition-colors"

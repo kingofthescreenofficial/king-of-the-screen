@@ -53,6 +53,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
     const [bidAmount, setBidAmount] = useState<number>(nextMinPriceUsd);
       const [isUploading, setIsUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -517,11 +518,21 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   </div>
                 )}
 
-                {/* Legal Compliance Notice */}
-                <div className="text-[10px] text-gray-500 text-center leading-relaxed pt-1">
-                  By submitting, you certify you own rights to this content and agree to the Terms of Service.{" "}
-                  All micropayments are strictly final fees for live billboard display time and token distribution.
-                </div>
+                {/* Click-Wrap Legal Consent (Mandatory) */}
+                <label className="flex items-start gap-2.5 cursor-pointer pt-1 pb-1">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded border-gray-600 accent-yellow-500 flex-shrink-0"
+                  />
+                  <span className="text-[10px] text-gray-400 leading-relaxed">
+                    I am 18+ years old, I certify I own rights to this content, and I agree to the{" "}
+                    <span className="text-yellow-400 underline">Terms of Service</span>.{" "}
+                    All micropayments are strictly final fees for billboard display time. Tokens are free novelty gifts with no intrinsic value.
+                    I represent that I am not located in any OFAC-sanctioned jurisdiction.
+                  </span>
+                </label>
 
                 {/* Submit CTA Button */}
                 
@@ -536,7 +547,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                   <button
                     type="button"
                     onClick={async (e) => { e.preventDefault(); await handleSubmit(e); }}
-                    disabled={loading || isUploading || walletConnecting}
+                    disabled={loading || isUploading || walletConnecting || !agreedToTerms}
                     className="w-full bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 hover:from-purple-400 hover:to-purple-500 text-white font-black py-4 rounded-xl shadow-[0_0_30px_rgba(168,85,247,0.7)] text-base uppercase tracking-wider transition-all active:scale-[0.99] flex items-center justify-center gap-2 mt-2"
                   >
                     {loading || walletConnecting ? (
