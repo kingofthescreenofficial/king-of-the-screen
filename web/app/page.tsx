@@ -29,10 +29,14 @@ export default function HomePage() {
     if (isMobile && !hasSolana) {
       setIsMobileExternal(true);
     }
+    if (!localStorage.getItem('kots_storage_ok')) {
+      setShowStorageBanner(true);
+    }
   }, []);
   const [isTakeoverOpen, setIsTakeoverOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState<"TOS" | "DISCLAIMER" | "DMCA" | "PRIVACY">("TOS");
+  const [showStorageBanner, setShowStorageBanner] = useState(false);
   const [lastEventId, setLastEventId] = useState<string | null>(null);
   const lastStateHashRef = useRef<string>("");
 
@@ -255,6 +259,21 @@ export default function HomePage() {
         defaultTab={legalTab}
         onClose={() => setIsLegalOpen(false)}
       />
+
+      {/* LocalStorage Consent Banner (ePrivacy) */}
+      {showStorageBanner && (
+        <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t border-gray-800 px-4 py-3 flex items-center justify-between gap-4 z-50 backdrop-blur-sm">
+          <p className="text-[11px] text-gray-400 font-mono">
+            🍪 This site uses browser localStorage to remember your wallet connection. No tracking cookies or analytics.
+          </p>
+          <button
+            onClick={() => { localStorage.setItem('kots_storage_ok', '1'); setShowStorageBanner(false); }}
+            className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-4 py-1.5 rounded-lg text-xs whitespace-nowrap transition-colors"
+          >
+            OK
+          </button>
+        </div>
+      )}
     </main>
   );
 }

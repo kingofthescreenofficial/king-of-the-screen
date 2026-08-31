@@ -71,6 +71,8 @@ export const LegalModal: React.FC<LegalModalProps> = ({
           </button>
         </div>
 
+        <div className="text-[10px] text-gray-600 mb-3 font-mono">Last Updated: August 31, 2026</div>
+
         {/* Content Body */}
         <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-2 text-gray-300 leading-relaxed">
           {activeTab === "TOS" && (
