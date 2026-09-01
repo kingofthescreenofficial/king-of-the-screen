@@ -201,6 +201,17 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         const signature = await sendTransaction(tx, connection);
         console.log("Transaction sent! Signature:", signature);
         
+        setLoading(true);
+        setErrorMsg("Confirming transaction on blockchain...");
+        
+        // Wait for confirmation to avoid backend race conditions (where meta is null)
+        const latestBlockhash = await connection.getLatestBlockhash();
+        await connection.confirmTransaction({
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+        }, "confirmed");
+
         // Pass signature to the backend
         await processTakeover(signature);
     } catch(err: any) {
