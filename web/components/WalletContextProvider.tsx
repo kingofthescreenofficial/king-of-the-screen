@@ -13,7 +13,7 @@ export function WalletContextProvider({ children }: { children: React.ReactNode 
   const network = "mainnet-beta";
 
   // You can also provide a custom RPC endpoint
-  const endpoint = useMemo(() => "https://api.mainnet-beta.solana.com", [network]);
+  const endpoint = useMemo(() => "https://solana-rpc.publicnode.com", [network]);
 
   const wallets = useMemo(
     () => [
