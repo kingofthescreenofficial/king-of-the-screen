@@ -1,9 +1,10 @@
+import fs from "fs";
+import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { executeDethronement, getAppState } from "@/lib/state";
 import { moderateContent } from "@/lib/moderation";
 import { verifyEvmTransaction, verifySolanaTransaction, sanitizeTxHash } from "@/lib/blockchain";
-import fs from "fs";
-import path from "path";
+
 
 function normalizeUrl(url?: string): string | undefined {
   if (!url) return undefined;
@@ -20,9 +21,6 @@ function normalizeUrl(url?: string): string | undefined {
   }
   return `https://${trimmed}`;
 }
-
-import fs from "fs";
-import path from "path";
 
 function logTelemetry(type, event, details) {
   try {
