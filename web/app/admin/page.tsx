@@ -7,6 +7,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [queue, setQueue] = useState<any[]>([]);
+  const [activeUsers, setActiveUsers] = useState(0);
   const [telemetry, setTelemetry] = useState<any[]>([]);
   const [lastQueueLength, setLastQueueLength] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -35,6 +36,7 @@ export default function AdminPage() {
         const data = await res.json();
         setQueue(data.queue || []);
         setTelemetry(data.telemetry || []);
+        setActiveUsers(data.activeUsersCount || 0);
         
         if (data.queueLength > lastQueueLength && data.queueLength > 0) {
           // Play sound when new item arrives
@@ -91,8 +93,14 @@ export default function AdminPage() {
             <Zap className="text-yellow-400" />
             SENTINEL COMMAND CENTER
           </h1>
-          <div className="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/40 animate-pulse">
-            SYSTEM ONLINE & MONITORING
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 bg-emerald-900/60 border border-emerald-500/40 px-3 py-1 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <span className="text-xs font-bold text-emerald-400">ON SITE: {activeUsers}</span>
+            </div>
+            <div className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full border border-gray-700">
+              MONITORING
+            </div>
           </div>
         </div>
 

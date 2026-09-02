@@ -26,7 +26,17 @@ export async function GET() {
     console.error(e);
   }
 
-  return NextResponse.json({
+  let activeUsersCount = 0;
+  try {
+    const PING_FILE = path.join(process.cwd(), "analytics", "active_users.json");
+    if (fs.existsSync(PING_FILE)) {
+      const data = JSON.parse(fs.readFileSync(PING_FILE, "utf8"));
+      const now = Date.now();
+      activeUsersCount = Object.values(data).filter((t: any) => now - t <= 30000).length;
+    }
+  } catch(e) {}
+  
+  return NextResponse.json({ activeUsersCount,
     queueLength: queue.length,
     queue: queue,
     telemetry: telemetry,
