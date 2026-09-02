@@ -6,6 +6,19 @@ import { ShieldAlert, CheckCircle2, Wallet, Zap, Bell, AlertTriangle, Trash2 } f
 export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("kots_admin_auth") === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    if (password === "KingPump2026!!!") {
+      setIsAuthenticated(true);
+      localStorage.setItem("kots_admin_auth", "true");
+    }
+  };
   const [queue, setQueue] = useState<any[]>([]);
   const [activeUsers, setActiveUsers] = useState(0);
   const [telemetry, setTelemetry] = useState<any[]>([]);
@@ -68,12 +81,10 @@ export default function AdminPage() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter secure password"
             className="w-full bg-black border border-red-500/30 rounded-lg px-4 py-2 text-white"
-            onKeyDown={(e) => {
-               if (e.key === 'Enter' && password === HARDCODED_PASS) setIsAuthenticated(true);
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleLogin(); }}
           />
           <button 
-            onClick={() => password === HARDCODED_PASS && setIsAuthenticated(true)}
+            onClick={handleLogin}
             className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg"
           >
             ENTER COMMAND CENTER
