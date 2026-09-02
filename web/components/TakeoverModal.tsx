@@ -194,7 +194,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         
         // Add priority fee to prevent Solana network from dropping the transaction during congestion
         const priorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
-            microLamports: 150000, // 0.00015 SOL per compute unit - high priority
+            microLamports: 500000, // 0.0005 SOL per compute unit - ultra high priority
         });
 
         const treasuryLamports = Math.floor(lamports * 0.80);
