@@ -19,3 +19,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed" }, { status: 500 });
     }
 }
+
+export async function DELETE() {
+    try {
+        const logFile = path.join(process.cwd(), "analytics", "telemetry.jsonl");
+        if (fs.existsSync(logFile)) fs.writeFileSync(logFile, "");
+        return NextResponse.json({ success: true });
+    } catch (e) {
+        return NextResponse.json({ error: "Failed" }, { status: 500 });
+    }
+}

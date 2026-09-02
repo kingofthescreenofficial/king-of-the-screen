@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ShieldAlert, CheckCircle2, Wallet, Zap, Bell, AlertTriangle } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Wallet, Zap, Bell, AlertTriangle, Trash2 } from "lucide-react";
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -21,7 +21,15 @@ export default function AdminPage() {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const fetchDashboard = async () => {
+    const clearLogs = async () => {
+    if (!confirm('Очистить все логи телеметрии?')) return;
+    try {
+      await fetch('/api/telemetry', { method: 'DELETE' });
+      setTelemetry([]);
+    } catch (e) { console.error(e); }
+  };
+
+  const fetchDashboard = async () => {
       try {
         const res = await fetch("/api/admin/dashboard");
         const data = await res.json();
@@ -113,6 +121,9 @@ export default function AdminPage() {
               <Zap className="text-blue-500 w-5 h-5" /> 
               TELEMETRY & SYSTEM LOGS (LIVE)
             </h2>
+            <button onClick={clearLogs} className="flex items-center gap-1.5 text-xs bg-red-950/40 hover:bg-red-900/60 text-red-400 px-3 py-1.5 rounded-lg border border-red-900/50 transition-colors">
+              <Trash2 className="w-3.5 h-3.5" /> Очистить
+            </button>
           </div>
           
           <div className="bg-black border border-gray-800 rounded-xl h-96 overflow-y-auto p-4 font-mono text-[11px] sm:text-xs space-y-1.5 scrollbar-thin scrollbar-thumb-gray-800">
