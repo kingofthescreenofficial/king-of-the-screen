@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { WalletContextProvider }
-import { TelemetryTracker } from "../components/TelemetryTracker"; from "../components/WalletContextProvider";
+import { WalletContextProvider } from "../components/WalletContextProvider";
+import { TelemetryTracker } from "../components/TelemetryTracker";
 
 export const metadata: Metadata = {
   title: "KING OF THE SCREEN | The $1,000,000 Global Live Canvas",

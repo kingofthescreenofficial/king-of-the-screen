@@ -110,7 +110,7 @@ export default function AdminPage() {
             <h3 className="text-sm font-bold text-gray-400 mb-2 flex items-center gap-2">
               <Wallet className="w-4 h-4" /> 1. ТРЕЖЕРИ (КАЗНА - ВАША ПРИБЫЛЬ 80%)
             </h3>
-            <p className="font-mono text-xs text-emerald-400 break-all">7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU</p>
+            <p className="font-mono text-xs text-emerald-400 break-all">EkgfzyrqfTZB8Er3XPSYn6nVmtTv4hvCo3F9Drkd62Aq</p>
             <p className="text-[11px] text-gray-500 mt-2">Сюда автоматически улетают 80% от всех оплат. Это ваша чистая прибыль. Ничего делать не нужно.</p>
           </div>
           <div className="bg-[#111119] p-5 rounded-xl border border-gray-800">
