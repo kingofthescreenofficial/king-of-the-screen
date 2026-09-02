@@ -216,7 +216,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         );
         
         setLoading(true);
-        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'PAYMENT_STARTED', details: { amountUsd }}) }).catch(()=>{});
+        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'PAYMENT_STARTED', details: { amountUsd: bidAmount }}) }).catch(()=>{});
         setErrorMsg("Requesting wallet signature...");
         
         const latestBlockhash = await connection.getLatestBlockhash('confirmed');
