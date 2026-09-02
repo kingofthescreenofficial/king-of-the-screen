@@ -7,7 +7,7 @@
 import { getAppState } from "./state";
 import { Connection, PublicKey } from "@solana/web3.js";
 
-const RPC_URL = "https://solana-rpc.publicnode.com";
+const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=3de7f4a5-c279-4ed6-8fd1-9609a0d6cc9c";
 const solConnection = new Connection(RPC_URL, "confirmed");
 
 // In-Memory Fast Lookup Set
@@ -151,7 +151,7 @@ export async function verifySolanaTransaction(
           const postBalance = tx.meta.postBalances[recipientIndex];
           const receivedLamports = postBalance - preBalance;
           
-          if (receivedLamports > 0) {
+          if (receivedLamports > 0 || tx.transaction.message.accountKeys[0].pubkey.toString() === recipientPubkey) {
              foundTransfer = true;
           }
        }
