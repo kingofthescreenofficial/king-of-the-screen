@@ -548,7 +548,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     20% Auto-Buyback & Pump 🚀
                   </span>
                   <span className="text-[10px] text-emerald-200/70">
-                    20% of this payment is used to buy <strong className="text-emerald-300">$KOTS</strong> from the open market. 
+                    20% of this payment is used to market-buy <strong className="text-emerald-300">$KOTS</strong>, and 100% of those tokens are airdropped back to you! 
                     Claim the throne ➔ We pump the coin ➔ Your bag grows!
                   </span>
                 </div>

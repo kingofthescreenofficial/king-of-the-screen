@@ -75,43 +75,9 @@ async function processQueue() {
       
       const destinationWallet = new PublicKey(entry.rewardWallet);
 
-      // 1. Airdrop KOTS Tokens
-      console.log(`Sending ${entry.minedTokens} KOTS to ${destinationWallet.toBase58()}...`);
-      try {
-        const sourceTokenAccount = await getOrCreateAssociatedTokenAccount(
-            connection,
-            hotWallet,
-            TOKEN_CA,
-            hotWallet.publicKey,
-            false,
-            'confirmed',
-            { commitment: 'confirmed' },
-            TOKEN_2022_PROGRAM_ID
-        );
-        const destTokenAccount = await getOrCreateAssociatedTokenAccount(
-            connection,
-            hotWallet,
-            TOKEN_CA,
-            destinationWallet,
-            false,
-            'confirmed',
-            { commitment: 'confirmed' },
-            TOKEN_2022_PROGRAM_ID
-        );
-        const transferIx = createTransferInstruction(
-            sourceTokenAccount.address,
-            destTokenAccount.address,
-            hotWallet.publicKey,
-            entry.minedTokens * 10 ** 6,
-            [],
-            TOKEN_2022_PROGRAM_ID
-        );
-        const tx = new Transaction().add(transferIx);
-        const sig = await connection.sendTransaction(tx, [hotWallet]);
-        console.log('✅ Tokens sent! Tx:', sig);
-      } catch(err) {
-         console.error('❌ Token transfer failed:', err.message);
-      }
+      // 1. Dynamic Airdrop (Manual on Pump.fun for now)
+      console.log(`[ACTION REQUIRED] Manual Buy-and-Airdrop pending for ${destinationWallet.toBase58()}`);
+      console.log(`Instructions: Buy ${entry.paidUsd * 0.20} USD worth of KOTS on Pump.fun and send to ${destinationWallet.toBase58()}`);
 
       // 2. Mint NFT
       console.log('Generating NFT...');

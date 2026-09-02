@@ -75,7 +75,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
             <span>Earn & Pump!</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Get instant $KOTS airdrops. <strong className="text-emerald-400">20% of your payment auto-buys $KOTS from the market!</strong> You buy the throne ➔ we pump the coin ➔ your bag grows!
+            Buy the throne and pump your own bag! <strong className="text-emerald-400">20% of your payment is instantly used to market-buy $KOTS, and 100% of those bought tokens are airdropped straight to you.</strong> You create the green candle, you keep the tokens!
           </p>
         </div>
       </div>
