@@ -4,7 +4,7 @@ const { Connection, Keypair, PublicKey, Transaction } = require('@solana/web3.js
 const { getOrCreateAssociatedTokenAccount, createTransferInstruction, TOKEN_2022_PROGRAM_ID } = require('@solana/spl-token');
 const { Metaplex, keypairIdentity, irysStorage, toMetaplexFile } = require('@metaplex-foundation/js');
 
-const RPC_URL = 'https://api.mainnet-beta.solana.com';
+const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=3de7f4a5-c279-4ed6-8fd1-9609a0d6cc9c';
 const TOKEN_CA = new PublicKey('HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump');
 const QUEUE_FILE = '/var/www/king-of-the-screen/web/analytics/airdrop_queue.jsonl';
 const PROCESSED_FILE = '/var/www/king-of-the-screen/web/analytics/airdrop_processed.jsonl';
