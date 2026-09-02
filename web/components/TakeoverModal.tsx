@@ -69,6 +69,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
   // Sync initial bid amount without resetting while user types
   useEffect(() => {
     if (isOpen) {
+      fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'CLICK_TAKEOVER_MODAL', details: { action: 'Opened Takeover Modal' }}) }).catch(()=>{});
       setBidAmount((prev) => Math.max(prev, nextMinPriceUsd));
     }
   }, [isOpen, nextMinPriceUsd]);
@@ -215,6 +216,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         );
         
         setLoading(true);
+        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'PAYMENT_STARTED', details: { amountUsd }}) }).catch(()=>{});
         setErrorMsg("Requesting wallet signature...");
         
         const latestBlockhash = await connection.getLatestBlockhash('confirmed');

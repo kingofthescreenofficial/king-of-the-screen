@@ -21,6 +21,18 @@ function normalizeUrl(url?: string): string | undefined {
   return `https://${trimmed}`;
 }
 
+import fs from "fs";
+import path from "path";
+
+function logTelemetry(type, event, details) {
+  try {
+    const logDir = path.join(process.cwd(), "analytics");
+    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+    const logEntry = { timestamp: new Date().toISOString(), type, event, details };
+    fs.appendFileSync(path.join(logDir, "telemetry.jsonl"), JSON.stringify(logEntry) + '\n');
+  } catch(e) {}
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

@@ -7,6 +7,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [queue, setQueue] = useState<any[]>([]);
+  const [telemetry, setTelemetry] = useState<any[]>([]);
   const [lastQueueLength, setLastQueueLength] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -25,6 +26,7 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/dashboard");
         const data = await res.json();
         setQueue(data.queue || []);
+        setTelemetry(data.telemetry || []);
         
         if (data.queueLength > lastQueueLength && data.queueLength > 0) {
           // Play sound when new item arrives
@@ -101,6 +103,31 @@ export default function AdminPage() {
             </h3>
             <p className="font-mono text-xs text-yellow-500 break-all">AahUkkoX21nkqkD3xnQUvsCcxQYbS9ajB2uurStj31xr</p>
             <p className="text-[11px] text-gray-500 mt-2">Сюда автоматически улетают 20% от оплат. С этих денег вы откупаете $KOTS на Pump.fun для передачи Королю.</p>
+          </div>
+        </div>
+
+        {/* TERMINAL / TELEMETRY LOGS */}
+        <div className="bg-[#0a0a0f] border-2 border-gray-800 rounded-2xl p-6 shadow-xl mb-8">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-800 pb-4">
+            <h2 className="text-lg font-bold text-gray-300 flex items-center gap-2">
+              <Zap className="text-blue-500 w-5 h-5" /> 
+              TELEMETRY & SYSTEM LOGS (LIVE)
+            </h2>
+          </div>
+          
+          <div className="bg-black border border-gray-800 rounded-xl h-96 overflow-y-auto p-4 font-mono text-[11px] sm:text-xs space-y-1.5 scrollbar-thin scrollbar-thumb-gray-800">
+            {telemetry.length === 0 ? (
+              <div className="text-gray-600 italic">No telemetry data yet...</div>
+            ) : (
+              telemetry.map((log, idx) => (
+                <div key={idx} className="flex gap-3 hover:bg-gray-900/50 p-1 rounded transition-colors">
+                  <span className="text-gray-600 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                  <span className={`shrink-0 font-bold ${log.type === 'USER' ? 'text-blue-400' : 'text-purple-400'}`}>[{log.type}]</span>
+                  <span className={`shrink-0 ${log.type === 'USER' ? 'text-blue-200' : 'text-purple-200'}`}>{log.event}</span>
+                  <span className="text-gray-400 truncate w-full">{JSON.stringify(log.details)}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

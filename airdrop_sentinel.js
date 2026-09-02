@@ -12,6 +12,15 @@ const PROCESSED_FILE = '/var/www/king-of-the-screen/web/analytics/airdrop_proces
 const walletData = JSON.parse(fs.readFileSync('/var/www/king-of-the-screen/hot_wallet.json', 'utf-8'));
 const hotWallet = Keypair.fromSecretKey(new Uint8Array(walletData));
 
+function logTelemetry(type, event, details) {
+  try {
+    const logDir = path.join(process.cwd(), "web/analytics");
+    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+    const logEntry = { timestamp: new Date().toISOString(), type, event, details };
+    fs.appendFileSync(path.join(logDir, "telemetry.jsonl"), JSON.stringify(logEntry) + '\n');
+  } catch(e) {}
+}
+
 const connection = new Connection(RPC_URL, 'confirmed');
 
 const metaplex = Metaplex.make(connection)
@@ -72,6 +81,7 @@ async function processQueue() {
     try {
       entry = JSON.parse(line);
       console.log(`\n[👑] Found new King in queue: ${entry.nickname} (${entry.kingId})`);
+      logTelemetry('SYSTEM', 'SENTINEL_PROCESSING_KING', { kingId: entry.kingId });
       
       const destinationWallet = new PublicKey(entry.rewardWallet);
 
