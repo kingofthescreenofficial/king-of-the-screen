@@ -13,7 +13,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ currentKing, nextMinPriceU
   const [copied, setCopied] = useState(false);
 
   const shareText = `👑 ${currentKing.nickname} is currently the KING OF THE SCREEN ($${currentKing.paidAmountUsd.toFixed(2)}).\n\nCan anyone dethrone them for $${nextMinPriceUsd.toFixed(2)}?\n\nTake the screen:`;
-  const shareUrl = typeof window !== "undefined" ? window.location.href : "https://kingofthescreen.xyz";
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "https://kingofthescreen.fun";
 
   const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     shareText

@@ -239,7 +239,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 Your data may be shared with the following third-party services strictly for operational purposes:
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm">
-                <li><strong>Solana RPC Provider</strong> (PublicNode) — receives your wallet address and transaction data to process blockchain operations.</li>
+                <li><strong>Solana RPC Provider</strong> (Ankr) — receives your wallet address and transaction data to process blockchain operations.</li>
                 <li><strong>Sightengine</strong> — receives image URLs for automated content moderation (NSFW, hate symbol detection).</li>
                 <li><strong>CoinGecko API</strong> — receives anonymized price queries (no personal data transmitted).</li>
               </ul>

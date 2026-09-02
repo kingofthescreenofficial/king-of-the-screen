@@ -30,7 +30,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
   };
 
   const shareToTwitter = () => {
-    const text = `👑 I AM OFFICIALLY CROWNED AS GENESIS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\n💎 Rule: Held the global $1,000,000 screen & mined a proportional share of \$KOTS tokens.\n\nVerify on-chain relic: https://king-of-the-screen.vercel.app/api/nft/${ordinalNumber}\n\n#KingOfTheScreen #Solana #Base #NFT`;
+    const text = `👑 I AM OFFICIALLY CROWNED AS GENESIS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\n💎 Rule: Held the global $1,000,000 screen & mined a proportional share of \$KOTS tokens.\n\nVerify on-chain relic: https://kingofthescreen.fun/api/nft/${ordinalNumber}\n\n#KingOfTheScreen #Solana #NFT`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
   };
