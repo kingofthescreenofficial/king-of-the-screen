@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL, ComputeBudgetProgram } from "@solana/web3.js";
 import confetti from "canvas-confetti";
 import {
   X,
@@ -25,6 +25,7 @@ import {
   Gem,
   Sparkles,
   Send,
+  TrendingUp,
 } from "lucide-react";
 import { AppState } from "@/lib/types";
 import { RoyalNFTCard } from "./RoyalNFTCard";
@@ -190,7 +191,13 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         
         const lamports = Math.floor((bidAmount / solPrice) * LAMPORTS_PER_SOL);
         
+        // Add priority fee to prevent Solana network from dropping the transaction during congestion
+        const priorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
+            microLamports: 150000, // 0.00015 SOL per compute unit - high priority
+        });
+
         const tx = new Transaction().add(
+            priorityFeeIx,
             SystemProgram.transfer({
                 fromPubkey: publicKey,
                 toPubkey: new PublicKey(walletConfig.solanaAddress),
@@ -198,14 +205,19 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
             })
         );
         
-        const signature = await sendTransaction(tx, connection);
+        setLoading(true);
+        setErrorMsg("Requesting wallet signature...");
+        
+        const latestBlockhash = await connection.getLatestBlockhash('confirmed');
+        tx.recentBlockhash = latestBlockhash.blockhash;
+        tx.feePayer = publicKey;
+        
+        const signature = await sendTransaction(tx, connection, { maxRetries: 5 });
         console.log("Transaction sent! Signature:", signature);
         
-        setLoading(true);
-        setErrorMsg("Confirming transaction on blockchain...");
+        setErrorMsg("Confirming transaction on blockchain... (usually takes 3-10 seconds)");
         
         // Wait for confirmation to avoid backend race conditions (where meta is null)
-        const latestBlockhash = await connection.getLatestBlockhash();
         await connection.confirmTransaction({
           signature,
           blockhash: latestBlockhash.blockhash,
@@ -528,6 +540,18 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* 20% Buyback Marketing Banner */}
+                <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex flex-col gap-1 items-center text-center">
+                  <span className="text-emerald-400 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    20% Auto-Buyback & Pump 🚀
+                  </span>
+                  <span className="text-[10px] text-emerald-200/70">
+                    20% of this payment is used to buy <strong className="text-emerald-300">$KOTS</strong> from the open market. 
+                    Claim the throne ➔ We pump the coin ➔ Your bag grows!
+                  </span>
+                </div>
 
                 {/* Click-Wrap Legal Consent (Mandatory) */}
                 <label className="flex items-start gap-2.5 cursor-pointer pt-1 pb-1">

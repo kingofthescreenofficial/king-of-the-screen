@@ -65,16 +65,17 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         </div>
 
         {/* Step 3 */}
-        <div className="bg-black/60 border border-cyber-border/80 hover:border-emerald-500/60 p-4 rounded-xl space-y-2 transition-colors">
+        <div className="bg-black/60 border border-cyber-border/80 hover:border-emerald-500/60 p-4 rounded-xl space-y-2 transition-colors relative overflow-hidden">
+          <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl animate-pulse"></div>
           <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
             <span className="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-xs font-black border border-emerald-500/40">
               3
             </span>
             <Sparkles className="w-4 h-4" />
-            <span>Sign & Mine</span>
+            <span>Earn & Pump!</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Approve the 1-click transaction. You instantly become King, mine $KOTS tokens, and get a Genesis NFT!
+            Get instant $KOTS airdrops. <strong className="text-emerald-400">20% of your payment auto-buys $KOTS from the market!</strong> You buy the throne ➔ we pump the coin ➔ your bag grows!
           </p>
         </div>
       </div>
