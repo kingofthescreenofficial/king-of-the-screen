@@ -113,7 +113,7 @@ async function processQueue() {
         }
 
         const { uri } = await metaplex.nfts().uploadMetadata({
-            name: `KOTS King #${entry.kingId.slice(-6).toUpperCase()}`,
+            name: `KOTS King`, symbol: `KOTS`,
             symbol: "KOTS",
             description: `This NFT proves that ${entry.nickname} conquered the $1,000,000 Global Live Canvas for $${entry.paidUsd}.`,
             image: imageUri,
@@ -129,7 +129,7 @@ async function processQueue() {
         console.log('Minting NFT to', destinationWallet.toBase58(), '...');
         const { nft } = await metaplex.nfts().create({
             uri: uri,
-            name: `KOTS King #${entry.kingId.slice(-6).toUpperCase()}`,
+            name: `KOTS King`, symbol: `KOTS`,
             sellerFeeBasisPoints: 500,
             tokenOwner: destinationWallet,
         });
