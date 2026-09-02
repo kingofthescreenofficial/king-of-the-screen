@@ -225,6 +225,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
         
         const signature = await sendTransaction(tx, connection, { maxRetries: 5 });
         console.log("Transaction sent! Signature:", signature);
+        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'TRANSACTION_SENT', details: { signature }}) }).catch(()=>{});
         
         setErrorMsg("Confirming transaction on blockchain... (usually takes 3-10 seconds)");
         
@@ -235,10 +236,12 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
           lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
         }, "confirmed");
 
+        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'TRANSACTION_CONFIRMED', details: { msg: 'SOL successfully transferred to Treasury (80%) and Hot Wallet (20%)' }}) }).catch(()=>{});
         // Pass signature to the backend
         await processTakeover(signature);
     } catch(err: any) {
         setErrorMsg("Wallet transaction failed or cancelled: " + err.message);
+        fetch('/api/telemetry', { method: 'POST', body: JSON.stringify({ type: 'USER', event: 'TRANSACTION_ERROR', details: { error: err.message }}) }).catch(()=>{});
     } finally {
         setWalletConnecting(false);
     }
