@@ -5,7 +5,7 @@ const { getOrCreateAssociatedTokenAccount, createTransferInstruction, TOKEN_2022
 const { Metaplex, keypairIdentity, irysStorage, toMetaplexFile } = require('@metaplex-foundation/js');
 
 const RPC_URL = 'https://api.mainnet-beta.solana.com';
-const TOKEN_CA = new PublicKey('EkgfzyrqfTZB8Er3XPSYn6nVmtTv4hvCo3F9Drkd62Aq');
+const TOKEN_CA = new PublicKey('HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump');
 const QUEUE_FILE = '/var/www/king-of-the-screen/web/analytics/airdrop_queue.jsonl';
 const PROCESSED_FILE = '/var/www/king-of-the-screen/web/analytics/airdrop_processed.jsonl';
 
