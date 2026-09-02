@@ -13,6 +13,14 @@ export default function AdminPage() {
 
   const HARDCODED_PASS = "KingPump2026!!!";
 
+  const clearLogs = async () => {
+    if (!confirm('Очистить все логи телеметрии?')) return;
+    try {
+      await fetch('/api/telemetry', { method: 'DELETE' });
+      setTelemetry([]);
+    } catch (e) { console.error(e); }
+  };
+
   useEffect(() => {
     // Create audio element for alarm
     audioRef.current = new Audio("https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3");
@@ -21,15 +29,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const clearLogs = async () => {
-    if (!confirm('Очистить все логи телеметрии?')) return;
-    try {
-      await fetch('/api/telemetry', { method: 'DELETE' });
-      setTelemetry([]);
-    } catch (e) { console.error(e); }
-  };
-
-  const fetchDashboard = async () => {
+    const fetchDashboard = async () => {
       try {
         const res = await fetch("/api/admin/dashboard");
         const data = await res.json();
