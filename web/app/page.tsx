@@ -110,39 +110,35 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 font-mono text-xs">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-xs mt-4 sm:mt-0">
             {/* Isolated Live Indicator */}
             <LiveViewerBadge />
 
             {/* Quick Action Button */}
             <button
               onClick={() => setIsTakeoverOpen(true)}
-              className="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-colors"
+              className="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-4 h-12 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-colors"
             >
               <Flame className="w-4 h-4 fill-black" />
               <span>CLAIM THRONE</span>
             </button>
+            
+            {/* Global Wallet Connect */}
+            {mounted && isMobileExternal ? (
+              <a 
+                href="https://phantom.app/ul/browse/https%3A%2F%2Fkingofthescreen.fun?ref=https%3A%2F%2Fkingofthescreen.fun"
+                className="flex items-center justify-center transition-all hover:bg-purple-500 active:scale-95 px-5"
+                style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "14px", fontWeight: "bold", color: "white", textDecoration: "none" }}
+              >
+                CONNECT WALLET
+              </a>
+            ) : (
+              <WalletMultiButton style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "14px", fontWeight: "bold", padding: "0 20px" }}>
+                {!publicKey ? "CONNECT WALLET" : undefined}
+              </WalletMultiButton>
+            )}
           </div>
         </header>
-
-        {/* Global Wallet Connect (Web3 Standard) */}
-        <div className="flex justify-end items-center -mt-4 mb-4">
-           <div className="w-full sm:w-auto flex justify-center sm:justify-end wallet-button-large">
-              {mounted && isMobileExternal ? (
-                <a 
-                  href="https://phantom.app/ul/browse/https%3A%2F%2Fkingofthescreen.fun?ref=https%3A%2F%2Fkingofthescreen.fun"
-                  className="flex items-center justify-center transition-all hover:bg-purple-500 active:scale-95"
-                  style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", width: "100%", color: "white", textDecoration: "none" }}
-                >
-                  CONNECT WALLET
-                </a>
-              ) : (
-                <WalletMultiButton style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "16px", fontWeight: "bold", width: "100%", justifyContent: "center" }}>
-                  {!publicKey ? "CONNECT WALLET" : undefined}
-                </WalletMultiButton>
-              )}
-           </div>
-        </div>
 
 
         {/* 👑 OFFICIAL $KOTS TOKEN BANNER WITH CA & TRADE LINKS */}
