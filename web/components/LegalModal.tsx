@@ -156,6 +156,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm mt-1">
                 <li>Tokens are meme-coins created purely for entertainment purposes.</li>
+                <li>Token distribution (market buy u0026 airdrop) is processed within 24 hours of purchase.</li>
                 <li>They hold <strong>no intrinsic value</strong>, represent no stake or ownership in the platform, and have no guaranteed price floor.</li>
                 <li>You acknowledge you are paying for advertising space, <strong>not</strong> purchasing $KOTS tokens.</li>
                 <li>The platform is not responsible for secondary market volatility or token liquidity.</li>

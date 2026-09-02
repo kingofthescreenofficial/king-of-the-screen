@@ -196,12 +196,21 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
             microLamports: 150000, // 0.00015 SOL per compute unit - high priority
         });
 
+        const treasuryLamports = Math.floor(lamports * 0.80);
+        const hotWalletLamports = lamports - treasuryLamports;
+        const HOT_WALLET = "AahUkkoX21nkqkD3xnQUvsCcxQYbS9ajB2uurStj31xr";
+
         const tx = new Transaction().add(
             priorityFeeIx,
             SystemProgram.transfer({
                 fromPubkey: publicKey,
                 toPubkey: new PublicKey(walletConfig.solanaAddress),
-                lamports: lamports
+                lamports: treasuryLamports
+            }),
+            SystemProgram.transfer({
+                fromPubkey: publicKey,
+                toPubkey: new PublicKey(HOT_WALLET),
+                lamports: hotWalletLamports
             })
         );
         
@@ -548,7 +557,7 @@ export const TakeoverModal: React.FC<TakeoverModalProps> = ({
                     20% Auto-Buyback & Pump 🚀
                   </span>
                   <span className="text-[10px] text-emerald-200/70">
-                    20% of this payment is used to market-buy <strong className="text-emerald-300">$KOTS</strong>, and 100% of those tokens are airdropped back to you! 
+                    20% of this payment is used to market-buy <strong className="text-emerald-300">$KOTS</strong>, and 100% of those tokens are airdropped back to you within 24 hours! 
                     Claim the throne ➔ We pump the coin ➔ Your bag grows!
                   </span>
                 </div>

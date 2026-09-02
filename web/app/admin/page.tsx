@@ -1,551 +1,157 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { AppState } from "@/lib/types";
-import {
-  ShieldAlert,
-  RefreshCw,
-  Trash2,
-  CheckCircle2,
-  Lock,
-  ArrowLeft,
-  Coins,
-  Gem,
-  Send,
-  ExternalLink,
-  Wallet,
-  Zap,
-  KeyRound,
-  Eye,
-  EyeOff,
-  LogOut,
-} from "lucide-react";
-import Link from "next/link";
-import { ethers } from "ethers";
-import compiledContracts from "@/lib/compiled_contracts.json";
-
-const MASTER_PASSWORD_HASH = "kots2026";
+import React, { useState, useEffect, useRef } from "react";
+import { ShieldAlert, CheckCircle2, Wallet, Zap, Bell, AlertTriangle } from "lucide-react";
 
 export default function AdminPage() {
-  const [passwordInput, setPasswordInput] = useState("");
+  const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [queue, setQueue] = useState<any[]>([]);
+  const [lastQueueLength, setLastQueueLength] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [state, setState] = useState<AppState | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  // Web3 Deployment State
-  const [account, setAccount] = useState<string | null>(null);
-  const [chainId, setChainId] = useState<number | null>(null);
-  const [networkName, setNetworkName] = useState<string>("EVM");
-  const [tokenAddress, setTokenAddress] = useState<string>("");
-  const [nftAddress, setNftAddress] = useState<string>("");
-  const [isDeployingToken, setIsDeployingToken] = useState(false);
-  const [isDeployingNFT, setIsDeployingNFT] = useState(false);
-  const [isAirdropping, setIsAirdropping] = useState(false);
-
-  // Get active Ethereum provider (resolves conflicts between MetaMask and Phantom)
-  const getEthereumProvider = () => {
-    if (typeof window === "undefined") return null;
-    const eth = (window as any).ethereum;
-    if (!eth) return null;
-
-    if (eth.providers && Array.isArray(eth.providers)) {
-      const metamask = eth.providers.find((p: any) => p.isMetaMask && !p.isPhantom);
-      if (metamask) return metamask;
-      const rabby = eth.providers.find((p: any) => p.isRabby);
-      if (rabby) return rabby;
-      return eth.providers[0];
-    }
-    return eth;
-  };
+  const HARDCODED_PASS = "KingPump2026!!!";
 
   useEffect(() => {
-    const savedAuth = localStorage.getItem("kots_admin_auth");
-    if (savedAuth === "true") {
-      setIsAuthenticated(true);
-    }
-
-    const savedToken = localStorage.getItem("kots_token_address");
-    if (savedToken) setTokenAddress(savedToken);
-
-    const savedNft = localStorage.getItem("kots_nft_address");
-    if (savedNft) setNftAddress(savedNft);
-
-    const eth = getEthereumProvider();
-    if (eth && eth.selectedAddress) {
-      setAccount(eth.selectedAddress);
-    }
+    // Create audio element for alarm
+    audioRef.current = new Audio("https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3");
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordInput.trim() === MASTER_PASSWORD_HASH || passwordInput.trim().length >= 6) {
-      setIsAuthenticated(true);
-      localStorage.setItem("kots_admin_auth", "true");
-      setError(null);
-    } else {
-      setError("Неверный мастер-пароль администратора.");
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("kots_admin_auth");
-    setPasswordInput("");
-  };
-
-  const fetchState = async () => {
-    try {
-      const res = await fetch("/api/state", { cache: "no-store" });
-      if (res.ok) {
-        const data = await res.json();
-        setState(data);
-      }
-    } catch (e) {
-      console.warn("Failed to fetch state:", e);
-    }
-  };
-
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchState();
-    }
-  }, [isAuthenticated]);
+    if (!isAuthenticated) return;
 
-  const connectWallet = async () => {
-    setError(null);
-    setMessage(null);
-
-    const eth = getEthereumProvider();
-    if (!eth) {
-      setError("Web3 кошелек (MetaMask / Rabby) не найден в браузере.");
-      return;
-    }
-
-    try {
-      const provider = new ethers.BrowserProvider(eth);
-      
-      // Try silent check first if already authorized
-      let accounts = await provider.send("eth_accounts", []);
-      if (!accounts || accounts.length === 0) {
-        accounts = await provider.send("eth_requestAccounts", []);
+    const fetchDashboard = async () => {
+      try {
+        const res = await fetch("/api/admin/dashboard");
+        const data = await res.json();
+        setQueue(data.queue || []);
+        
+        if (data.queueLength > lastQueueLength && data.queueLength > 0) {
+          // Play sound when new item arrives
+          if (audioRef.current) {
+             audioRef.current.play().catch(e => console.log("Audio play blocked by browser:", e));
+          }
+        }
+        setLastQueueLength(data.queueLength);
+      } catch (err) {
+        console.error(err);
       }
+    };
 
-      if (!accounts || accounts.length === 0) {
-        throw new Error("Не удалось получить адрес кошелька.");
-      }
+    fetchDashboard();
+    const interval = setInterval(fetchDashboard, 5000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, lastQueueLength]);
 
-      const userAddr = accounts[0];
-      setAccount(userAddr);
-
-      const network = await provider.getNetwork();
-      const cid = Number(network.chainId);
-      setChainId(cid);
-
-      let netName = "EVM Network";
-      if (cid === 56) netName = "BNB Smart Chain (BSC)";
-      else if (cid === 8453) netName = "Base Mainnet";
-      else if (cid === 1) netName = "Ethereum Mainnet";
-      else if (cid === 137) netName = "Polygon PoS";
-      else if (cid === 42161) netName = "Arbitrum One";
-      setNetworkName(netName);
-
-      setMessage(`✓ Подключен кошелек: ${userAddr.slice(0, 6)}...${userAddr.slice(-4)} (${netName})`);
-    } catch (err: any) {
-      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
-        setError("Подключение было отменено в окне кошелька. Откройте расширение MetaMask/Rabby и подтвердите вход.");
-      } else {
-        setError(err.message || "Ошибка подключения кошелька");
-      }
-    }
-  };
-
-  const deployToken = async () => {
-    setError(null);
-    setMessage(null);
-
-    const eth = getEthereumProvider();
-    if (!eth) {
-      setError("Кошелек не найден.");
-      return;
-    }
-
-    try {
-      const provider = new ethers.BrowserProvider(eth);
-      const signer = await provider.getSigner();
-      const currentAddress = await signer.getAddress();
-      setAccount(currentAddress);
-
-      setIsDeployingToken(true);
-      setMessage(`Подтвердите создание $KOTS в вашем кошельке (${networkName})...`);
-
-      const factory = new ethers.ContractFactory(
-        compiledContracts.KingToken.abi,
-        compiledContracts.KingToken.bytecode,
-        signer
-      );
-
-      const contract = await factory.deploy();
-      setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
-      await contract.waitForDeployment();
-
-      const deployedAddr = await contract.getAddress();
-      setTokenAddress(deployedAddr);
-      localStorage.setItem("kots_token_address", deployedAddr);
-      setMessage(`🎉 УСПЕШНО! Токен $KOTS развернут на ${networkName}: ${deployedAddr}`);
-    } catch (err: any) {
-      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
-        setError("Транзакция была отклонена в кошельке.");
-      } else {
-        setError(err.message || "Token deployment failed");
-      }
-    } finally {
-      setIsDeployingToken(false);
-    }
-  };
-
-  const deployNFT = async () => {
-    setError(null);
-    setMessage(null);
-
-    const eth = getEthereumProvider();
-    if (!eth) {
-      setError("Кошелек не найден.");
-      return;
-    }
-
-    try {
-      const provider = new ethers.BrowserProvider(eth);
-      const signer = await provider.getSigner();
-      const currentAddress = await signer.getAddress();
-      setAccount(currentAddress);
-
-      setIsDeployingNFT(true);
-      setMessage(`Подтвердите развертывание NFT-контракта в кошельке (${networkName})...`);
-
-      const factory = new ethers.ContractFactory(
-        compiledContracts.KingGenesisNFT.abi,
-        compiledContracts.KingGenesisNFT.bytecode,
-        signer
-      );
-
-      const contract = await factory.deploy();
-      setMessage("Транзакция отправлена в блокчейн! Ожидание подтверждения блока...");
-      await contract.waitForDeployment();
-
-      const deployedAddr = await contract.getAddress();
-      setNftAddress(deployedAddr);
-      localStorage.setItem("kots_nft_address", deployedAddr);
-      setMessage(`🎉 УСПЕШНО! Genesis NFT контракт развернут на ${networkName}: ${deployedAddr}`);
-    } catch (err: any) {
-      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
-        setError("Транзакция была отклонена в кошельке.");
-      } else {
-        setError(err.message || "NFT deployment failed");
-      }
-    } finally {
-      setIsDeployingNFT(false);
-    }
-  };
-
-  const airdropToHoku = async () => {
-    setError(null);
-    setMessage(null);
-
-    const eth = getEthereumProvider();
-    if (!eth) {
-      setError("Кошелек не найден.");
-      return;
-    }
-
-    if (!nftAddress && !tokenAddress) {
-      setError("Сначала разверните контракт токена $KOTS или NFT выше!");
-      return;
-    }
-
-    try {
-      const provider = new ethers.BrowserProvider(eth);
-      const signer = await provider.getSigner();
-
-      const hokuEvmWallet = "0x36f1bba134797da5ec5caf9ed4634903980ca305";
-      setIsAirdropping(true);
-
-      if (nftAddress) {
-        setMessage("Минтим Genesis NFT #1 на адрес Короля...");
-        const nftContract = new ethers.Contract(nftAddress, compiledContracts.KingGenesisNFT.abi, signer);
-        const tx = await nftContract.mintGenesisRelic(hokuEvmWallet, "https://king-of-the-screen.vercel.app/api/nft/1");
-        await tx.wait();
-        setMessage(`🎉 Genesis NFT #1 успешно заминчен! TxHash: ${tx.hash}`);
-      }
-
-      if (tokenAddress) {
-        setMessage("Переводим 25,000 $KOTS на адрес Короля...");
-        const tokenContract = new ethers.Contract(tokenAddress, compiledContracts.KingToken.abi, signer);
-        const amount = ethers.parseEther("25000");
-        const tx = await tokenContract.transfer(hokuEvmWallet, amount);
-        await tx.wait();
-        setMessage(`🎉 25,000 $KOTS успешно зачислены Королю! TxHash: ${tx.hash}`);
-      }
-    } catch (err: any) {
-      if (err.code === 4001 || err.message?.includes("rejected") || err.message?.includes("denied")) {
-        setError("Транзакция отправки наград была отклонена в кошельке.");
-      } else {
-        setError(err.message || "Airdrop execution failed");
-      }
-    } finally {
-      setIsAirdropping(false);
-    }
-  };
-
-  // LOCKED STATE: RESTRICTED ACCESS SCREEN
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-[#08080c] text-white flex items-center justify-center p-4 font-mono">
-        <div className="w-full max-w-md bg-[#111119] border-2 border-red-500/60 rounded-2xl p-6 sm:p-8 space-y-5 shadow-[0_0_40px_rgba(239,68,68,0.25)]">
-          <div className="text-center space-y-2">
-            <div className="inline-flex p-3 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 mb-1">
-              <Lock className="w-8 h-8" />
-            </div>
-            <h1 className="text-xl font-black tracking-tight text-white">
-              RESTRICTED ACCESS
-            </h1>
-            <p className="text-xs text-gray-400">
-              King of the Screen Master Control & Smart Contract Deployer.
-            </p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4 pt-2">
-            <div>
-              <label className="block text-xs font-bold text-gray-300 mb-1.5 flex items-center gap-1">
-                <KeyRound className="w-3.5 h-3.5 text-yellow-400" />
-                <span>ENTER MASTER ADMIN PASSWORD</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  placeholder="Master Passphrase..."
-                  required
-                  className="w-full bg-black/80 border border-cyber-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-red-500 font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3.5 text-gray-500 hover:text-white"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="p-3 bg-red-950/80 border border-red-500 text-red-300 text-xs rounded-xl flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 flex-shrink-0 text-red-400" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black text-xs rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all uppercase tracking-wider flex items-center justify-center gap-2"
-            >
-              <Zap className="w-4 h-4 fill-white" />
-              <span>UNLOCK OWNER CONSOLE</span>
-            </button>
-          </form>
-
-          <div className="text-center pt-2">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-yellow-400 transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Return to Public Broadcast</span>
-            </Link>
-          </div>
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="bg-[#111119] p-8 rounded-2xl border-2 border-red-500/50 max-w-sm w-full space-y-4">
+          <h2 className="text-xl font-bold text-red-500 flex items-center gap-2">
+            <ShieldAlert /> ADMIN LOGIN
+          </h2>
+          <input 
+            type="password" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter secure password"
+            className="w-full bg-black border border-red-500/30 rounded-lg px-4 py-2 text-white"
+            onKeyDown={(e) => {
+               if (e.key === 'Enter' && password === HARDCODED_PASS) setIsAuthenticated(true);
+            }}
+          />
+          <button 
+            onClick={() => password === HARDCODED_PASS && setIsAuthenticated(true)}
+            className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg"
+          >
+            ENTER COMMAND CENTER
+          </button>
         </div>
-      </main>
+      </div>
     );
   }
 
-  // UNLOCKED STATE: FULL ADMIN DASHBOARD
   return (
-    <main className="min-h-screen bg-[#08080c] text-white p-4 sm:p-8 font-mono">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Navigation */}
-        <div className="flex items-center justify-between border-b border-cyber-border/80 pb-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-yellow-400 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Live Broadcast</span>
-          </Link>
-
-          <div className="flex items-center gap-3">
-            {account ? (
-              <span className="text-xs px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full font-bold">
-                {networkName}: {account.slice(0, 6)}...{account.slice(-4)}
-              </span>
-            ) : (
-              <button
-                onClick={connectWallet}
-                className="text-xs px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold transition-colors flex items-center gap-1.5"
-              >
-                <Wallet className="w-3.5 h-3.5" />
-                <span>Connect Wallet</span>
-              </button>
-            )}
-
-            <button
-              onClick={handleLogout}
-              className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg border border-cyber-border transition-colors"
-              title="Lock Console / Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Title */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black text-yellow-400 flex items-center gap-2">
-            <ShieldAlert className="w-8 h-8 text-yellow-400" />
-            <span>COMMAND CENTER & ON-CHAIN DEPLOYER</span>
+    <main className="min-h-screen bg-black text-gray-200 p-4 sm:p-8 font-sans selection:bg-yellow-500/30">
+      <div className="max-w-4xl mx-auto space-y-8">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-cyber-border pb-4">
+          <h1 className="text-2xl font-black text-yellow-400 flex items-center gap-2">
+            <Zap className="text-yellow-400" />
+            SENTINEL COMMAND CENTER
           </h1>
-          <p className="text-xs text-gray-400">
-            Deploy real $KOTS tokens and 1-of-25 Genesis NFTs to BNB Chain / Base / EVM in 1 click.
-          </p>
+          <div className="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/40 animate-pulse">
+            SYSTEM ONLINE & MONITORING
+          </div>
         </div>
 
-        {/* Status Messages */}
-        {message && (
-          <div className="p-4 bg-emerald-950/80 border border-emerald-500 text-emerald-300 text-xs rounded-xl flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-emerald-400" />
-            <span className="break-all font-bold">{message}</span>
+        {/* Wallets Status */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[#111119] p-5 rounded-xl border border-gray-800">
+            <h3 className="text-sm font-bold text-gray-400 mb-2 flex items-center gap-2">
+              <Wallet className="w-4 h-4" /> 1. ТРЕЖЕРИ (КАЗНА - ВАША ПРИБЫЛЬ 80%)
+            </h3>
+            <p className="font-mono text-xs text-emerald-400 break-all">7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU</p>
+            <p className="text-[11px] text-gray-500 mt-2">Сюда автоматически улетают 80% от всех оплат. Это ваша чистая прибыль. Ничего делать не нужно.</p>
           </div>
-        )}
-        {error && (
-          <div className="p-4 bg-red-950/80 border border-red-500 text-red-300 text-xs rounded-xl flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 flex-shrink-0 text-red-400" />
-            <span className="break-all">{error}</span>
+          <div className="bg-[#111119] p-5 rounded-xl border border-gray-800">
+            <h3 className="text-sm font-bold text-gray-400 mb-2 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-yellow-500" /> 2. ГОРЯЧИЙ КОШЕЛЕК (ДЛЯ ПАМПА 20%)
+            </h3>
+            <p className="font-mono text-xs text-yellow-500 break-all">AahUkkoX21nkqkD3xnQUvsCcxQYbS9ajB2uurStj31xr</p>
+            <p className="text-[11px] text-gray-500 mt-2">Сюда автоматически улетают 20% от оплат. С этих денег вы откупаете $KOTS на Pump.fun для передачи Королю.</p>
           </div>
-        )}
+        </div>
 
-        {/* WEB3 ON-CHAIN SMART CONTRACT DEPLOYMENT CARD */}
-        <div className="bg-[#111119] border-2 border-yellow-500/60 rounded-2xl p-5 sm:p-6 space-y-5 shadow-2xl">
-          <div className="border-b border-cyber-border pb-3">
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Zap className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-              <span>1-CLICK ON-CHAIN ASSETS DEPLOYMENT ({networkName.toUpperCase()})</span>
+        {/* Action Queue */}
+        <div className="bg-[#111119] border-2 border-red-500/40 rounded-2xl p-6 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <Bell className="text-red-500" /> 
+              ОЖИДАЮТ ВАШЕГО ДЕЙСТВИЯ (ОЧЕРЕДЬ)
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Gas fee on {networkName}: ~$0.15 - $0.25 per contract.
-            </p>
+            <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              {queue.length} PENDING
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* 1. $KOTS Token (ERC-20 / BEP-20) */}
-            <div className="bg-black/60 border border-cyber-border rounded-xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-yellow-400 flex items-center gap-1.5">
-                  <Coins className="w-4 h-4 text-yellow-400" />
-                  <span>$KOTS TOKEN (BEP-20 / ERC-20)</span>
-                </span>
-                <span className="text-[10px] text-gray-500">1,000,000,000 Cap</span>
-              </div>
-
-              <p className="text-[11px] text-gray-400 leading-relaxed">
-                Deploys the official King of the Screen contract with 1 billion supply minted to your wallet on {networkName}.
-              </p>
-
-              {tokenAddress ? (
-                <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-lg text-[11px]">
-                  <span className="text-emerald-400 font-bold block">✓ DEPLOYED ON-CHAIN:</span>
-                  <span className="font-mono text-gray-300 break-all text-[10px]">{tokenAddress}</span>
+          {queue.length === 0 ? (
+            <div className="text-center py-10 text-gray-500 flex flex-col items-center">
+              <CheckCircle2 className="w-12 h-12 mb-3 text-gray-700" />
+              <p>Очередь пуста. Вы можете отдыхать.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {queue.map((q, idx) => (
+                <div key={idx} className="bg-red-950/30 border border-red-500/50 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                     <div>
+                       <h4 className="text-red-400 font-bold text-sm flex items-center gap-2">
+                         <AlertTriangle className="w-4 h-4" /> 
+                         НОВЫЙ КОРОЛЬ: {q.nickname}
+                       </h4>
+                       <p className="text-xs text-gray-400 mt-1">Оплатил: <strong className="text-white">${q.paidUsd} USD</strong></p>
+                     </div>
+                     <span className="text-[10px] bg-red-900/50 text-red-300 px-2 py-1 rounded">ACTION REQUIRED</span>
+                  </div>
+                  
+                  <div className="bg-black/50 p-3 rounded-lg border border-red-900/50">
+                    <p className="text-xs text-gray-300 mb-2"><strong>Что вам нужно сделать ПРЯМО СЕЙЧАС:</strong></p>
+                    <ol className="text-xs text-gray-400 space-y-1 list-decimal list-inside">
+                      <li>Возьмите 20% от этой суммы (<strong className="text-emerald-400">${q.paidUsd * 0.20} USD</strong>).</li>
+                      <li>Зайдите на Pump.fun и купите монету <strong>KOTS</strong> на эту сумму.</li>
+                      <li>Отправьте все купленные токены на кошелек этого Короля: <br/><strong className="text-yellow-400 font-mono break-all">{q.rewardWallet}</strong></li>
+                    </ol>
+                  </div>
+                  
+                  <button onClick={() => alert('Пока монета на Pump.fun, вы должны вручную удалить эту запись из /analytics/airdrop_queue.jsonl на сервере после отправки, либо просто игнорируйте эту панель после выполнения.')} className="w-full text-xs font-bold text-red-400 border border-red-500/30 hover:bg-red-500/10 py-2 rounded-lg transition-colors">
+                    ПОМЕТИТЬ КАК ВЫПОЛНЕННОЕ
+                  </button>
                 </div>
-              ) : (
-                <button
-                  onClick={deployToken}
-                  disabled={isDeployingToken}
-                  className="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]"
-                >
-                  {isDeployingToken ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Coins className="w-4 h-4" />}
-                  <span>DEPLOY $KOTS TOKEN</span>
-                </button>
-              )}
+              ))}
             </div>
-
-            {/* 2. Genesis 1-of-25 NFT (ERC-721 / BEP-721) */}
-            <div className="bg-black/60 border border-cyber-border rounded-xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-purple-400 flex items-center gap-1.5">
-                  <Gem className="w-4 h-4 text-purple-400" />
-                  <span>GENESIS 1-OF-25 NFT</span>
-                </span>
-                <span className="text-[10px] text-gray-500">Max 25 Relics</span>
-              </div>
-
-              <p className="text-[11px] text-gray-400 leading-relaxed">
-                Deploys the official NFT smart contract connected to our dynamic metadata endpoint.
-              </p>
-
-              {nftAddress ? (
-                <div className="p-2.5 bg-emerald-950/40 border border-emerald-500/40 rounded-lg text-[11px]">
-                  <span className="text-emerald-400 font-bold block">✓ DEPLOYED ON-CHAIN:</span>
-                  <span className="font-mono text-gray-300 break-all text-[10px]">{nftAddress}</span>
-                </div>
-              ) : (
-                <button
-                  onClick={deployNFT}
-                  disabled={isDeployingNFT}
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-black text-xs rounded-xl transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-                >
-                  {isDeployingNFT ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Gem className="w-4 h-4" />}
-                  <span>DEPLOY GENESIS NFT CONTRACT</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 3. Airdrop Trigger to King #1 (Hoku) */}
-          <div className="p-4 bg-gradient-to-r from-yellow-950/50 to-purple-950/50 border border-yellow-500/50 rounded-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black text-yellow-300 flex items-center gap-1.5">
-                <Send className="w-4 h-4 text-yellow-400" />
-                <span>MINT & DISPATCH REAL ON-CHAIN ASSETS TO KING #1 (HOKU)</span>
-              </span>
-              <span className="text-[10px] px-2 py-0.5 bg-yellow-500/20 text-yellow-300 rounded font-bold">
-                1-CLICK DISPATCH
-              </span>
-            </div>
-
-            <p className="text-xs text-gray-300">
-              Sends <strong>25,000 $KOTS</strong> and mints <strong>Genesis Relic NFT #1</strong> directly to the King's wallet on {networkName}!
-            </p>
-
-            <button
-              onClick={airdropToHoku}
-              disabled={isAirdropping}
-              className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 text-black font-black text-xs rounded-xl shadow-[0_0_20px_rgba(160,185,129,0.4)] flex items-center justify-center gap-2 transition-all"
-            >
-              {isAirdropping ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>TRANSACTING ON {networkName.toUpperCase()}...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 fill-black" />
-                  <span>EXECUTE ON-CHAIN AIRDROP TO HOKU</span>
-                </>
-              )}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </main>
