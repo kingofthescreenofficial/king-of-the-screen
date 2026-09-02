@@ -22,7 +22,7 @@ function normalizeUrl(url?: string): string | undefined {
   return `https://${trimmed}`;
 }
 
-function logTelemetry(type, event, details) {
+function logTelemetry(type: string, event: string, details: any) {
   try {
     const logDir = path.join(process.cwd(), "analytics");
     if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
