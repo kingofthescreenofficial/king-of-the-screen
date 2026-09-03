@@ -121,6 +121,19 @@ export function closeDatabaseForTests(): void {
   connection = null;
 }
 
+export function withImmediateTransaction<T>(operation: (database: Database.Database) => T): T {
+  const database = getDatabase();
+  database.exec("BEGIN IMMEDIATE");
+  try {
+    const result = operation(database);
+    database.exec("COMMIT");
+    return result;
+  } catch (error) {
+    database.exec("ROLLBACK");
+    throw error;
+  }
+}
+
 export function readAuctionState(): AppState | null {
   const row = getDatabase().prepare("SELECT state_json FROM auction_state WHERE id = 1").get() as { state_json: string } | undefined;
   return row ? JSON.parse(row.state_json) as AppState : null;
@@ -148,6 +161,56 @@ export function writeTelemetryPageView(pagePath: string): void {
   getDatabase().prepare(
     "INSERT INTO telemetry (event_type, path, created_at, updated_at) VALUES (?, ?, ?, ?)",
   ).run("PAGE_VIEW", pagePath, now, now);
+}
+
+type LegacyTelemetryEntry = {
+  timestamp?: unknown;
+  type?: unknown;
+  event?: unknown;
+  details?: { path?: unknown };
+};
+
+function isLegacyPageView(entry: LegacyTelemetryEntry): entry is LegacyTelemetryEntry & { details: { path: string } } {
+  return entry.type === "USER"
+    && entry.event === "PAGE_VIEW"
+    && typeof entry.details?.path === "string"
+    && entry.details.path.startsWith("/")
+    && entry.details.path.length <= 200;
+}
+
+export function importLegacyTelemetry(filePath: string): number {
+  const database = getDatabase();
+  const migrationKey = "legacy_telemetry_v1_imported";
+  const completed = database.prepare("SELECT value FROM settings WHERE key = ?").get(migrationKey);
+  if (completed || !fs.existsSync(filePath)) return 0;
+
+  const insert = database.prepare(
+    "INSERT INTO telemetry (event_type, path, created_at, updated_at) VALUES (?, ?, ?, ?)",
+  );
+  const markCompleted = database.prepare(
+    "INSERT INTO settings (key, value, created_at, updated_at) VALUES (?, ?, ?, ?)",
+  );
+
+  return withImmediateTransaction(() => {
+    let count = 0;
+    for (const line of fs.readFileSync(filePath, "utf-8").split("\n")) {
+      if (!line.trim()) continue;
+      try {
+        const entry = JSON.parse(line) as LegacyTelemetryEntry;
+        if (!isLegacyPageView(entry)) continue;
+        const parsedTime = typeof entry.timestamp === "string" ? Date.parse(entry.timestamp) : Number.NaN;
+        const createdAt = Number.isFinite(parsedTime) ? parsedTime : Date.now();
+        insert.run("PAGE_VIEW", entry.details.path, createdAt, createdAt);
+        count += 1;
+      } catch {
+        // Invalid historical records are not imported.
+      }
+    }
+    const now = Date.now();
+    markCompleted.run(migrationKey, "true", now, now);
+    return count;
+  });
+
 }
 
 export function touchActiveSession(sessionId: string): void {

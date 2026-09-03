@@ -14,8 +14,8 @@
 | 1 | Establish engineering baseline | completed | 2026-09-03 | 2026-09-03 | Deterministic lint, typecheck, Vitest coverage, Playwright desktop/mobile E2E and Node 20 CI added. |
 | 2 | Freeze unsafe surfaces | completed | 2026-09-03 | 2026-09-03 | Paid takeovers paused; public operational routes closed; emergency release verified live. |
 | 3 | Simplify dependency surface | completed | 2026-09-03 | 2026-09-03 | Removed inactive wallet runtime and EVM dependency while paid takeovers remain paused. |
-| 4 | Build durable persistence | in_progress | 2026-09-03 | — | SQLite WAL schema, state repository and legacy import are in place. |
-| 5 | Create payment intents | pending | — | — | — |
+| 4 | Build durable persistence | completed | 2026-09-03 | 2026-09-03 | SQLite WAL schema, state repository, one-time safe legacy imports, consistent backup/restore and writer-contention tests are in place. |
+| 5 | Create payment intents | in_progress | 2026-09-03 | — | Public endpoint remains closed. Only the disabled response contract exists. |
 | 6 | Verify Solana payments | pending | — | — | — |
 | 7 | Enforce auction consistency | pending | — | — | — |
 | 8 | Secure administrative access | pending | — | — | — |
@@ -32,8 +32,8 @@
 
 - Build: pass locally and on the VPS; broad-wallet warnings deferred to phase 3
 - Typecheck: pass
-- Lint: pass with 89 inherited warnings and zero errors
-- Tests: pass, 12 Vitest assertions and desktop/mobile Playwright smoke coverage
+- Lint: pass with 55 inherited warnings and zero errors
+- Tests: pass, 18 Vitest assertions and desktop/mobile Playwright smoke coverage
 
 ## Notable events
 
@@ -52,6 +52,8 @@
 - 2026-09-03 — Phase 3 complete. Wallet adapters, WalletConnect and `ethers` were removed from the paused public release. Next 16 build, desktop/mobile E2E and production audit no longer report high or critical advisories.
 - 2026-09-03 — Phase 4 started. SQLite WAL database is now the authority for auction state. The legacy state file is imported once on first initialization; database integration tests verify WAL mode, schema and idempotent import.
 - 2026-09-03 — SQLite was deployed to the VPS after backup `sqlite-20260903T201015Z`. The web process restarted successfully, Sentinel remained online, public state returned 200, takeover remained 503, and the database contains one imported auction state row with mode 600.
+- 2026-09-03 — Phase 4 complete. Legacy JSONL import keeps only validated page views; all other historical events are discarded. Backup and restore tests use a SQLite-consistent snapshot, and a second OS process receives `SQLITE_BUSY` while an immediate write transaction is held.
+- 2026-09-03 — Phase 5 started with a closed `POST /api/payment-intents` contract. It returns `503 PAYMENTS_DISABLED` until the explicit payment-activation decision.
 
 ## Failure log
 

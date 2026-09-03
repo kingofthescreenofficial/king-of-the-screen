@@ -1,5 +1,5 @@
 import path from "path";
-import { importLegacyAuctionState, readAuctionState, writeAuctionState } from "./database";
+import { importLegacyAuctionState, importLegacyTelemetry, readAuctionState, writeAuctionState } from "./database";
 import { calculateNextPrice } from "./pricing";
 import { AppState, King } from "./types";
 
@@ -7,6 +7,7 @@ export { calculateNextPrice } from "./pricing";
 
 const SEED_FILE = path.join(process.cwd(), "data", "state.json");
 const LEGACY_PRODUCTION_FILE = path.join("/tmp", "state.json");
+const LEGACY_TELEMETRY_FILE = path.join(process.cwd(), "analytics", "telemetry.jsonl");
 
 export const DEFAULT_STATE: AppState = {
   currentKing: {
@@ -67,6 +68,7 @@ export function getAppState(): AppState {
   }
 
   try {
+    importLegacyTelemetry(LEGACY_TELEMETRY_FILE);
     const durableState = readAuctionState();
     if (durableState) {
       memoryState = durableState;
