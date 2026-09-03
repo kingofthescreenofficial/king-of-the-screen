@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { WalletContextProvider } from "../components/WalletContextProvider";
 import { TelemetryTracker } from "../components/TelemetryTracker";
 
 export const metadata: Metadata = {
@@ -22,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#08080c] text-gray-100 selection:bg-yellow-500 selection:text-black">
-        <WalletContextProvider><TelemetryTracker />{children}</WalletContextProvider>
+        <TelemetryTracker />{children}
       </body>
     </html>
   );

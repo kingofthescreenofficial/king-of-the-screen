@@ -12,27 +12,10 @@ import { LiveAudio } from "@/components/LiveAudio";
 import { ShareCard } from "@/components/ShareCard";
 import { LiveViewerBadge } from "@/components/LiveViewerBadge";
 import { LegalModal } from "@/components/LegalModal";
-import { Crown, Flame, Info, Smartphone } from "lucide-react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { Crown, Flame } from "lucide-react";
 
 export default function HomePage() {
-    const { publicKey } = useWallet();
   const [state, setState] = useState<PublicAppState | null>(null);
-  const [isMobileExternal, setIsMobileExternal] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const hasSolana = typeof window !== 'undefined' && ('solana' in window || 'phantom' in window);
-    if (isMobile && !hasSolana) {
-      setIsMobileExternal(true);
-    }
-    if (!localStorage.getItem('kots_storage_ok')) {
-      setShowStorageBanner(true);
-    }
-  }, []);
   const [isTakeoverOpen, setIsTakeoverOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState<"TOS" | "DISCLAIMER" | "DMCA" | "PRIVACY">("TOS");
@@ -40,8 +23,11 @@ export default function HomePage() {
   const [lastEventId, setLastEventId] = useState<string | null>(null);
   const lastStateHashRef = useRef<string>("");
 
-  
-
+  useEffect(() => {
+    if (!localStorage.getItem('kots_storage_ok')) {
+      setShowStorageBanner(true);
+    }
+  }, []);
 
   // Poll state every 2.5s for instant sync
   const fetchState = async () => {
@@ -123,20 +109,6 @@ export default function HomePage() {
               <span>{state.capabilities.paidTakeoverEnabled ? "CLAIM THRONE" : "TAKEOVERS PAUSED"}</span>
             </button>
             
-            {/* Global Wallet Connect */}
-            {mounted && isMobileExternal ? (
-              <a 
-                href="https://phantom.app/ul/browse/https%3A%2F%2Fkingofthescreen.fun?ref=https%3A%2F%2Fkingofthescreen.fun"
-                className="flex items-center justify-center transition-all hover:bg-purple-500 active:scale-95 px-5"
-                style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "14px", fontWeight: "bold", color: "white", textDecoration: "none" }}
-              >
-                CONNECT WALLET
-              </a>
-            ) : (
-              <WalletMultiButton style={{ backgroundColor: "#8b5cf6", border: "2px solid #a855f7", height: "48px", borderRadius: "12px", fontSize: "14px", fontWeight: "bold", padding: "0 20px" }}>
-                {!publicKey ? "CONNECT WALLET" : undefined}
-              </WalletMultiButton>
-            )}
           </div>
         </header>
 

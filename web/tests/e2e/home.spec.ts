@@ -1,19 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("home page", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.route("**/*", async (route) => {
-      const url = route.request().url();
-
-      if (url.startsWith("http://127.0.0.1:3100")) {
-        await route.continue();
-        return;
-      }
-
-      await route.abort();
-    });
-  });
-
   test("renders the current King of the Screen experience", async ({ page }) => {
     await page.goto("/");
 

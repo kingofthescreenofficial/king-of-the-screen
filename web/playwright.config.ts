@@ -4,7 +4,8 @@ const port = 3100;
 const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
-  fullyParallel: true,
+  fullyParallel: false,
+  workers: 1,
   testDir: "./tests/e2e",
   timeout: 30_000,
   use: {
