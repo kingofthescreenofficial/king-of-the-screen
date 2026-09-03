@@ -49,6 +49,7 @@
 - 2026-09-03 — Phase 2 complete. Emergency release backup `emergency-20260903T124156Z` was created before deployment. Live state returned 200; takeover returned 503 `PAYMENTS_DISABLED`; admin dashboard, telemetry deletion and takedown returned 401; the public state fingerprint did not change. Sentinel was not restarted.
 - 2026-09-03 — The initial VPS build was blocked by AppleDouble `._*` metadata copied from macOS. Those exact metadata files were removed, the retry build exited 0, and the web process restarted successfully. `.gitignore` now prevents recurrence.
 - 2026-09-03 — Node 20 lockfile reproducibility verified with `npm@10.8.2 ci --dry-run --legacy-peer-deps`; the local and VPS lockfile hashes match.
+- 2026-09-03 — User requires every production deployment to be paired with an immediate GitHub push. Before phase 10 reward processing and phase 11 NFT issuance, agree the token and NFT accrual mathematics with the user.
 
 ## Failure log
 
