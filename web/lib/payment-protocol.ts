@@ -83,12 +83,17 @@ function verifyChallenge(challengeId: string, walletAddress: string, signature: 
       format: "der",
       type: "spki",
     }, Buffer.from(bs58.decode(signature)));
-    if (!verified) return false;
-    getDatabase().prepare("UPDATE wallet_challenges SET used_at = ?, updated_at = ? WHERE id = ? AND used_at IS NULL").run(now, now, challengeId);
-    return true;
+    return verified;
   } catch {
     return false;
   }
+}
+
+function consumeChallenge(challengeId: string, now: number): boolean {
+  const result = getDatabase().prepare(
+    "UPDATE wallet_challenges SET used_at = ?, updated_at = ? WHERE id = ? AND used_at IS NULL",
+  ).run(now, now, challengeId);
+  return result.changes === 1;
 }
 
 function quoteToLamports(priceUsdCents: number, solUsdCents: number): number {
@@ -133,6 +138,7 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
     const database = getDatabase();
     const activeIntent = database.prepare("SELECT id FROM payment_intents WHERE status = 'RESERVED' AND expires_at > ? AND cancelled_at IS NULL LIMIT 1").get(now);
     if (activeIntent) throw new Error("AUCTION_RESERVED");
+    if (!consumeChallenge(request.challengeId, now)) throw new Error("INVALID_WALLET_CHALLENGE");
 
     const totalLamports = quoteToLamports(request.quote.priceUsdCents, request.quote.solUsdCents);
     const treasuryLamports = Math.floor(totalLamports * 0.8);

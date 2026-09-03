@@ -70,6 +70,13 @@ describe("payment intent protocol", () => {
     expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM payment_intents").get()).toEqual({ count: 1 });
   });
 
+  it("rejects a signature produced by another wallet", () => {
+    const fixture = requestFixture(1_000);
+    fixture.request.signature = walletFixture().sign(fixture.challenge.message);
+    expect(() => createPaymentIntent(fixture.request)).toThrow("INVALID_WALLET_CHALLENGE");
+    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM payment_intents").get()).toEqual({ count: 0 });
+  });
+
   it("expires reservations after 90 seconds", () => {
     const first = requestFixture(1_000);
     createPaymentIntent(first.request);
