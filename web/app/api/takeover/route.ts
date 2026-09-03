@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { executeDethronement, getAppState } from "@/lib/state";
 import { moderateContent } from "@/lib/moderation";
 import { verifyEvmTransaction, verifySolanaTransaction, sanitizeTxHash } from "@/lib/blockchain";
+import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
 
 
 function normalizeUrl(url?: string): string | undefined {
@@ -32,6 +33,16 @@ function logTelemetry(type: string, event: string, details: any) {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isPaidTakeoverEnabled()) {
+    return NextResponse.json(
+      {
+        code: "PAYMENTS_DISABLED",
+        error: "Paid takeovers are temporarily paused.",
+      },
+      { status: 503 },
+    );
+  }
+
   try {
     const body = await req.json();
     const {

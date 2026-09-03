@@ -1,6 +1,9 @@
 import fs from "fs";
 import path from "path";
+import { calculateNextPrice } from "./pricing";
 import { AppState, King } from "./types";
+
+export { calculateNextPrice } from "./pricing";
 
 const DATA_FILE = process.env.NODE_ENV === "production"
   ? path.join("/tmp", "state.json")
@@ -96,16 +99,6 @@ export function saveAppState(state: AppState): void {
     fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2), "utf-8");
   } catch (error) {
     console.warn("Notice: Saved to memory state (read-only disk fallback)");
-  }
-}
-
-export function calculateNextPrice(currentPriceUsd: number): number {
-  if (currentPriceUsd < 10) {
-    return currentPriceUsd + 1;
-  } else if (currentPriceUsd < 100) {
-    return currentPriceUsd + 5;
-  } else {
-    return Math.round(currentPriceUsd * 1.10); // +10% exactly to hit $1,059,358 at 100 Kings
   }
 }
 

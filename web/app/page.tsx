@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { AppState } from "@/lib/types";
+import { PublicAppState } from "@/lib/types";
 import { TheScreen } from "@/components/TheScreen";
 import { ConceptHero } from "@/components/ConceptHero";
 import { TokenBanner } from "@/components/TokenBanner";
@@ -18,7 +18,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function HomePage() {
     const { publicKey } = useWallet();
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<PublicAppState | null>(null);
   const [isMobileExternal, setIsMobileExternal] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -48,7 +48,7 @@ export default function HomePage() {
     try {
       const res = await fetch("/api/state", { cache: "no-store" });
       if (res.ok) {
-        const data: AppState = await res.json();
+        const data: PublicAppState = await res.json();
         const stateHash = `${data.currentKing.id}_${data.stats.totalRaisedUsd}_${data.nextMinPriceUsd}_${data.hallOfFame.length}`;
 
         if (stateHash !== lastStateHashRef.current) {
@@ -120,7 +120,7 @@ export default function HomePage() {
               className="bg-yellow-500 hover:bg-yellow-400 text-black font-black px-4 h-12 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_15px_rgba(234,179,8,0.5)] transition-colors"
             >
               <Flame className="w-4 h-4 fill-black" />
-              <span>CLAIM THRONE</span>
+              <span>{state.capabilities.paidTakeoverEnabled ? "CLAIM THRONE" : "TAKEOVERS PAUSED"}</span>
             </button>
             
             {/* Global Wallet Connect */}
@@ -244,8 +244,9 @@ export default function HomePage() {
         onClose={() => setIsTakeoverOpen(false)}
         nextMinPriceUsd={state.nextMinPriceUsd}
         walletConfig={state.walletConfig}
+        paymentsEnabled={state.capabilities.paidTakeoverEnabled}
         onSuccess={(updatedState) => {
-          setState(updatedState);
+          setState({ ...updatedState, capabilities: state.capabilities });
         }}
       />
 

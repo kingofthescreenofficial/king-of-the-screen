@@ -21,3 +21,10 @@ yarn-error.log*
 # OS files
 .DS_Store
 *.pem
+
+# TypeScript build metadata and test artifacts
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+web/analytics/

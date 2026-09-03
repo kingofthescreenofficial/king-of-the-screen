@@ -51,3 +51,9 @@ export interface AppState {
   };
   tokenConfig?: TokenConfig;
 }
+
+export interface PublicAppState extends AppState {
+  capabilities: {
+    paidTakeoverEnabled: boolean;
+  };
+}

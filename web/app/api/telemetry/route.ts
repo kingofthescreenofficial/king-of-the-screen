@@ -1,31 +1,47 @@
-import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { NextResponse } from "next/server";
+
+const MAX_PATH_LENGTH = 200;
+
+function isAllowedPageView(body: unknown): body is { type: "USER"; event: "PAGE_VIEW"; details: { path: string } } {
+  if (!body || typeof body !== "object") return false;
+  const value = body as Record<string, unknown>;
+  const details = value.details as Record<string, unknown> | undefined;
+
+  return value.type === "USER"
+    && value.event === "PAGE_VIEW"
+    && !!details
+    && typeof details.path === "string"
+    && details.path.startsWith("/")
+    && details.path.length <= MAX_PATH_LENGTH;
+}
 
 export async function POST(req: Request) {
-    try {
-        const body = await req.json();
-        const logEntry = {
-            timestamp: new Date().toISOString(),
-            type: body.type || 'SYSTEM', // 'USER' or 'SYSTEM'
-            event: body.event,
-            details: body.details || {}
-        };
-        const logDir = path.join(process.cwd(), "analytics");
-        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-        fs.appendFileSync(path.join(logDir, "telemetry.jsonl"), JSON.stringify(logEntry) + '\n');
-        return NextResponse.json({ success: true });
-    } catch (e) {
-        return NextResponse.json({ error: "Failed" }, { status: 500 });
+  try {
+    const body: unknown = await req.json();
+    if (!isAllowedPageView(body)) {
+      return NextResponse.json({ code: "INVALID_TELEMETRY", error: "Unsupported telemetry event." }, { status: 400 });
     }
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      type: body.type,
+      event: body.event,
+      details: { path: body.details.path },
+    };
+    const logDir = path.join(process.cwd(), "analytics");
+    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+    fs.appendFileSync(path.join(logDir, "telemetry.jsonl"), `${JSON.stringify(logEntry)}\n`);
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ code: "INVALID_TELEMETRY", error: "Invalid telemetry payload." }, { status: 400 });
+  }
 }
 
 export async function DELETE() {
-    try {
-        const logFile = path.join(process.cwd(), "analytics", "telemetry.jsonl");
-        if (fs.existsSync(logFile)) fs.writeFileSync(logFile, "");
-        return NextResponse.json({ success: true });
-    } catch (e) {
-        return NextResponse.json({ error: "Failed" }, { status: 500 });
-    }
+  return NextResponse.json(
+    { code: "ADMIN_AUTH_REQUIRED", error: "Admin access is temporarily unavailable." },
+    { status: 401 },
+  );
 }
