@@ -1,7 +1,7 @@
 # State: King of the Screen production hardening
 
 **Status:** IN_PROGRESS
-**Current phase:** 3
+**Current phase:** 4
 **Started:** 2026-09-03
 **Last update:** 2026-09-03
 **Run root:** .supergoal/production-hardening-king-of-the-screen-T6f8XH
@@ -13,9 +13,8 @@
 |---|-------|--------|---------|-----------|-------|
 | 1 | Establish engineering baseline | completed | 2026-09-03 | 2026-09-03 | Deterministic lint, typecheck, Vitest coverage, Playwright desktop/mobile E2E and Node 20 CI added. |
 | 2 | Freeze unsafe surfaces | completed | 2026-09-03 | 2026-09-03 | Paid takeovers paused; public operational routes closed; emergency release verified live. |
-| 3 | Simplify dependency surface | in_progress | 2026-09-03 | — | Replace the broad wallet bundle and address runtime compatibility. |
-| 3 | Simplify dependency surface | pending | — | — | — |
-| 4 | Build durable persistence | pending | — | — | — |
+| 3 | Simplify dependency surface | completed | 2026-09-03 | 2026-09-03 | Removed inactive wallet runtime and EVM dependency while paid takeovers remain paused. |
+| 4 | Build durable persistence | in_progress | 2026-09-03 | — | SQLite WAL schema, state repository and legacy import are in place. |
 | 5 | Create payment intents | pending | — | — | — |
 | 6 | Verify Solana payments | pending | — | — | — |
 | 7 | Enforce auction consistency | pending | — | — | — |
@@ -50,6 +49,8 @@
 - 2026-09-03 — The initial VPS build was blocked by AppleDouble `._*` metadata copied from macOS. Those exact metadata files were removed, the retry build exited 0, and the web process restarted successfully. `.gitignore` now prevents recurrence.
 - 2026-09-03 — Node 20 lockfile reproducibility verified with `npm@10.8.2 ci --dry-run --legacy-peer-deps`; the local and VPS lockfile hashes match.
 - 2026-09-03 — User requires every production deployment to be paired with an immediate GitHub push. Before phase 10 reward processing and phase 11 NFT issuance, agree the token and NFT accrual mathematics with the user.
+- 2026-09-03 — Phase 3 complete. Wallet adapters, WalletConnect and `ethers` were removed from the paused public release. Next 16 build, desktop/mobile E2E and production audit no longer report high or critical advisories.
+- 2026-09-03 — Phase 4 started. SQLite WAL database is now the authority for auction state. The legacy state file is imported once on first initialization; database integration tests verify WAL mode, schema and idempotent import.
 
 ## Failure log
 
