@@ -168,6 +168,15 @@ function migrate(database: Database.Database): void {
     const [name] = column.split(" ");
     if (!existingColumns.has(name)) database.exec(`ALTER TABLE payment_intents ADD COLUMN ${column}`);
   }
+  const adminSessionColumns = ["token_hash TEXT", "csrf_token TEXT", "idle_expires_at INTEGER", "revoked_at INTEGER"];
+  const existingAdminColumns = new Set(
+    (database.prepare("PRAGMA table_info(admin_sessions)").all() as Array<{ name: string }>).map(({ name }) => name),
+  );
+  for (const column of adminSessionColumns) {
+    const [name] = column.split(" ");
+    if (!existingAdminColumns.has(name)) database.exec(`ALTER TABLE admin_sessions ADD COLUMN ${column}`);
+  }
+  database.exec("CREATE UNIQUE INDEX IF NOT EXISTS admin_sessions_token_hash ON admin_sessions(token_hash)");
 }
 
 export function getDatabase(): Database.Database {

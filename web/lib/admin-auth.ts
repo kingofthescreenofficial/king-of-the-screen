@@ -22,11 +22,26 @@ export function createAdminSession(now = Date.now()): { token: string; csrfToken
   const token = randomBytes(32).toString("base64url");
   const csrfToken = randomBytes(32).toString("base64url");
   const expiresAt = now + ABSOLUTE_MS;
-  getDatabase().prepare(`INSERT INTO admin_sessions (id, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?)`)
-    .run(JSON.stringify({ tokenHash: hash(token), csrfToken, idleExpiresAt: now + IDLE_MS }), expiresAt, now, now);
+  getDatabase().prepare(`INSERT INTO admin_sessions (id, token_hash, csrf_token, idle_expires_at, expires_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+    .run(randomBytes(16).toString("hex"), hash(token), csrfToken, now + IDLE_MS, expiresAt, now, now);
   return { token, csrfToken, expiresAt };
 }
 
 export function adminCookie(token: string, expiresAt: number): string {
   return `${COOKIE_NAME}=${token}; Path=/admin; HttpOnly; Secure; SameSite=Strict; Expires=${new Date(expiresAt).toUTCString()}`;
+}
+
+export function requireAdmin(request: Request, now = Date.now()): { sessionId: string; csrfToken: string } | null {
+  const cookie = request.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=([^;]+)`));
+  if (!cookie?.[1]) return null;
+  const session = getDatabase().prepare("SELECT id, csrf_token, idle_expires_at, expires_at, revoked_at FROM admin_sessions WHERE token_hash = ?")
+    .get(hash(cookie[1])) as { id: string; csrf_token: string; idle_expires_at: number; expires_at: number; revoked_at: number | null } | undefined;
+  if (!session || session.revoked_at || session.idle_expires_at < now || session.expires_at < now) return null;
+  getDatabase().prepare("UPDATE admin_sessions SET idle_expires_at = ?, updated_at = ? WHERE id = ?").run(now + IDLE_MS, now, session.id);
+  return { sessionId: session.id, csrfToken: session.csrf_token };
+}
+
+export function revokeAdminSession(request: Request, now = Date.now()): void {
+  const cookie = request.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=([^;]+)`));
+  if (cookie?.[1]) getDatabase().prepare("UPDATE admin_sessions SET revoked_at = ?, updated_at = ? WHERE token_hash = ?").run(now, now, hash(cookie[1]));
 }
