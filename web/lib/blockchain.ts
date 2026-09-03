@@ -5,9 +5,9 @@
  */
 
 import { getAppState } from "./state";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection } from "@solana/web3.js";
 
-const RPC_URL = "https://mainnet.helius-rpc.com/?api-key=3de7f4a5-c279-4ed6-8fd1-9609a0d6cc9c";
+const RPC_URL = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
 const solConnection = new Connection(RPC_URL, "confirmed");
 
 // In-Memory Fast Lookup Set
