@@ -100,7 +100,54 @@ function migrate(database: Database.Database): void {
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS wallet_challenges (
+      id TEXT PRIMARY KEY,
+      wallet_address TEXT NOT NULL,
+      nonce TEXT NOT NULL UNIQUE,
+      message TEXT NOT NULL,
+      expires_at INTEGER NOT NULL,
+      used_at INTEGER,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS payment_intent_attempts (
+      id TEXT PRIMARY KEY,
+      wallet_address TEXT NOT NULL,
+      source_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS payment_intent_attempts_wallet_created_at
+      ON payment_intent_attempts(wallet_address, created_at);
+    CREATE INDEX IF NOT EXISTS payment_intent_attempts_source_created_at
+      ON payment_intent_attempts(source_hash, created_at);
   `);
+
+  const paymentIntentColumns = [
+    "buyer_wallet TEXT",
+    "reward_wallet TEXT",
+    "content_digest TEXT",
+    "terms_version TEXT",
+    "price_usd_cents INTEGER",
+    "sol_usd_cents INTEGER",
+    "total_lamports INTEGER",
+    "treasury_lamports INTEGER",
+    "hot_wallet_lamports INTEGER",
+    "treasury_address TEXT",
+    "hot_wallet_address TEXT",
+    "nonce TEXT",
+    "expires_at INTEGER",
+    "price_version TEXT",
+    "serialized_transaction TEXT",
+    "cancelled_at INTEGER",
+  ];
+  const existingColumns = new Set(
+    (database.prepare("PRAGMA table_info(payment_intents)").all() as Array<{ name: string }>).map(({ name }) => name),
+  );
+  for (const column of paymentIntentColumns) {
+    const [name] = column.split(" ");
+    if (!existingColumns.has(name)) database.exec(`ALTER TABLE payment_intents ADD COLUMN ${column}`);
+  }
 }
 
 export function getDatabase(): Database.Database {

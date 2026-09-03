@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { GET as adminDashboard } from "@/app/api/admin/dashboard/route";
 import { GET as takedownGet, POST as takedownPost } from "@/app/api/admin/takedown/route";
 import { POST as createPaymentIntent } from "@/app/api/payment-intents/route";
+import { POST as createWalletChallenge } from "@/app/api/payment-intents/challenge/route";
 import { DELETE as deleteTelemetry, POST as postTelemetry } from "@/app/api/telemetry/route";
 import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
 
@@ -38,6 +39,16 @@ describe("emergency payment freeze", () => {
     delete process.env.PAID_TAKEOVER_ENABLED;
 
     const response = await createPaymentIntent();
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({ code: "PAYMENTS_DISABLED" });
+  });
+
+  it("closes wallet challenges while paid takeovers are paused", async () => {
+    delete process.env.PAID_TAKEOVER_ENABLED;
+    const response = await createWalletChallenge(new Request("http://localhost/api/payment-intents/challenge", {
+      method: "POST",
+      body: JSON.stringify({ walletAddress: "11111111111111111111111111111111" }),
+    }));
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({ code: "PAYMENTS_DISABLED" });
   });
