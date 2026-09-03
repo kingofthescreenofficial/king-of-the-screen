@@ -1,7 +1,7 @@
 # State: King of the Screen production hardening
 
 **Status:** IN_PROGRESS
-**Current phase:** 2
+**Current phase:** 3
 **Started:** 2026-09-03
 **Last update:** 2026-09-03
 **Run root:** .supergoal/production-hardening-king-of-the-screen-T6f8XH
@@ -12,7 +12,8 @@
 | # | Phase | Status | Started | Completed | Notes |
 |---|-------|--------|---------|-----------|-------|
 | 1 | Establish engineering baseline | completed | 2026-09-03 | 2026-09-03 | Deterministic lint, typecheck, Vitest coverage, Playwright desktop/mobile E2E and Node 20 CI added. |
-| 2 | Freeze unsafe surfaces | in_progress | 2026-09-03 | — | Payment pause, endpoint closure and minimal emergency release. |
+| 2 | Freeze unsafe surfaces | completed | 2026-09-03 | 2026-09-03 | Paid takeovers paused; public operational routes closed; emergency release verified live. |
+| 3 | Simplify dependency surface | in_progress | 2026-09-03 | — | Replace the broad wallet bundle and address runtime compatibility. |
 | 3 | Simplify dependency surface | pending | — | — | — |
 | 4 | Build durable persistence | pending | — | — | — |
 | 5 | Create payment intents | pending | — | — | — |
@@ -30,10 +31,10 @@
 
 ## Engineering check status
 
-- Build: pass through production-build E2E, with known broad-wallet warnings deferred to phase 3
+- Build: pass locally and on the VPS; broad-wallet warnings deferred to phase 3
 - Typecheck: pass
 - Lint: pass with 89 inherited warnings and zero errors
-- Tests: pass, 8 Vitest assertions and desktop/mobile Playwright smoke coverage
+- Tests: pass, 12 Vitest assertions and desktop/mobile Playwright smoke coverage
 
 ## Notable events
 
@@ -45,6 +46,9 @@
 - 2026-09-03 — User approved local code changes, emergency safety release, feature-branch push and staged VPS hardening. Payment activation and wallet asset movement remain out of scope.
 - 2026-09-03 — Pre-flight red: `npm run lint` is interactive; `typecheck`, `test`, `test:coverage` and `test:e2e` scripts are absent. These failures are phase-1 scope, so execution proceeds.
 - 2026-09-03 — Phase 1 complete. `npm ci`, lint, typecheck, unit tests, 100% scoped pricing coverage and desktop/mobile production-build E2E passed. The legacy broad wallet dependency still emits build warnings and is phase-3 scope.
+- 2026-09-03 — Phase 2 complete. Emergency release backup `emergency-20260903T124156Z` was created before deployment. Live state returned 200; takeover returned 503 `PAYMENTS_DISABLED`; admin dashboard, telemetry deletion and takedown returned 401; the public state fingerprint did not change. Sentinel was not restarted.
+- 2026-09-03 — The initial VPS build was blocked by AppleDouble `._*` metadata copied from macOS. Those exact metadata files were removed, the retry build exited 0, and the web process restarted successfully. `.gitignore` now prevents recurrence.
+- 2026-09-03 — Node 20 lockfile reproducibility verified with `npm@10.8.2 ci --dry-run --legacy-peer-deps`; the local and VPS lockfile hashes match.
 
 ## Failure log
 
