@@ -13,20 +13,12 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@solana/wallet-adapter-base": "^0.9.27",
-    "@solana/wallet-adapter-phantom": "0.9.29",
-    "@solana/wallet-adapter-react": "^0.15.39",
-    "@solana/wallet-adapter-react-ui": "^0.9.39",
-    "@solana/wallet-adapter-solflare": "0.6.33",
     "@solana/web3.js": "^1.98.4",
     "bs58": "6.0.0",
-    "canvas-confetti": "^1.9.3",
-    "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "next": "16.3.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "tailwind-merge": "^2.5.5"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
@@ -34,7 +26,6 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
-    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
