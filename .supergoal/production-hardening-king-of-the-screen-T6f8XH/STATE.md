@@ -54,6 +54,7 @@
 - 2026-09-03 — SQLite was deployed to the VPS after backup `sqlite-20260903T201015Z`. The web process restarted successfully, Sentinel remained online, public state returned 200, takeover remained 503, and the database contains one imported auction state row with mode 600.
 - 2026-09-03 — Phase 4 complete. Legacy JSONL import keeps only validated page views; all other historical events are discarded. Backup and restore tests use a SQLite-consistent snapshot, and a second OS process receives `SQLITE_BUSY` while an immediate write transaction is held.
 - 2026-09-03 — Phase 5 started with a closed `POST /api/payment-intents` contract. It returns `503 PAYMENTS_DISABLED` until the explicit payment-activation decision.
+- 2026-09-03 — Phase 4 durable-storage release deployed from pushed commit `7281ff4`. Pre-deploy SQLite backup `phase4-20260903T2219Z` has mode 600. `kots-web` restarted after a successful build; Sentinel was not restarted. Live state returned 200, and payment intents plus takeovers remained `503 PAYMENTS_DISABLED`.
 
 ## Failure log
 
