@@ -25,6 +25,9 @@ yarn-error.log*
 # TypeScript build metadata and test artifacts
 *.tsbuildinfo
 ._*
+web/data/*.sqlite
+web/data/*.sqlite-shm
+web/data/*.sqlite-wal
 coverage/
 playwright-report/
 test-results/

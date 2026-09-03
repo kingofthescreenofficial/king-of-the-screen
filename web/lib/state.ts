@@ -1,15 +1,12 @@
-import fs from "fs";
 import path from "path";
+import { importLegacyAuctionState, readAuctionState, writeAuctionState } from "./database";
 import { calculateNextPrice } from "./pricing";
 import { AppState, King } from "./types";
 
 export { calculateNextPrice } from "./pricing";
 
-const DATA_FILE = process.env.NODE_ENV === "production"
-  ? path.join("/tmp", "state.json")
-  : path.join(process.cwd(), "data", "state.json");
-
 const SEED_FILE = path.join(process.cwd(), "data", "state.json");
+const LEGACY_PRODUCTION_FILE = path.join("/tmp", "state.json");
 
 export const DEFAULT_STATE: AppState = {
   currentKing: {
@@ -70,36 +67,35 @@ export function getAppState(): AppState {
   }
 
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, "utf-8");
-      memoryState = JSON.parse(data);
+    const durableState = readAuctionState();
+    if (durableState) {
+      memoryState = durableState;
       return memoryState!;
     }
-    if (fs.existsSync(SEED_FILE)) {
-      const seedData = fs.readFileSync(SEED_FILE, "utf-8");
-      memoryState = JSON.parse(seedData);
-      return memoryState!;
+
+    const importedProductionState = importLegacyAuctionState(LEGACY_PRODUCTION_FILE);
+    if (importedProductionState) {
+      memoryState = importedProductionState;
+      return memoryState;
+    }
+
+    const importedSeedState = importLegacyAuctionState(SEED_FILE);
+    if (importedSeedState) {
+      memoryState = importedSeedState;
+      return memoryState;
     }
   } catch (error) {
-    console.error("Error reading state file:", error);
+    console.error("Error reading auction state:", error);
   }
 
-  memoryState = JSON.parse(JSON.stringify(DEFAULT_STATE));
-  saveAppState(memoryState!);
-  return memoryState!;
+  const initialState = JSON.parse(JSON.stringify(DEFAULT_STATE)) as AppState;
+  saveAppState(initialState);
+  return initialState;
 }
 
 export function saveAppState(state: AppState): void {
   memoryState = state;
-  try {
-    const dir = path.dirname(DATA_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2), "utf-8");
-  } catch (error) {
-    console.warn("Notice: Saved to memory state (read-only disk fallback)");
-  }
+  writeAuctionState(state);
 }
 
 export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">): { success: boolean; state: AppState; error?: string } {

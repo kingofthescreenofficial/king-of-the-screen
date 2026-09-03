@@ -7,6 +7,7 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   outputFileTracingRoot: projectRoot,
   reactStrictMode: true,
+  serverExternalPackages: ["better-sqlite3"],
   images: {
     remotePatterns: [
       {

@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
 import { NextResponse } from "next/server";
+import { writeTelemetryPageView } from "@/lib/database";
 
 const MAX_PATH_LENGTH = 200;
 
@@ -24,15 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ code: "INVALID_TELEMETRY", error: "Unsupported telemetry event." }, { status: 400 });
     }
 
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      type: body.type,
-      event: body.event,
-      details: { path: body.details.path },
-    };
-    const logDir = path.join(process.cwd(), "analytics");
-    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-    fs.appendFileSync(path.join(logDir, "telemetry.jsonl"), `${JSON.stringify(logEntry)}\n`);
+    writeTelemetryPageView(body.details.path);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ code: "INVALID_TELEMETRY", error: "Invalid telemetry payload." }, { status: 400 });
