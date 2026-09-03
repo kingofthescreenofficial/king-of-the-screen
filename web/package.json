@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "db:backup": "node scripts/db-backup.mjs",
     "db:restore": "node scripts/db-restore.mjs"
+    ,"ops:validate": "node scripts/validate-env.mjs"
   },
   "dependencies": {
     "@solana/web3.js": "^1.98.4",
