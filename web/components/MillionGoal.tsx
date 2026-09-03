@@ -106,7 +106,7 @@ export const MillionGoal: React.FC<MillionGoalProps> = ({
             ⚡ Solana Instant Finality
           </span>
           <span className="bg-blue-950/60 text-blue-300 border border-blue-800/50 px-2 py-0.5 rounded">
-            💎 Base / EVM / USDT
+            💎 Solana only when takeovers are enabled
           </span>
         </div>
       </div>

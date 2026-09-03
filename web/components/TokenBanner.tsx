@@ -43,7 +43,7 @@ export const TokenBanner: React.FC<TokenBannerProps> = ({ tokenConfig }) => {
               </span>
             </div>
             <span className="text-xs text-gray-400 block truncate">
-              {tokenConfig.name} • 100% Mined by 100 Kings
+              {tokenConfig.name} • Community token information
             </span>
           </div>
         </div>

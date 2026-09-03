@@ -29,7 +29,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
           One global screen. Pay to broadcast your image & link worldwide.{" "}
           <strong className="text-emerald-400">
-            Every King automatically mines $KOTS tokens and mints a historical 1-of-100 Genesis NFT!
+            Current takeovers are paused. Any future token or NFT program will be published with final eligibility rules before launch.
           </strong>
         </p>
       </div>
@@ -75,7 +75,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
             <span>Earn & Pump!</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Buy the throne and pump your own bag! <strong className="text-emerald-400">20% of your payment is instantly used to market-buy $KOTS, and 100% of those bought tokens are airdropped straight to you within 24 hours.</strong> You create the green candle, you keep the tokens!
+            The platform does not promise token value, market activity, token delivery, or NFT delivery.
           </p>
         </div>
       </div>
