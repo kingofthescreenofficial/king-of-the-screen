@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { GET as adminDashboard } from "@/app/api/admin/dashboard/route";
 import { GET as takedownGet, POST as takedownPost } from "@/app/api/admin/takedown/route";
+import { POST as createPaymentIntent } from "@/app/api/payment-intents/route";
 import { DELETE as deleteTelemetry, POST as postTelemetry } from "@/app/api/telemetry/route";
 import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
 
@@ -31,6 +32,14 @@ describe("emergency payment freeze", () => {
 
     process.env.PAID_TAKEOVER_ENABLED = "true";
     expect(isPaidTakeoverEnabled()).toBe(true);
+  });
+
+  it("closes payment intent creation while paid takeovers are paused", async () => {
+    delete process.env.PAID_TAKEOVER_ENABLED;
+
+    const response = await createPaymentIntent();
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({ code: "PAYMENTS_DISABLED" });
   });
 });
 
