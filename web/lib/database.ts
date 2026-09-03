@@ -117,6 +117,26 @@ function migrate(database: Database.Database): void {
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS settlement_recoveries (
+      id TEXT PRIMARY KEY,
+      payment_id TEXT NOT NULL UNIQUE,
+      reason_code TEXT NOT NULL,
+      status TEXT NOT NULL,
+      resolution_history_json TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      FOREIGN KEY (payment_id) REFERENCES payments(id)
+    );
+    CREATE TABLE IF NOT EXISTS outbox_events (
+      id TEXT PRIMARY KEY,
+      event_type TEXT NOT NULL,
+      aggregate_id TEXT NOT NULL,
+      payload_json TEXT NOT NULL,
+      status TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      UNIQUE(event_type, aggregate_id)
+    );
     CREATE INDEX IF NOT EXISTS payment_intent_attempts_wallet_created_at
       ON payment_intent_attempts(wallet_address, created_at);
     CREATE INDEX IF NOT EXISTS payment_intent_attempts_source_created_at
