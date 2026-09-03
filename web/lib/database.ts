@@ -94,6 +94,12 @@ function migrate(database: Database.Database): void {
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS active_sessions (
+      id TEXT PRIMARY KEY,
+      last_seen_at INTEGER NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
   `);
 }
 
@@ -142,4 +148,15 @@ export function writeTelemetryPageView(pagePath: string): void {
   getDatabase().prepare(
     "INSERT INTO telemetry (event_type, path, created_at, updated_at) VALUES (?, ?, ?, ?)",
   ).run("PAGE_VIEW", pagePath, now, now);
+}
+
+export function touchActiveSession(sessionId: string): void {
+  const now = Date.now();
+  const database = getDatabase();
+  database.prepare("DELETE FROM active_sessions WHERE last_seen_at < ?").run(now - 30_000);
+  database.prepare(`
+    INSERT INTO active_sessions (id, last_seen_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(id) DO UPDATE SET last_seen_at = excluded.last_seen_at, updated_at = excluded.updated_at
+  `).run(sessionId, now, now, now);
 }

@@ -10,6 +10,7 @@ import {
   importLegacyAuctionState,
   readAuctionState,
   writeAuctionState,
+  touchActiveSession,
   writeTelemetryPageView,
 } from "@/lib/database";
 import type { AppState } from "@/lib/types";
@@ -59,6 +60,9 @@ describe("durable auction storage", () => {
 
     writeTelemetryPageView("/");
     expect(database.prepare("SELECT COUNT(*) AS count FROM telemetry").get()).toEqual({ count: 1 });
+
+    touchActiveSession("session123");
+    expect(database.prepare("SELECT COUNT(*) AS count FROM active_sessions").get()).toEqual({ count: 1 });
   });
 
   it("imports legacy state once without overwriting durable state", () => {
