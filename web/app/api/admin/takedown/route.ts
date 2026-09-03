@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireAdminMutation } from "@/lib/admin-auth";
 
 function unavailable() {
   return NextResponse.json(
@@ -13,6 +13,6 @@ export async function GET() {
 }
 
 export async function POST(request?: Request) {
-  if (!request || !requireAdmin(request)) return unavailable();
+  if (!request || !requireAdminMutation(request)) return unavailable();
   return NextResponse.json({ code: "TAKEDOWN_NOT_READY", error: "Takedown is temporarily unavailable." }, { status: 503 });
 }

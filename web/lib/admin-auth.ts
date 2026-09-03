@@ -45,3 +45,12 @@ export function revokeAdminSession(request: Request, now = Date.now()): void {
   const cookie = request.headers.get("cookie")?.match(new RegExp(`(?:^|;\\s*)${COOKIE_NAME}=([^;]+)`));
   if (cookie?.[1]) getDatabase().prepare("UPDATE admin_sessions SET revoked_at = ?, updated_at = ? WHERE token_hash = ?").run(now, now, hash(cookie[1]));
 }
+
+export function requireAdminMutation(request: Request, now = Date.now()): { sessionId: string } | null {
+  const session = requireAdmin(request, now);
+  const expectedOrigin = process.env.KOTS_PUBLIC_ORIGIN;
+  if (!session || !expectedOrigin || request.headers.get("origin") !== expectedOrigin) return null;
+  const csrfToken = request.headers.get("x-kots-csrf");
+  if (!csrfToken || csrfToken.length !== session.csrfToken.length || !timingSafeEqual(Buffer.from(csrfToken), Buffer.from(session.csrfToken))) return null;
+  return { sessionId: session.sessionId };
+}
