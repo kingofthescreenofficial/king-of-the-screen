@@ -205,7 +205,7 @@ export default function HomePage() {
           </div>
 
           <div className="mt-6 pt-4 border-t border-cyber-border/40 text-[10px] text-gray-600 text-center leading-relaxed">
-            Disclaimer: King of the Screen is an entertainment and advertising broadcast platform. Fees paid for billboard time and token distributions are non-refundable micropayments. Content is user-submitted and moderated in accordance with our Terms.
+            Disclaimer: King of the Screen is an entertainment and advertising broadcast platform. Takeovers, token programs, and NFT programs are currently paused. Content is user-submitted and subject to moderation.
           </div>
         </footer>
       </div>
@@ -233,7 +233,7 @@ export default function HomePage() {
       {showStorageBanner && (
         <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t border-gray-800 px-4 py-3 flex items-center justify-between gap-4 z-50 backdrop-blur-sm">
           <p className="text-[11px] text-gray-400 font-mono">
-            🍪 This site uses browser localStorage to remember your wallet connection. No tracking cookies or analytics.
+            🍪 This site uses essential browser storage and limited operational telemetry. See the Privacy Policy for details.
           </p>
           <button
             onClick={() => { localStorage.setItem('kots_storage_ok', '1'); setShowStorageBanner(false); }}

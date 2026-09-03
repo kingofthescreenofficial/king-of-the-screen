@@ -86,7 +86,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 By using this site, you warrant that you are at least <strong>18 years of age</strong> (or the age of majority in your jurisdiction).
               </p>
               <p>
-                Because the service is executed immediately upon transaction confirmation, <strong>all payments are strictly final, non-refundable, and non-cancellable</strong>.
+                Takeovers are currently paused. Any future payment terms, including cancellation and refund rules, will be published before payments are enabled.
               </p>
 
               <h3 className="text-base font-bold text-white pt-2">2. Section 230 CDA & User Content Liability</h3>
@@ -229,7 +229,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
 
               <h3 className="text-base font-bold text-white pt-2">3. Cookies & Local Storage</h3>
               <p>
-                This site uses browser <strong>localStorage</strong> (via the Solana Wallet Adapter) to remember your wallet connection preference. We do not use tracking cookies, analytics pixels, or advertising SDKs.
+                This site uses essential browser storage and limited operational telemetry, such as page views and session activity. We do not use advertising SDKs or tracking pixels.
               </p>
 
               <h3 className="text-base font-bold text-white pt-2">4. Third-Party Data Sharing</h3>
