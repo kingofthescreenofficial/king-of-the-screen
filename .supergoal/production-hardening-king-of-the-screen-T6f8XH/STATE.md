@@ -51,6 +51,7 @@
 - 2026-09-03 — User requires every production deployment to be paired with an immediate GitHub push. Before phase 10 reward processing and phase 11 NFT issuance, agree the token and NFT accrual mathematics with the user.
 - 2026-09-03 — Phase 3 complete. Wallet adapters, WalletConnect and `ethers` were removed from the paused public release. Next 16 build, desktop/mobile E2E and production audit no longer report high or critical advisories.
 - 2026-09-03 — Phase 4 started. SQLite WAL database is now the authority for auction state. The legacy state file is imported once on first initialization; database integration tests verify WAL mode, schema and idempotent import.
+- 2026-09-03 — SQLite was deployed to the VPS after backup `sqlite-20260903T201015Z`. The web process restarted successfully, Sentinel remained online, public state returned 200, takeover remained 503, and the database contains one imported auction state row with mode 600.
 
 ## Failure log
 
