@@ -131,10 +131,13 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
   asPublicKey(request.rewardWalletAddress);
   asPublicKey(request.recipients.treasuryAddress);
   asPublicKey(request.recipients.hotWalletAddress);
+  if (!verifyChallenge(request.challengeId, request.walletAddress, request.signature, now)) {
+    throw new Error("INVALID_WALLET_CHALLENGE");
+  }
+  enforceReservationLimits(request.walletAddress, request.sourceHash, now);
 
   return withImmediateTransaction(() => {
     if (!verifyChallenge(request.challengeId, request.walletAddress, request.signature, now)) throw new Error("INVALID_WALLET_CHALLENGE");
-    enforceReservationLimits(request.walletAddress, request.sourceHash, now);
     const database = getDatabase();
     const activeIntent = database.prepare("SELECT id FROM payment_intents WHERE status = 'RESERVED' AND expires_at > ? AND cancelled_at IS NULL LIMIT 1").get(now);
     if (activeIntent) throw new Error("AUCTION_RESERVED");

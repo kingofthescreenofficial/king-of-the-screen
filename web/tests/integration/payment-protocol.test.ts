@@ -83,4 +83,23 @@ describe("payment intent protocol", () => {
     const second = requestFixture(91_001);
     expect(createPaymentIntent(second.request).id).toBeTruthy();
   });
+
+  it("limits a wallet to three reservation attempts per 15 minutes", () => {
+    const first = requestFixture(1_000);
+    createPaymentIntent(first.request);
+    for (const now of [1_001, 1_002]) {
+      const next = requestFixture(now);
+      next.request.walletAddress = first.wallet.address;
+      next.request.rewardWalletAddress = first.wallet.address;
+      next.request.signature = first.wallet.sign(next.challenge.message);
+      getDatabase().prepare("UPDATE wallet_challenges SET wallet_address = ? WHERE id = ?").run(first.wallet.address, next.challenge.id);
+      expect(() => createPaymentIntent(next.request)).toThrow("AUCTION_RESERVED");
+    }
+    const limited = requestFixture(1_003);
+    limited.request.walletAddress = first.wallet.address;
+    limited.request.rewardWalletAddress = first.wallet.address;
+    limited.request.signature = first.wallet.sign(limited.challenge.message);
+    getDatabase().prepare("UPDATE wallet_challenges SET wallet_address = ? WHERE id = ?").run(first.wallet.address, limited.challenge.id);
+    expect(() => createPaymentIntent(limited.request)).toThrow("WALLET_RATE_LIMITED");
+  });
 });

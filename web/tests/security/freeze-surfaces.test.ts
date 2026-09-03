@@ -38,7 +38,7 @@ describe("emergency payment freeze", () => {
   it("closes payment intent creation while paid takeovers are paused", async () => {
     delete process.env.PAID_TAKEOVER_ENABLED;
 
-    const response = await createPaymentIntent();
+    const response = await createPaymentIntent(new Request("http://localhost/api/payment-intents", { method: "POST" }));
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({ code: "PAYMENTS_DISABLED" });
   });
