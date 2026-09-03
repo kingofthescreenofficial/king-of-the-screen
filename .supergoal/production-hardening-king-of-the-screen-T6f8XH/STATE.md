@@ -58,4 +58,4 @@
 
 ## Failure log
 
-- None.
+- 2026-09-03 — VPS SSH hardening created and verified `kots-admin` key login, then disabled root and password SSH login. `kots-admin` lacks passwordless sudo, so future privileged VPS changes require provider-console recovery to add a scoped sudo rule or restore root access.
