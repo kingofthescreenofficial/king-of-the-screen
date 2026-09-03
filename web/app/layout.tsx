@@ -3,12 +3,12 @@ import "./globals.css";
 import { TelemetryTracker } from "../components/TelemetryTracker";
 
 export const metadata: Metadata = {
-  title: "KING OF THE SCREEN | The $1,000,000 Global Live Canvas",
+  title: "KING OF THE SCREEN | Coming Soon",
   description:
-    "The world's most contested screen. Dethrone the King with crypto, hold the broadcast until someone outbids you, and fund the $1,000,000 digital monument.",
+    "King of the Screen is preparing for public launch.",
   openGraph: {
-    title: "KING OF THE SCREEN | The $1,000,000 Global Live Canvas",
-    description: "Hold the world's screen until you get dethroned.",
+    title: "KING OF THE SCREEN | Coming Soon",
+    description: "The throne is being prepared.",
     type: "website",
   },
 };
