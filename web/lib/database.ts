@@ -160,6 +160,7 @@ function migrate(database: Database.Database): void {
     "price_version TEXT",
     "serialized_transaction TEXT",
     "cancelled_at INTEGER",
+    "content_submission_id TEXT",
   ];
   const existingColumns = new Set(
     (database.prepare("PRAGMA table_info(payment_intents)").all() as Array<{ name: string }>).map(({ name }) => name),
@@ -167,6 +168,24 @@ function migrate(database: Database.Database): void {
   for (const column of paymentIntentColumns) {
     const [name] = column.split(" ");
     if (!existingColumns.has(name)) database.exec(`ALTER TABLE payment_intents ADD COLUMN ${column}`);
+  }
+  const contentSubmissionColumns = [
+    "nickname TEXT",
+    "tagline TEXT",
+    "link_url TEXT",
+    "media_mime TEXT",
+    "media_storage_key TEXT",
+    "content_digest TEXT",
+    "moderation_provider TEXT",
+    "moderation_result_json TEXT",
+    "rejection_reason TEXT",
+  ];
+  const existingContentColumns = new Set(
+    (database.prepare("PRAGMA table_info(content_submissions)").all() as Array<{ name: string }>).map(({ name }) => name),
+  );
+  for (const column of contentSubmissionColumns) {
+    const [name] = column.split(" ");
+    if (!existingContentColumns.has(name)) database.exec(`ALTER TABLE content_submissions ADD COLUMN ${column}`);
   }
   const adminSessionColumns = ["token_hash TEXT", "csrf_token TEXT", "idle_expires_at INTEGER", "revoked_at INTEGER"];
   const existingAdminColumns = new Set(

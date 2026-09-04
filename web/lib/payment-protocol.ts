@@ -31,6 +31,7 @@ export type PaymentIntentRequest = {
   challengeId: string;
   signature: string;
   contentDigest: string;
+  contentSubmissionId: string;
   termsVersion: string;
   sourceHash: string;
   quote: PaymentQuote;
@@ -126,7 +127,7 @@ function buildUnsignedTransaction(intentId: string, nonce: string, buyer: Public
 
 export function createPaymentIntent(request: PaymentIntentRequest): PaymentIntent {
   const now = request.now ?? Date.now();
-  if (!isValidDigest(request.contentDigest) || !request.termsVersion || !request.sourceHash) throw new Error("INVALID_INTENT_REQUEST");
+  if (!isValidDigest(request.contentDigest) || !request.contentSubmissionId || !request.termsVersion || !request.sourceHash) throw new Error("INVALID_INTENT_REQUEST");
   const buyer = asPublicKey(request.walletAddress);
   asPublicKey(request.rewardWalletAddress);
   asPublicKey(request.recipients.treasuryAddress);
@@ -152,11 +153,11 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
     const serializedTransaction = buildUnsignedTransaction(id, nonce, buyer, request.recipients, totalLamports, treasuryLamports, request.recentBlockhash);
     database.prepare(`
       INSERT INTO payment_intents (
-        id, status, buyer_wallet, reward_wallet, content_digest, terms_version, price_usd_cents,
+        id, status, buyer_wallet, reward_wallet, content_digest, content_submission_id, terms_version, price_usd_cents,
         sol_usd_cents, total_lamports, treasury_lamports, hot_wallet_lamports, treasury_address,
         hot_wallet_address, nonce, expires_at, price_version, serialized_transaction, created_at, updated_at
-      ) VALUES (?, 'RESERVED', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, request.walletAddress, request.rewardWalletAddress, request.contentDigest, request.termsVersion,
+      ) VALUES (?, 'RESERVED', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, request.walletAddress, request.rewardWalletAddress, request.contentDigest, request.contentSubmissionId, request.termsVersion,
       request.quote.priceUsdCents, request.quote.solUsdCents, totalLamports, treasuryLamports, operationsVaultLamports,
       request.recipients.treasuryAddress, request.recipients.operationsVaultAddress, nonce, expiresAt, request.quote.priceVersion,
       serializedTransaction, now, now);

@@ -56,6 +56,14 @@ describe("durable auction storage", () => {
     const database = getDatabase();
     expect(database.pragma("journal_mode", { simple: true })).toBe("wal");
     expect(database.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'reward_jobs'").get()).toBeTruthy();
+    expect(database.prepare("PRAGMA table_info(content_submissions)").all()).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: "content_digest" }),
+      expect.objectContaining({ name: "moderation_result_json" }),
+      expect.objectContaining({ name: "media_storage_key" }),
+    ]));
+    expect(database.prepare("PRAGMA table_info(payment_intents)").all()).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: "content_submission_id" }),
+    ]));
 
     writeAuctionState(stateFixture());
     expect(readAuctionState()).toMatchObject({ currentKing: { id: "king-fixture" }, nextMinPriceUsd: 2 });

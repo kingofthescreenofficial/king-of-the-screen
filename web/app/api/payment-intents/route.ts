@@ -6,13 +6,14 @@ import { createPaymentIntent, hashNetworkSource } from "@/lib/payment-protocol";
 import { getFreshSolQuote } from "@/lib/solana-quote";
 import { AUCTION_MANIFEST_V1, getCrownPriceCents } from "@/lib/auction-manifest";
 import { getAppState } from "@/lib/state";
+import { getApprovedContentSubmission } from "@/lib/content-submissions";
 
 type IntentBody = {
   walletAddress?: unknown;
   rewardWalletAddress?: unknown;
   challengeId?: unknown;
   signature?: unknown;
-  contentDigest?: unknown;
+  contentSubmissionId?: unknown;
   termsVersion?: unknown;
 };
 
@@ -35,6 +36,9 @@ export async function POST(request: Request) {
     if (!process.env.KOTS_TERMS_VERSION || termsVersion !== process.env.KOTS_TERMS_VERSION) {
       return NextResponse.json({ code: "STALE_TERMS", error: "Current terms acceptance is required." }, { status: 409 });
     }
+    const contentSubmissionId = requireString(body.contentSubmissionId);
+    const submission = getApprovedContentSubmission(contentSubmissionId);
+    if (!submission) return NextResponse.json({ code: "CONTENT_NOT_APPROVED", error: "Approved content is required." }, { status: 409 });
     const state = getAppState();
     const nextOrdinal = (state.stats.settledCrownCount ?? 0) + 1;
     if (nextOrdinal > AUCTION_MANIFEST_V1.crownLimit) {
@@ -54,7 +58,8 @@ export async function POST(request: Request) {
       rewardWalletAddress: requireString(body.rewardWalletAddress),
       challengeId: requireString(body.challengeId),
       signature: requireString(body.signature),
-      contentDigest: requireString(body.contentDigest),
+      contentDigest: submission.contentDigest,
+      contentSubmissionId: submission.id,
       termsVersion,
       sourceHash: hashNetworkSource(request.headers.get("x-forwarded-for") ?? "unknown"),
       quote: { priceUsdCents, solUsdCents: quote.usdCents, priceVersion: AUCTION_MANIFEST_V1.version },
@@ -70,6 +75,7 @@ export async function POST(request: Request) {
       WALLET_RATE_LIMITED: 429,
       SOURCE_RATE_LIMITED: 429,
       INVALID_INTENT_REQUEST: 400,
+      CONTENT_NOT_APPROVED: 409,
       PAYMENT_CONFIGURATION_UNAVAILABLE: 503,
     };
     return NextResponse.json({ code, error: "Payment intent could not be created." }, { status: statuses[code] ?? 503 });

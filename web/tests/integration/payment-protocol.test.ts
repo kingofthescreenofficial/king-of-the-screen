@@ -30,6 +30,7 @@ function requestFixture(now: number) {
       challengeId: challenge.id,
       signature: wallet.sign(challenge.message),
       contentDigest: "a".repeat(64),
+      contentSubmissionId: "submission-fixture",
       termsVersion: "2026-09-03",
       sourceHash: hashNetworkSource("test-source"),
       quote: { priceUsdCents: 200, solUsdCents: 10_000, priceVersion: "fixture-v1" },
@@ -58,6 +59,7 @@ describe("payment intent protocol", () => {
     expect(transaction.instructions[2].keys[1].pubkey.toBase58()).toBe(fixture.request.recipients.operationsVaultAddress);
     expect(transaction.instructions[1].data.readBigUInt64LE(4)).toBe(BigInt(intent.treasuryLamports));
     expect(transaction.instructions[2].data.readBigUInt64LE(4)).toBe(BigInt(intent.operationsVaultLamports));
+    expect(getDatabase().prepare("SELECT content_submission_id FROM payment_intents WHERE id = ?").get(intent.id)).toEqual({ content_submission_id: "submission-fixture" });
   });
 
   it("rejects a reused wallet challenge and keeps the existing reservation", () => {
