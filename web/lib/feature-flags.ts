@@ -2,6 +2,10 @@ export function isPaidTakeoverEnabled(): boolean {
   return process.env.PAID_TAKEOVER_ENABLED === "true";
 }
 
+export function isAuctionSettlementEnabled(): boolean {
+  return isPaidTakeoverEnabled() && process.env.AUCTION_SETTLEMENT_ENABLED === "true";
+}
+
 function hasFinalKotsMint(): boolean {
   return Boolean(process.env.KOTS_V12_MINT_ADDRESS?.trim());
 }

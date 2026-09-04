@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { getPublicCapabilities } from "@/lib/feature-flags";
+import { getPublicCapabilities, isAuctionSettlementEnabled } from "@/lib/feature-flags";
 
 const originalEnvironment = { ...process.env };
 
@@ -28,5 +28,14 @@ describe("pre-launch capability flags", () => {
       kotsClaimEnabled: false,
       kotsMarketOperationsEnabled: false,
     });
+  });
+
+  it("requires a separate approval before settlement can run", () => {
+    process.env.PAID_TAKEOVER_ENABLED = "true";
+    delete process.env.AUCTION_SETTLEMENT_ENABLED;
+    expect(isAuctionSettlementEnabled()).toBe(false);
+
+    process.env.AUCTION_SETTLEMENT_ENABLED = "true";
+    expect(isAuctionSettlementEnabled()).toBe(true);
   });
 });
