@@ -1,0 +1,132 @@
+.page {
+  --ink: #f2ead8;
+  --muted: #a9a294;
+  --line: rgba(239, 218, 166, 0.16);
+  --gold: #e4bb62;
+  --gold-soft: #f3d890;
+  --mint: #8cdbc0;
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #0d0e0d;
+  color: var(--ink);
+}
+
+.noise,
+.orbit { pointer-events: none; position: absolute; }
+
+.noise {
+  inset: 0;
+  opacity: 0.16;
+  background-image: linear-gradient(rgba(255, 242, 210, 0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 242, 210, 0.055) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black, transparent 74%);
+}
+
+.orbit {
+  top: 94px;
+  right: -132px;
+  display: grid;
+  width: 430px;
+  height: 430px;
+  place-items: center;
+  border: 1px solid rgba(228, 187, 98, 0.12);
+  border-radius: 50%;
+  color: rgba(228, 187, 98, 0.2);
+}
+
+.orbit svg { width: 82%; height: 82%; animation: orbit 34s linear infinite; }
+
+.nav,
+.hero,
+.section,
+.disclosure,
+.footer { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 27px 0;
+  border-bottom: 1px solid var(--line);
+  font: 700 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.14em;
+}
+
+.backLink { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); text-decoration: none; transition: color 160ms ease; }
+.backLink:hover { color: var(--gold-soft); }
+.backLink:focus-visible { outline: 2px solid var(--gold-soft); outline-offset: 5px; }
+.version { color: var(--gold); }
+
+.hero { position: relative; padding: 108px 0 86px; text-align: center; }
+.draftMark { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid rgba(140, 219, 192, 0.27); border-radius: 999px; color: var(--mint); font: 700 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.14em; }
+.draftMark span { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+.kicker, .eyebrow { margin: 0; color: var(--gold); font: 700 10px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.18em; }
+.kicker { margin-top: 38px; }
+.hero h1 { max-width: 840px; margin: 17px auto 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(46px, 8vw, 98px); font-weight: 500; letter-spacing: -0.07em; line-height: 0.86; text-wrap: balance; }
+.lead { max-width: 600px; margin: 28px auto 0; color: var(--muted); font-size: clamp(16px, 2vw, 19px); line-height: 1.65; }
+.heroFacts { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 670px; margin: 54px auto 0; border-block: 1px solid var(--line); }
+.heroFacts div { display: grid; gap: 6px; padding: 19px 12px; }
+.heroFacts div + div { border-left: 1px solid var(--line); }
+.heroFacts strong { color: var(--gold-soft); font: 500 clamp(23px, 3vw, 31px)/1 Georgia, serif; }
+.heroFacts span { color: var(--muted); font-size: 11px; }
+
+.section { padding: 72px 0; border-top: 1px solid var(--line); }
+.sectionHeader { display: grid; grid-template-columns: 54px 1fr; gap: 16px; align-items: start; }
+.sectionNumber { color: var(--gold); font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.sectionHeader h2, .disclosure h2 { margin: 9px 0 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(30px, 4.2vw, 53px); font-weight: 400; letter-spacing: -0.045em; line-height: 0.98; }
+.sectionIntro { max-width: 610px; margin: 24px 0 0 70px; color: var(--muted); font-size: 16px; line-height: 1.65; }
+
+.premiseGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 39px; }
+.featureCard { min-height: 216px; padding: 24px; border: 1px solid var(--line); background: linear-gradient(145deg, rgba(255,255,255,0.025), transparent); }
+.iconFrame { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid rgba(228, 187, 98, 0.34); border-radius: 50%; color: var(--gold-soft); }
+.featureCard h3 { margin: 34px 0 10px; font-size: 15px; }
+.featureCard p, .totalCard p, .treasuryCard p, .vaultCard p, .kotsStatement p, .operations p, .nftPanel p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+.priceSection { position: relative; }
+.milestoneRail { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 42px; border-block: 1px solid var(--line); }
+.milestone { position: relative; display: grid; gap: 7px; min-height: 148px; padding: 24px 16px 22px; }
+.milestone + .milestone { border-left: 1px solid var(--line); }
+.milestoneDot { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; background: var(--gold); color: #211b0e; font: 800 10px/1 ui-monospace, monospace; }
+.milestoneNumber { margin-top: 8px; color: var(--muted); font: 700 9px/1 ui-monospace, monospace; letter-spacing: 0.12em; }
+.milestone strong { color: var(--gold-soft); font: 500 26px/1 Georgia, serif; }
+.milestone > span:last-child { color: var(--muted); font-size: 11px; }
+.totalCard { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 32px; align-items: end; padding: 27px; border: 1px solid rgba(228, 187, 98, 0.32); border-top: 0; background: rgba(228, 187, 98, 0.035); }
+.totalCard p { max-width: 390px; }
+.totalCard div p { margin-bottom: 8px; color: var(--muted); font-size: 11px; }
+.totalCard strong { color: var(--gold-soft); font: 500 clamp(31px, 4vw, 47px)/1 Georgia, serif; letter-spacing: -0.05em; }
+
+.flow { margin: 41px 0 0 70px; }
+.flowOrigin { display: grid; justify-items: start; gap: 10px; max-width: 310px; padding: 22px; border: 1px solid var(--line); }
+.flowOrigin strong { font-size: 15px; }.flowOrigin > span:last-child { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.flowArrow { display: block; margin: 17px 0 17px 27px; color: var(--gold); }
+.splitGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 690px; gap: 15px; }
+.treasuryCard, .vaultCard { position: relative; min-height: 190px; padding: 25px; border: 1px solid var(--line); overflow: hidden; }
+.treasuryCard { background: rgba(228, 187, 98, 0.045); }.vaultCard { background: rgba(140, 219, 192, 0.045); }
+.treasuryCard > span, .vaultCard > span { position: absolute; top: 21px; right: 23px; color: var(--gold-soft); font: 500 34px/1 Georgia, serif; }.vaultCard > span { color: var(--mint); }
+.treasuryCard svg, .vaultCard svg { color: var(--gold); }.vaultCard svg { color: var(--mint); }
+.treasuryCard h3, .vaultCard h3 { margin: 43px 0 8px; font-size: 16px; }
+
+.kotsSection { background: linear-gradient(90deg, rgba(140, 219, 192, 0.055), transparent 54%); }
+.kotsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 38px 0 0 70px; }
+.kotsStatement { display: grid; align-content: start; gap: 17px; padding: 25px; border-left: 2px solid var(--mint); }.kotsStatement svg { color: var(--mint); }
+.operations { display: grid; }.operations div { display: grid; grid-template-columns: 63px 1fr; gap: 15px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); }.operations div:first-child { border-top: 1px solid var(--line); }
+.operations span { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid rgba(140, 219, 192, 0.35); border-radius: 50%; color: var(--mint); font: 700 11px/1 ui-monospace, monospace; }
+.ruleBox { display: flex; gap: 13px; align-items: flex-start; margin: 28px 0 0 70px; padding: 16px 18px; border: 1px solid rgba(140, 219, 192, 0.25); background: rgba(140, 219, 192, 0.04); color: var(--muted); font-size: 12px; line-height: 1.6; }.ruleBox svg, .ruleBox strong { color: var(--mint); }.ruleBox p { margin: 0; }
+
+.nftPanel { display: grid; grid-template-columns: 180px 1fr 1.2fr; gap: 27px; align-items: center; margin: 38px 0 0 70px; padding: 26px; border: 1px solid var(--line); background: linear-gradient(105deg, rgba(228,187,98,0.08), transparent 49%); }
+.nftSeal { display: grid; width: 128px; height: 128px; place-items: center; align-content: center; gap: 8px; border: 1px solid rgba(228, 187, 98, 0.45); border-radius: 50%; color: var(--gold-soft); box-shadow: inset 0 0 28px rgba(228,187,98,0.08); }.nftSeal span { font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.14em; }.nftPanel h3 { margin: 0 0 10px; font-family: Georgia, serif; font-size: 25px; font-weight: 400; }.nftPanel ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 12px; line-height: 1.45; }.nftPanel li { display: flex; gap: 8px; align-items: flex-start; }.nftPanel li svg { flex: none; color: var(--gold); }
+
+.disclosure { margin-top: 16px; padding: 61px 0 65px; border-top: 1px solid var(--line); text-align: center; }.disclosure p { margin: 0; color: var(--mint); font: 700 10px/1 ui-monospace, monospace; letter-spacing: 0.18em; }.disclosure h2 { margin-top: 16px; }.disclosure span { display: block; max-width: 670px; margin: 22px auto 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.footer { display: flex; justify-content: space-between; padding: 23px 0 31px; border-top: 1px solid var(--line); color: #6e6a61; font: 700 9px/1 ui-monospace, monospace; letter-spacing: 0.13em; }
+
+@keyframes orbit { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .nav, .hero, .section, .disclosure, .footer { width: min(100% - 28px, 1120px); }
+  .hero { padding: 72px 0 62px; text-align: left; }.hero h1 { margin-left: 0; }.lead { margin-left: 0; }.heroFacts { margin-inline: 0; }.heroFacts strong { font-size: 23px; }
+  .section { padding: 54px 0; }.sectionHeader { grid-template-columns: 1fr; gap: 11px; }.sectionIntro, .flow, .kotsGrid, .ruleBox, .nftPanel { margin-left: 0; }
+  .premiseGrid, .splitGrid, .kotsGrid, .nftPanel { grid-template-columns: 1fr; }.featureCard { min-height: 0; }.milestoneRail { grid-template-columns: 1fr; }.milestone { min-height: auto; grid-template-columns: 22px 90px 1fr; align-items: center; }.milestone + .milestone { border-top: 1px solid var(--line); border-left: 0; }.milestoneDot { grid-row: span 2; }.milestoneNumber { margin-top: 0; }.milestone > span:last-child { grid-column: 3; }.totalCard { grid-template-columns: 1fr; gap: 18px; }.flowOrigin { max-width: none; }.nftPanel { gap: 22px; }.nftSeal { width: 106px; height: 106px; }.footer { gap: 11px; flex-direction: column; line-height: 1.45; }.orbit { top: 130px; right: -290px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .orbit svg { animation: none; } }
