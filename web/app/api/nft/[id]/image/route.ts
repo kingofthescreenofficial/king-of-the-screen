@@ -18,7 +18,6 @@ export async function GET(
     const nickname = (king.nickname || "Genesis King").replace(/[<>&"]/g, "");
     const tagline = (king.tagline || "forever KING").replace(/[<>&"]/g, "");
     const tribute = `$${(king.paidAmountUsd || 1).toFixed(2)} USD`;
-    const tokens = `+${((king.paidAmountUsd || 1) * 25000).toLocaleString()} $KOTS`;
     const tokenId = `KOTS-GENESIS-#${ordinal.toString().padStart(2, "0")}`;
 
     const svg = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +58,7 @@ export async function GET(
   <!-- Top Header Badge -->
   <rect x="60" y="70" width="460" height="56" rx="28" fill="rgba(234,179,8,0.15)" stroke="#facc15" stroke-width="2"/>
   <text x="90" y="106" font-family="monospace, sans-serif" font-size="22" font-weight="900" fill="#fde047" letter-spacing="2">
-    👑 GENESIS MONARCH #${ordinal}/25
+    👑 MONARCH #${ordinal}/100
   </text>
 
   <rect x="640" y="70" width="300" height="56" rx="28" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
@@ -94,15 +93,15 @@ export async function GET(
   <text x="110" y="840" font-family="monospace, sans-serif" font-size="36" font-weight="900" fill="#facc15">${tribute}</text>
   <text x="110" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">BNB SMART CHAIN</text>
 
-  <!-- Column 2: Mined Tokens -->
-  <text x="440" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">MINED REWARD</text>
-  <text x="440" y="840" font-family="monospace, sans-serif" font-size="36" font-weight="900" fill="#34d399">${tokens}</text>
-  <text x="440" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">100% UNLOCKED</text>
+  <!-- Column 2: Program status -->
+  <text x="440" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">KOTS PROGRAM</text>
+  <text x="440" y="840" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#34d399">TERMS PENDING</text>
+  <text x="440" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">NO TOKEN CLAIM IS LIVE</text>
 
   <!-- Column 3: Token ID -->
   <text x="730" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">RELIC TOKEN ID</text>
   <text x="730" y="840" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#c084fc">${tokenId}</text>
-  <text x="730" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">SERIES 1 OF 25</text>
+  <text x="730" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">SERIES 1 OF 100</text>
 
   <!-- Bottom Brand Watermark -->
   <text x="500" y="955" font-family="monospace, sans-serif" font-size="14" font-weight="800" fill="#eab308" text-anchor="middle" letter-spacing="3">

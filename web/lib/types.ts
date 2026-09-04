@@ -14,17 +14,6 @@ export interface King {
   txHash?: string;
   countryCode?: string;
   rewardWalletAddress?: string;
-  airdropStatus?: "QUEUED" | "DELIVERED" | "SENT";
-  minedTokens?: number;
-}
-
-export interface TokenConfig {
-  ticker: string;
-  name: string;
-  contractAddress: string;
-  pumpFunUrl: string;
-  dexScreenerUrl: string;
-  totalSupply: number;
 }
 
 export interface AppState {
@@ -49,7 +38,6 @@ export interface AppState {
     evmAddress: string;
     usdtTrc20Address: string;
   };
-  tokenConfig?: TokenConfig;
 }
 
 export interface PublicAppState extends AppState {

@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { King } from "@/lib/types";
-import { Crown, Sparkles, Share2, ShieldCheck, Flame, Award, Gem, X } from "lucide-react";
+import { Crown, Sparkles, Share2, ShieldCheck, Award, Gem, X } from "lucide-react";
 
 interface RoyalNFTCardProps {
   king: King;
@@ -30,7 +30,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
   };
 
   const shareToTwitter = () => {
-    const text = `👑 I AM OFFICIALLY CROWNED AS GENESIS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\n💎 Rule: Held the global $1,000,000 screen & mined a proportional share of \$KOTS tokens.\n\nVerify on-chain relic: https://kingofthescreen.fun/api/nft/${ordinalNumber}\n\n#KingOfTheScreen #Solana #NFT`;
+    const text = `👑 I AM OFFICIALLY CROWNED AS MONARCH #${ordinalNumber} OF ${totalCap} on @kingofthescreen!\n\nRule: held the global screen and received a status NFT.\n\nVerify: https://kingofthescreen.fun/api/nft/${ordinalNumber}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
   };
@@ -104,7 +104,7 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
           </p>
         </div>
 
-        {/* Proof & Mining Stats Grid */}
+        {/* Proof and program status */}
         <div className="grid grid-cols-2 gap-2 bg-black/70 p-2.5 rounded-xl border border-cyber-border text-xs">
           <div>
             <span className="text-[9px] text-gray-400 block uppercase font-bold">REIGN STATUS</span>
@@ -114,11 +114,8 @@ export const RoyalNFTCard: React.FC<RoyalNFTCardProps> = ({
             </span>
           </div>
           <div>
-            <span className="text-[9px] text-gray-400 block uppercase font-bold">$KOTS MINED</span>
-            <span className="font-bold text-emerald-400 flex items-center gap-1 mt-0.5">
-              <Flame className="w-3 h-3 text-emerald-400 fill-emerald-400" />
-              <span className="text-[10px] sm:text-[11px]">+{((king.paidAmountUsd || 1) * 900).toLocaleString()} $KOTS</span>
-            </span>
+            <span className="text-[9px] text-gray-400 block uppercase font-bold">KOTS PROGRAM</span>
+            <span className="font-bold text-gray-300 flex items-center gap-1 mt-0.5 text-[10px] sm:text-[11px]">TERMS PENDING</span>
           </div>
         </div>
 

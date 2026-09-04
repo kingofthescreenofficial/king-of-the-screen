@@ -19,15 +19,15 @@ export async function GET(
     const imageUrl = `https://king-of-the-screen.vercel.app/api/nft/${ordinal}/image`;
 
     const metadata = {
-      name: `King of the Screen — Genesis Monarch #${ordinal} of 25`,
+      name: `King of the Screen — Monarch #${ordinal} of 100`,
       symbol: "KOTSNFT",
-      description: `Official 1-of-25 Genesis Digital Relic awarded for ruling the world's most contested $1,000,000 digital screen. Monarch: ${targetKing.nickname}.`,
+      description: `Status NFT for a completed King of the Screen reign. Token claims and payments are not live. Monarch: ${targetKing.nickname}.`,
       image: imageUrl,
       external_url: "https://king-of-the-screen.vercel.app",
       attributes: [
         {
           trait_type: "Monarch Rank",
-          value: `#${ordinal} of 25`,
+          value: `#${ordinal} of 100`,
         },
         {
           trait_type: "Ruler Nickname",
@@ -47,7 +47,7 @@ export async function GET(
         },
         {
           trait_type: "Collection Tier",
-          value: "Genesis 1-of-25 Ultra Rare",
+          value: "Series 1-of-100",
         },
       ],
       properties: {

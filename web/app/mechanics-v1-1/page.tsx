@@ -4,7 +4,7 @@ import { ArrowDown, ArrowLeft, Check, CircleDollarSign, Crown, Eye, Gem, LockKey
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "KOTS Mechanics v1.1 | Draft",
+  title: "KOTS Mechanics v1.2 | Draft",
   description: "A discussion draft explaining the King of the Screen mechanics.",
   robots: { index: false, follow: false },
 };
@@ -28,7 +28,7 @@ export default function MechanicsV11Page() {
           <ArrowLeft size={15} aria-hidden="true" />
           <span>COMING SOON</span>
         </Link>
-        <span className={styles.version}>MECHANICS V1.1</span>
+        <span className={styles.version}>MECHANICS V1.2</span>
       </nav>
 
       <section className={styles.hero} aria-labelledby="mechanics-title">
@@ -127,7 +127,7 @@ export default function MechanicsV11Page() {
               <span>20%</span>
               <LockKeyhole size={23} aria-hidden="true" />
               <h3>KOTS Vault</h3>
-              <p>Публичный резерв для будущих операций с ликвидностью и KOTS.</p>
+              <p>Прозрачный резерв. Он накапливается до отдельного решения о ликвидности.</p>
             </article>
           </div>
         </div>
@@ -137,25 +137,25 @@ export default function MechanicsV11Page() {
         <div className={styles.sectionHeader}>
           <span className={styles.sectionNumber}>04</span>
           <div>
-            <p className={styles.eyebrow}>KOTS VAULT</p>
-            <h2 id="kots-title">Ликвидность, а не обещание цены</h2>
+            <p className={styles.eyebrow}>KOTS V1.2</p>
+            <h2 id="kots-title">100 фиксированных наград. Новый mint ещё не создан.</h2>
           </div>
         </div>
         <div className={styles.kotsGrid}>
           <div className={styles.kotsStatement}>
             <Sparkles size={28} aria-hidden="true" />
-            <p>В версии 1.1 покупка трона не начисляет KOTS покупателю. Она даёт правление и NFT.</p>
-            <p>20% оплаты накапливаются в Vault. После юридической и технической готовности Vault работает по публичной политике.</p>
+            <p>После завершения серии каждый окончательно расчётный Король получит право на 1,000,000 KOTS и одну статусную NFT. Сумма не зависит от цены трона.</p>
+            <p>Новый KOTS mint создаётся только после отдельной юридической и технической проверки. Старый token mint не используется проектом.</p>
           </div>
           <div className={styles.operations}>
-            <div><span>12%</span><p>Покупка KOTS на DEX по фактической рыночной цене.</p></div>
-            <div><span>8%</span><p>SOL-сторона пула KOTS/SOL для торговли.</p></div>
-            <div><span><LockKeyhole size={15} /></span><p>Остаток KOTS хранится в публичном timelock-резерве.</p></div>
+            <div><span>10%</span><p>100,000,000 KOTS. Резерв Crown Rewards для 100 Королей.</p></div>
+            <div><span>25%</span><p>250,000 KOTS из награды открываются после завершения серии и антифрод-проверки.</p></div>
+            <div><span><LockKeyhole size={15} /></span><p>750,000 KOTS из награды открываются равномерно за 12 месяцев.</p></div>
           </div>
         </div>
         <div className={styles.ruleBox}>
           <ShieldCheck size={20} aria-hidden="true" />
-          <p><strong>Честное правило:</strong> No price, profit, or liquidity is guaranteed. Операции Vault видны публично, но результат зависит от рынка.</p>
+          <p><strong>Честное правило:</strong> No price, profit, liquidity, or token delivery is guaranteed before final launch terms. Vault не является механизмом поддержки цены.</p>
         </div>
       </section>
 
@@ -171,7 +171,7 @@ export default function MechanicsV11Page() {
           <div className={styles.nftSeal}><Crown size={42} aria-hidden="true" /><span>1 / 100</span></div>
           <div>
             <h3>NFT подтверждает правление</h3>
-            <p>Он хранит номер Короля, время правления, визуальный след и ссылку на подтверждённую транзакцию. NFT не даёт доход, KOTS или долю в Vault.</p>
+            <p>Он хранит номер Короля, время правления, визуальный след и ссылку на подтверждённую транзакцию. NFT не даёт доход, долю в Vault или право на выкуп.</p>
           </div>
           <ul>
             <li><Check size={16} aria-hidden="true" /> Один номер на одно подтверждённое правление</li>
@@ -184,11 +184,11 @@ export default function MechanicsV11Page() {
       <section className={styles.disclosure} aria-label="Статус запуска">
         <p>СТАТУС ПРОЕКТА</p>
         <h2>Это черновик для обсуждения.</h2>
-        <span>Оплаты, NFT и операции KOTS выключены. Эта страница не является предложением инвестировать, купить токен или ждать доход.</span>
+        <span>Оплаты, NFT, claim и операции KOTS выключены. Эта страница не является предложением инвестировать, купить токен или ждать доход.</span>
       </section>
 
       <footer className={styles.footer}>
-        <span>KING OF THE SCREEN · MECHANICS V1.1</span>
+        <span>KING OF THE SCREEN · MECHANICS V1.2</span>
         <span>TEMPORARY DISCUSSION PAGE</span>
       </footer>
     </main>

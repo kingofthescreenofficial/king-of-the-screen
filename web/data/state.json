@@ -12,9 +12,7 @@
     "countryCode": "👑",
     "id": "king_hoku_001",
     "crownedAt": 1787753367000,
-    "rewardWalletAddress": "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo",
-    "airdropStatus": "DELIVERED_ON_CHAIN",
-    "minedTokens": 25000
+    "rewardWalletAddress": "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo"
   },
   "nextMinPriceUsd": 2,
   "stats": {
@@ -37,14 +35,5 @@
     "solanaAddress": "EkgfzyrqfTZB8Er3XPSYn6nVmtTv4hvCo3F9Drkd62Aq",
     "evmAddress": "",
     "usdtTrc20Address": ""
-  },
-  "tokenConfig": {
-    "ticker": "KOTS",
-    "name": "King of the Screen",
-    "contractAddress": "HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    "pumpFunUrl": "https://pump.fun/coin/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    "dexScreenerUrl": "https://dexscreener.com/solana/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    "solscanUrl": "https://solscan.io/token/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    "totalSupply": 1000000000
   }
 }

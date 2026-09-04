@@ -24,8 +24,6 @@ export const DEFAULT_STATE: AppState = {
     id: "king_hoku_001",
     crownedAt: 1787753367000,
     rewardWalletAddress: "CC3SUMpNzWDMpAt2JxtYERohLmyHjj2GPxWscYXnW1Fo",
-    airdropStatus: "QUEUED",
-    minedTokens: 900,
   },
   nextMinPriceUsd: 2,
   stats: {
@@ -48,14 +46,6 @@ export const DEFAULT_STATE: AppState = {
     solanaAddress: process.env.SOLANA_WALLET_ADDRESS || "EkgfzyrqfTZB8Er3XPSYn6nVmtTv4hvCo3F9Drkd62Aq",
     evmAddress: "",
     usdtTrc20Address: "",
-  },
-  tokenConfig: {
-    ticker: "KOTS",
-    name: "King of the Screen",
-    contractAddress: "HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    pumpFunUrl: "https://pump.fun/coin/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    dexScreenerUrl: "https://dexscreener.com/solana/HzkfcbeL2gTG5Xm1GomNbr9SwN96RUbGS6M42VhPpump",
-    totalSupply: 1000000000,
   },
 };
 

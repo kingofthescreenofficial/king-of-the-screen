@@ -71,7 +71,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
           </button>
         </div>
 
-        <div className="text-[10px] text-gray-600 mb-3 font-mono">Last Updated: August 31, 2026</div>
+        <div className="text-[10px] text-gray-600 mb-3 font-mono">Last Updated: September 4, 2026</div>
 
         {/* Content Body */}
         <div className="max-h-[60vh] overflow-y-auto space-y-4 pr-2 text-gray-300 leading-relaxed">
@@ -152,11 +152,11 @@ export const LegalModal: React.FC<LegalModalProps> = ({
 
               <h3 className="text-base font-bold text-white pt-2">2. Token and NFT programs</h3>
               <p>
-                Token and NFT programs are currently unavailable. The platform makes no promise of token distribution, NFT issuance, market purchases, or delivery time.
+                The proposed KOTS v1.2 program is not live. A new KOTS mint has not been created. The existing Pump.fun token is not an official KOTS v1.2 asset and is not used by this platform.
               </p>
               <ul className="list-disc list-inside space-y-1 text-gray-400 pl-2 text-sm mt-1">
-                <li>No participation creates a right to receive tokens or NFTs.</li>
-                <li>Any future program will have separate published eligibility rules.</li>
+                <li>Payments, NFT minting, KOTS claims, and KOTS trading operations are disabled.</li>
+                <li>Final eligibility, claim, vesting, and jurisdiction rules will be published before any live program.</li>
                 <li>Digital assets can be volatile and may lose all value.</li>
               </ul>
 
