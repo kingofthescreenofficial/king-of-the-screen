@@ -3,7 +3,7 @@
 **Status:** IN_PROGRESS
 **Current phase:** 4
 **Started:** 2026-09-03
-**Last update:** 2026-09-03
+**Last update:** 2026-09-04
 **Run root:** .supergoal/production-hardening-king-of-the-screen-T6f8XH
 **Baseline ref:** 10b855fbe7a60a00ffaf9cac77afc02bf34f7188
 
@@ -55,7 +55,10 @@
 - 2026-09-03 — Phase 4 complete. Legacy JSONL import keeps only validated page views; all other historical events are discarded. Backup and restore tests use a SQLite-consistent snapshot, and a second OS process receives `SQLITE_BUSY` while an immediate write transaction is held.
 - 2026-09-03 — Phase 5 started with a closed `POST /api/payment-intents` contract. It returns `503 PAYMENTS_DISABLED` until the explicit payment-activation decision.
 - 2026-09-03 — Phase 4 durable-storage release deployed from pushed commit `7281ff4`. Pre-deploy SQLite backup `phase4-20260903T2219Z` has mode 600. `kots-web` restarted after a successful build; Sentinel was not restarted. Live state returned 200, and payment intents plus takeovers remained `503 PAYMENTS_DISABLED`.
+- 2026-09-04 — Public site replaced with a Coming Soon page from pushed commit `be6b024`. The VPS build passed, `kots-web` restarted, and `https://kingofthescreen.fun/` returned 200 with no public takeover or payment path.
+- 2026-09-04 — Tokenomics decision: exactly 100 Kings and 100 status NFTs. The auction target is $1,250,000 gross, which credits $1,000,000 to the cold wallet at the fixed 80/20 split. The KOTS policy may disclose that 20% of each confirmed throne payment is reinvested, but must not promise price growth, liquidity, profit, or buyer token allocation.
 
 ## Failure log
 
 - 2026-09-03 — VPS SSH hardening created and verified `kots-admin` key login, then disabled root and password SSH login. `kots-admin` lacks passwordless sudo, so future privileged VPS changes require provider-console recovery to add a scoped sudo rule or restore root access.
+- 2026-09-04 — Root key access was restored through the provider console by setting `PermitRootLogin prohibit-password`; password login remains disabled. The user supplied panel and root passwords in chat, so both credentials require rotation.
