@@ -40,9 +40,9 @@ export async function POST(request: Request) {
     if (nextOrdinal > AUCTION_MANIFEST_V1.crownLimit) {
       return NextResponse.json({ code: "CROWN_SERIES_COMPLETE", error: "The 100 Crown series is complete." }, { status: 409 });
     }
-    const hotWalletAddress = process.env.SOLANA_HOT_WALLET_ADDRESS;
+    const operationsVaultAddress = process.env.SOLANA_OPERATIONS_VAULT_ADDRESS;
     const rpcUrl = process.env.SOLANA_RPC_URL;
-    if (!hotWalletAddress || !rpcUrl) throw new Error("PAYMENT_CONFIGURATION_UNAVAILABLE");
+    if (!operationsVaultAddress || !rpcUrl) throw new Error("PAYMENT_CONFIGURATION_UNAVAILABLE");
 
     const [quote, latestBlockhash] = await Promise.all([
       getFreshSolQuote(),
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       termsVersion,
       sourceHash: hashNetworkSource(request.headers.get("x-forwarded-for") ?? "unknown"),
       quote: { priceUsdCents, solUsdCents: quote.usdCents, priceVersion: AUCTION_MANIFEST_V1.version },
-      recipients: { treasuryAddress: state.walletConfig.solanaAddress, hotWalletAddress },
+      recipients: { treasuryAddress: state.walletConfig.solanaAddress, operationsVaultAddress },
       recentBlockhash: latestBlockhash.blockhash,
     });
     return NextResponse.json(intent, { status: 201 });

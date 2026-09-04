@@ -1,6 +1,6 @@
 import bs58 from "bs58";
 
-export type StoredPaymentIntent = { id: string; nonce: string; buyerWallet: string; treasuryAddress: string; hotWalletAddress: string; treasuryLamports: number; hotWalletLamports: number; createdAt: number; expiresAt: number };
+export type StoredPaymentIntent = { id: string; nonce: string; buyerWallet: string; treasuryAddress: string; operationsVaultAddress: string; treasuryLamports: number; operationsVaultLamports: number; createdAt: number; expiresAt: number };
 type ParsedInstruction = { program?: string; programId?: string; parsed?: { type?: string; info?: { source?: string; destination?: string; lamports?: number } }; data?: string };
 export type SolanaPaymentFixture = { signature: string; confirmationStatus: "processed" | "confirmed" | "finalized"; blockTime: number | null; meta: { err: unknown; innerInstructions?: unknown[] | null } | null; transaction: { message: { accountKeys: Array<{ pubkey: string } | string>; instructions: ParsedInstruction[] } } };
 export type PaymentVerification = { valid: true } | { valid: false; code: string };
@@ -22,10 +22,10 @@ export function verifySolanaPayment(transaction: SolanaPaymentFixture, intent: S
   if (blockTime < intent.createdAt - 120_000 || blockTime > intent.expiresAt) return { valid: false, code: "STALE_BLOCK_TIME" };
   const payer = transaction.transaction.message.accountKeys[0];
   if ((typeof payer === "string" ? payer : payer?.pubkey) !== intent.buyerWallet) return { valid: false, code: "WRONG_FEE_PAYER" };
-  const [budget, treasury, hot, intentMemo, ...extra] = transaction.transaction.message.instructions;
+  const [budget, treasury, operationsVault, intentMemo, ...extra] = transaction.transaction.message.instructions;
   if (extra.length || !compute(budget)) return { valid: false, code: "UNDECLARED_INSTRUCTION" };
   if (!transfer(treasury, intent.buyerWallet, intent.treasuryAddress, intent.treasuryLamports)) return { valid: false, code: "INVALID_TREASURY_TRANSFER" };
-  if (!transfer(hot, intent.buyerWallet, intent.hotWalletAddress, intent.hotWalletLamports)) return { valid: false, code: "INVALID_HOT_WALLET_TRANSFER" };
+  if (!transfer(operationsVault, intent.buyerWallet, intent.operationsVaultAddress, intent.operationsVaultLamports)) return { valid: false, code: "INVALID_OPERATIONS_VAULT_TRANSFER" };
   if (!memo(intentMemo, intent)) return { valid: false, code: "INVALID_MEMO" };
   return { valid: true };
 }

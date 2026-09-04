@@ -1,7 +1,7 @@
 const required = ["KOTS_DATABASE_PATH", "KOTS_PUBLIC_ORIGIN"];
 const failures = required.filter((key) => !process.env[key]);
 if (process.env.PAID_TAKEOVER_ENABLED === "true") {
-  for (const key of ["KOTS_ADMIN_PASSWORD_HASH", "KOTS_SESSION_SECRET", "SOLANA_RPC_URL", "SOLANA_HOT_WALLET_ADDRESS"]) {
+  for (const key of ["KOTS_ADMIN_PASSWORD_HASH", "KOTS_SESSION_SECRET", "SOLANA_RPC_URL", "SOLANA_OPERATIONS_VAULT_ADDRESS"]) {
     if (!process.env[key]) failures.push(key);
   }
 }

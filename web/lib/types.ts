@@ -44,5 +44,9 @@ export interface AppState {
 export interface PublicAppState extends AppState {
   capabilities: {
     paidTakeoverEnabled: boolean;
+    nftMintEnabled: boolean;
+    kotsClaimEnabled: boolean;
+    kotsMarketOperationsEnabled: boolean;
+    kotsMechanicsPlanned: boolean;
   };
 }

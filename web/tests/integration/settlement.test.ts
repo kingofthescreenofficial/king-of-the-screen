@@ -7,7 +7,7 @@ const now = 1_000;
 
 beforeEach(() => {
   closeDatabaseForTests();
-  getDatabase().exec("DELETE FROM settlement_recoveries; DELETE FROM outbox_events; DELETE FROM reigns; DELETE FROM payments; DELETE FROM payment_intents;");
+  getDatabase().exec("DELETE FROM settlement_recoveries; DELETE FROM outbox_events; DELETE FROM nft_mints; DELETE FROM reward_jobs; DELETE FROM reigns; DELETE FROM payments; DELETE FROM payment_intents;");
 });
 
 function reservedIntent(id = "intent") {
@@ -22,6 +22,8 @@ describe("durable settlement", () => {
     expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM payments WHERE status = 'SETTLED'").get()).toEqual({ count: 1 });
     expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM reigns").get()).toEqual({ count: 1 });
     expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM outbox_events WHERE event_type = 'reign.created'").get()).toEqual({ count: 1 });
+    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM reward_jobs WHERE status = 'PENDING_LAUNCH'").get()).toEqual({ count: 1 });
+    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM outbox_events WHERE event_type = 'status-nft.requested'").get()).toEqual({ count: 1 });
   });
 
   it("returns the original payment on replay", () => {
@@ -29,7 +31,8 @@ describe("durable settlement", () => {
     const first = settleVerifiedPayment({ intentId: "intent", signature: "signature", landedAt: 1_500, now });
     const replay = settleVerifiedPayment({ intentId: "intent", signature: "signature", landedAt: 1_500, now: 1_100 });
     expect(replay).toMatchObject({ status: "SETTLED", paymentId: first.paymentId });
-    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM outbox_events").get()).toEqual({ count: 1 });
+    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM outbox_events").get()).toEqual({ count: 2 });
+    expect(getDatabase().prepare("SELECT COUNT(*) AS count FROM reward_jobs").get()).toEqual({ count: 1 });
   });
 
   it("records late payment for recovery without a reign", () => {

@@ -30,6 +30,9 @@ export function settleVerifiedPayment(input: SettlementInput): SettlementResult 
     database.prepare("INSERT INTO reigns (id, payment_id, created_at, updated_at) VALUES (?, ?, ?, ?)").run(reignId, paymentId, now, now);
     database.prepare("UPDATE payments SET status = 'SETTLED', updated_at = ? WHERE id = ?").run(now, paymentId);
     database.prepare("INSERT INTO outbox_events (id, event_type, aggregate_id, payload_json, status, created_at, updated_at) VALUES (?, 'reign.created', ?, ?, 'PENDING', ?, ?)").run(randomUUID(), reignId, JSON.stringify({ reignId }), now, now);
+    const rewardJobId = randomUUID();
+    database.prepare("INSERT INTO reward_jobs (id, idempotency_key, status, created_at, updated_at) VALUES (?, ?, 'PENDING_LAUNCH', ?, ?)").run(rewardJobId, `status-nft:${reignId}`, now, now);
+    database.prepare("INSERT INTO outbox_events (id, event_type, aggregate_id, payload_json, status, created_at, updated_at) VALUES (?, 'status-nft.requested', ?, ?, 'PENDING', ?, ?)").run(randomUUID(), rewardJobId, JSON.stringify({ reignId, rewardJobId }), now, now);
     return { status: "SETTLED", paymentId, reignId };
   });
 }

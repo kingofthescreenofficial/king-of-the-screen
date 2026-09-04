@@ -20,7 +20,7 @@ function requestFixture(now: number) {
   const wallet = walletFixture();
   const challenge = createWalletChallenge(wallet.address, now);
   const treasury = Keypair.generate().publicKey.toBase58();
-  const hotWallet = Keypair.generate().publicKey.toBase58();
+  const operationsVault = Keypair.generate().publicKey.toBase58();
   return {
     wallet,
     challenge,
@@ -33,7 +33,7 @@ function requestFixture(now: number) {
       termsVersion: "2026-09-03",
       sourceHash: hashNetworkSource("test-source"),
       quote: { priceUsdCents: 200, solUsdCents: 10_000, priceVersion: "fixture-v1" },
-      recipients: { treasuryAddress: treasury, hotWalletAddress: hotWallet },
+      recipients: { treasuryAddress: treasury, operationsVaultAddress: operationsVault },
       recentBlockhash: "11111111111111111111111111111111",
       now,
     },
@@ -51,13 +51,13 @@ describe("payment intent protocol", () => {
     const intent = createPaymentIntent(fixture.request);
     const transaction = Transaction.from(Buffer.from(intent.serializedTransaction, "base64"));
 
-    expect(intent.treasuryLamports + intent.hotWalletLamports).toBe(intent.totalLamports);
+    expect(intent.treasuryLamports + intent.operationsVaultLamports).toBe(intent.totalLamports);
     expect(intent.expiresAt).toBe(91_000);
     expect(transaction.instructions).toHaveLength(4);
     expect(transaction.instructions[1].keys[1].pubkey.toBase58()).toBe(fixture.request.recipients.treasuryAddress);
-    expect(transaction.instructions[2].keys[1].pubkey.toBase58()).toBe(fixture.request.recipients.hotWalletAddress);
+    expect(transaction.instructions[2].keys[1].pubkey.toBase58()).toBe(fixture.request.recipients.operationsVaultAddress);
     expect(transaction.instructions[1].data.readBigUInt64LE(4)).toBe(BigInt(intent.treasuryLamports));
-    expect(transaction.instructions[2].data.readBigUInt64LE(4)).toBe(BigInt(intent.hotWalletLamports));
+    expect(transaction.instructions[2].data.readBigUInt64LE(4)).toBe(BigInt(intent.operationsVaultLamports));
   });
 
   it("rejects a reused wallet challenge and keeps the existing reservation", () => {

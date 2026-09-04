@@ -22,7 +22,7 @@ export type PaymentQuote = {
 
 export type PaymentRecipients = {
   treasuryAddress: string;
-  hotWalletAddress: string;
+  operationsVaultAddress: string;
 };
 
 export type PaymentIntentRequest = {
@@ -45,7 +45,7 @@ export type PaymentIntent = {
   expiresAt: number;
   totalLamports: number;
   treasuryLamports: number;
-  hotWalletLamports: number;
+  operationsVaultLamports: number;
   serializedTransaction: string;
 };
 
@@ -118,7 +118,7 @@ function buildUnsignedTransaction(intentId: string, nonce: string, buyer: Public
   transaction.add(
     ComputeBudgetProgram.setComputeUnitLimit({ units: 200_000 }),
     SystemProgram.transfer({ fromPubkey: buyer, toPubkey: asPublicKey(recipients.treasuryAddress), lamports: treasuryLamports }),
-    SystemProgram.transfer({ fromPubkey: buyer, toPubkey: asPublicKey(recipients.hotWalletAddress), lamports: totalLamports - treasuryLamports }),
+    SystemProgram.transfer({ fromPubkey: buyer, toPubkey: asPublicKey(recipients.operationsVaultAddress), lamports: totalLamports - treasuryLamports }),
     new TransactionInstruction({ keys: [], programId: MEMO_PROGRAM, data: Buffer.from(`kots:intent:${intentId}:${nonce}`) }),
   );
   return transaction.serialize({ requireAllSignatures: false, verifySignatures: false }).toString("base64");
@@ -130,7 +130,7 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
   const buyer = asPublicKey(request.walletAddress);
   asPublicKey(request.rewardWalletAddress);
   asPublicKey(request.recipients.treasuryAddress);
-  asPublicKey(request.recipients.hotWalletAddress);
+  asPublicKey(request.recipients.operationsVaultAddress);
   if (!verifyChallenge(request.challengeId, request.walletAddress, request.signature, now)) {
     throw new Error("INVALID_WALLET_CHALLENGE");
   }
@@ -145,7 +145,7 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
 
     const totalLamports = quoteToLamports(request.quote.priceUsdCents, request.quote.solUsdCents);
     const treasuryLamports = Math.floor(totalLamports * 0.8);
-    const hotWalletLamports = totalLamports - treasuryLamports;
+    const operationsVaultLamports = totalLamports - treasuryLamports;
     const id = randomUUID();
     const nonce = randomUUID();
     const expiresAt = now + INTENT_TTL_MS;
@@ -157,10 +157,10 @@ export function createPaymentIntent(request: PaymentIntentRequest): PaymentInten
         hot_wallet_address, nonce, expires_at, price_version, serialized_transaction, created_at, updated_at
       ) VALUES (?, 'RESERVED', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, request.walletAddress, request.rewardWalletAddress, request.contentDigest, request.termsVersion,
-      request.quote.priceUsdCents, request.quote.solUsdCents, totalLamports, treasuryLamports, hotWalletLamports,
-      request.recipients.treasuryAddress, request.recipients.hotWalletAddress, nonce, expiresAt, request.quote.priceVersion,
+      request.quote.priceUsdCents, request.quote.solUsdCents, totalLamports, treasuryLamports, operationsVaultLamports,
+      request.recipients.treasuryAddress, request.recipients.operationsVaultAddress, nonce, expiresAt, request.quote.priceVersion,
       serializedTransaction, now, now);
-    return { id, nonce, expiresAt, totalLamports, treasuryLamports, hotWalletLamports, serializedTransaction };
+    return { id, nonce, expiresAt, totalLamports, treasuryLamports, operationsVaultLamports, serializedTransaction };
   });
 }
 
