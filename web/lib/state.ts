@@ -1,7 +1,6 @@
 import path from "path";
 import { importLegacyAuctionState, importLegacyTelemetry, readAuctionState, writeAuctionState } from "./database";
 import { AUCTION_MANIFEST_V1, getCrownPriceCents } from "./auction-manifest";
-import { calculateNextPrice } from "./pricing";
 import { AppState, King } from "./types";
 
 export { calculateNextPrice } from "./pricing";
@@ -91,9 +90,12 @@ export function saveAppState(state: AppState): void {
   writeAuctionState(state);
 }
 
-export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">): { success: boolean; state: AppState; error?: string } {
-  const state = getAppState();
-  const now = Date.now();
+export function synchronizeRuntimeState(state: AppState): void {
+  memoryState = state;
+}
+
+export function advanceAuctionState(previousState: AppState, newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">, now: number): { success: boolean; state: AppState; error?: string } {
+  const state = JSON.parse(JSON.stringify(previousState)) as AppState;
   const settledCrownCount = state.stats.settledCrownCount ?? 0;
   const nextOrdinal = settledCrownCount + 1;
 
@@ -118,46 +120,45 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
   oldKing.reignDurationSeconds = reignDurationSeconds;
 
   // Add old king to Hall of Fame (keep last 50)
-  state.hallOfFame.unshift(oldKing);
-  if (state.hallOfFame.length > 50) {
-    state.hallOfFame.pop();
-  }
+  const hallOfFame = [oldKing, ...state.hallOfFame].slice(0, 50);
 
   // 2. Crown new king
   const newKing: King = {
     ...newKingData,
-    id: `king_${now}_${Math.random().toString(36).substring(2, 7)}`,
+    id: `king_${nextOrdinal}_${now}`,
     crownedAt: now,
   };
-  state.currentKing = newKing;
+  const recentEvents = [{
+    id: `ev-${now}`,
+    type: "TAKEOVER" as const,
+    text: `⚡ ${newKing.nickname} DETHRONED the King with $${newKing.paidAmountUsd.toFixed(2)} (${newKing.cryptoCurrency})!`,
+    timestamp: now,
+  }, ...state.recentEvents].slice(0, 20);
 
   // 3. Update stats
-  state.stats.totalRaisedUsd += expectedPriceUsd;
-  state.stats.totalDethronements += 1;
-  state.stats.settledCrownCount = nextOrdinal;
+  const stats = {
+    ...state.stats,
+    totalRaisedUsd: state.stats.totalRaisedUsd + expectedPriceUsd,
+    totalDethronements: state.stats.totalDethronements + 1,
+    settledCrownCount: nextOrdinal,
+  };
   if (reignDurationSeconds > state.stats.longestReignSeconds) {
-    state.stats.longestReignSeconds = reignDurationSeconds;
-    state.stats.longestReignKing = oldKing.nickname;
+    stats.longestReignSeconds = reignDurationSeconds;
+    stats.longestReignKing = oldKing.nickname;
   }
 
   // 4. Calculate next minimum price
-  state.nextMinPriceUsd = nextOrdinal === AUCTION_MANIFEST_V1.crownLimit
+  const nextMinPriceUsd = nextOrdinal === AUCTION_MANIFEST_V1.crownLimit
     ? 0
     : getCrownPriceCents(nextOrdinal + 1) / 100;
 
-  // 5. Add event
-  state.recentEvents.unshift({
-    id: `ev-${now}`,
-    type: "TAKEOVER",
-    text: `⚡ ${newKing.nickname} DETHRONED the King with $${newKing.paidAmountUsd.toFixed(2)} (${newKing.cryptoCurrency})!`,
-    timestamp: now,
-  });
-  if (state.recentEvents.length > 20) {
-    state.recentEvents.pop();
-  }
+  return { success: true, state: { ...state, currentKing: newKing, hallOfFame, recentEvents, stats, nextMinPriceUsd } };
+}
 
-  saveAppState(state);
-  return { success: true, state };
+export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">): { success: boolean; state: AppState; error?: string } {
+  const result = advanceAuctionState(getAppState(), newKingData, Date.now());
+  if (result.success) saveAppState(result.state);
+  return result;
 }
 
 export function resetToGenesis(fullReset: boolean = false): AppState {

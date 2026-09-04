@@ -179,6 +179,7 @@ function migrate(database: Database.Database): void {
     "moderation_provider TEXT",
     "moderation_result_json TEXT",
     "rejection_reason TEXT",
+    "settled_at INTEGER",
   ];
   const existingContentColumns = new Set(
     (database.prepare("PRAGMA table_info(content_submissions)").all() as Array<{ name: string }>).map(({ name }) => name),
