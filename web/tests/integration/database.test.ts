@@ -32,7 +32,7 @@ function stateFixture(): AppState {
       crownedAt: 1,
     },
     nextMinPriceUsd: 2,
-    stats: { longestReignKing: "Fixture", longestReignSeconds: 1, targetGoalUsd: 100, totalDethronements: 1, totalRaisedUsd: 1 },
+    stats: { longestReignKing: "Fixture", longestReignSeconds: 1, settledCrownCount: 0, targetGoalUsd: 100, totalDethronements: 1, totalRaisedUsd: 1 },
     hallOfFame: [],
     recentEvents: [],
     walletConfig: { evmAddress: "", solanaAddress: "", usdtTrc20Address: "" },

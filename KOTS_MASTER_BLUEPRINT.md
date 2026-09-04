@@ -1,4 +1,6 @@
-# 👑 King of the Screen: Master Blueprint
+# 👑 King of the Screen: Master Blueprint, archived
+
+> Status: historical reference only. The former Pump.fun buyback, proportional KOTS reward, and price-promotion model are retired. Current source of truth: `docs/KOTS_TOKENOMICS_V12.md` and `docs/LEGAL_LAUNCH_CHECKLIST.md`.
 
 <div align="center">
   <p><strong>DeFi Social Billboard & Viral FOMO Engine</strong></p>

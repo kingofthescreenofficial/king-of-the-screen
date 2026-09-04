@@ -1,5 +1,6 @@
 import path from "path";
 import { importLegacyAuctionState, importLegacyTelemetry, readAuctionState, writeAuctionState } from "./database";
+import { AUCTION_MANIFEST_V1, getCrownPriceCents } from "./auction-manifest";
 import { calculateNextPrice } from "./pricing";
 import { AppState, King } from "./types";
 
@@ -16,10 +17,9 @@ export const DEFAULT_STATE: AppState = {
     link: "https://king-of-the-screen.vercel.app",
     mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
     mediaType: "image",
-    paidAmountUsd: 1,
-    paidCryptoAmount: 1,
-    cryptoCurrency: "USDT",
-    txHash: "0x2226154bede9587e864a7ebb1d75f123d82993463f4e82f0e51b4dddffb2ce22",
+    paidAmountUsd: 0,
+    paidCryptoAmount: 0,
+    cryptoCurrency: "DEMO",
     countryCode: "👑",
     id: "king_hoku_001",
     crownedAt: 1787753367000,
@@ -27,8 +27,9 @@ export const DEFAULT_STATE: AppState = {
   },
   nextMinPriceUsd: 2,
   stats: {
-    totalRaisedUsd: 1,
-    totalDethronements: 1,
+    totalRaisedUsd: 0,
+    totalDethronements: 0,
+    settledCrownCount: 0,
     longestReignSeconds: 1800,
     longestReignKing: "Hoku",
     targetGoalUsd: 1000000,
@@ -36,9 +37,9 @@ export const DEFAULT_STATE: AppState = {
   hallOfFame: [],
   recentEvents: [
     {
-      id: "ev-hoku-001",
+    id: "ev-hoku-preview",
       type: "TAKEOVER",
-      text: "👑 Hoku claimed the throne with $1.00 (USDT)! Message: forever KING",
+    text: "👑 Preview throne. Payments are disabled.",
       timestamp: 1787753367000,
     },
   ],
@@ -93,20 +94,21 @@ export function saveAppState(state: AppState): void {
 export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">): { success: boolean; state: AppState; error?: string } {
   const state = getAppState();
   const now = Date.now();
+  const settledCrownCount = state.stats.settledCrownCount ?? 0;
+  const nextOrdinal = settledCrownCount + 1;
 
-  // Validate bid amount with a strict 60-second grace window for race conditions
-  if (newKingData.paidAmountUsd < state.nextMinPriceUsd) {
-    const isTied = newKingData.paidAmountUsd >= state.currentKing.paidAmountUsd;
-    const isRecent = (now - state.currentKing.crownedAt) < 60000; // 60 seconds max
-    
-    if (!(isTied && isRecent)) {
-      return {
-        success: false,
-        state,
-        error: `Bid too low! Minimum required: ${state.nextMinPriceUsd}. You sent: ${newKingData.paidAmountUsd}`,
-      };
-    }
-    console.log("Race condition averted, accepting tied bid within 60s window.");
+  if (nextOrdinal > AUCTION_MANIFEST_V1.crownLimit) {
+    return { success: false, state, error: "CROWN_SERIES_COMPLETE" };
+  }
+
+  const expectedPriceUsd = getCrownPriceCents(nextOrdinal) / 100;
+
+  if (Math.round(newKingData.paidAmountUsd * 100) !== getCrownPriceCents(nextOrdinal)) {
+    return {
+      success: false,
+      state,
+      error: `CROWN_PRICE_MISMATCH:${expectedPriceUsd.toFixed(2)}`,
+    };
   }
 
   // 1. Archive current king
@@ -130,15 +132,18 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
   state.currentKing = newKing;
 
   // 3. Update stats
-  state.stats.totalRaisedUsd += newKingData.paidAmountUsd;
+  state.stats.totalRaisedUsd += expectedPriceUsd;
   state.stats.totalDethronements += 1;
+  state.stats.settledCrownCount = nextOrdinal;
   if (reignDurationSeconds > state.stats.longestReignSeconds) {
     state.stats.longestReignSeconds = reignDurationSeconds;
     state.stats.longestReignKing = oldKing.nickname;
   }
 
   // 4. Calculate next minimum price
-  state.nextMinPriceUsd = calculateNextPrice(newKingData.paidAmountUsd);
+  state.nextMinPriceUsd = nextOrdinal === AUCTION_MANIFEST_V1.crownLimit
+    ? 0
+    : getCrownPriceCents(nextOrdinal + 1) / 100;
 
   // 5. Add event
   state.recentEvents.unshift({
@@ -165,18 +170,18 @@ export function resetToGenesis(fullReset: boolean = false): AppState {
       link: "https://x.com",
       mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
       mediaType: "image",
-      paidAmountUsd: 1,
+      paidAmountUsd: 0,
       paidCryptoAmount: 0.005,
-      cryptoCurrency: "SOL",
-      txHash: "genesis_tx_001",
+      cryptoCurrency: "DEMO",
       countryCode: "🌐",
       id: `king_genesis_${now}`,
       crownedAt: now,
     },
-    nextMinPriceUsd: 2,
+    nextMinPriceUsd: getCrownPriceCents(1) / 100,
     stats: {
-      totalRaisedUsd: 1,
-      totalDethronements: 1,
+      totalRaisedUsd: 0,
+      totalDethronements: 0,
+      settledCrownCount: 0,
       longestReignSeconds: 1420,
       longestReignKing: "👑 Sovereign Origin",
       targetGoalUsd: 1000000,
@@ -186,7 +191,7 @@ export function resetToGenesis(fullReset: boolean = false): AppState {
       {
         id: `ev-${now}`,
         type: "TAKEOVER",
-        text: "👑 Sovereign Origin claimed the throne for $1.00 (SOL)!",
+        text: "👑 Preview throne. Payments are disabled.",
         timestamp: now,
       },
     ],

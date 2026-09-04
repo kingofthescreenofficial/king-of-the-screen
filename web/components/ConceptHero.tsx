@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Zap, Crown, Trophy, Sparkles, ArrowRight, ShieldCheck, Flame, Coins, Gem } from "lucide-react";
+import { Zap, Crown, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
 
 interface ConceptHeroProps {
   onOpenTakeover: () => void;
@@ -23,7 +23,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
         </div>
 
         <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-          THE $1M THRONE: RULE, <span className="text-emerald-400">MINE $KOTS</span> & CLAIM YOUR <span className="text-yellow-400">1-OF-100 NFT</span>
+          THE $1M THRONE: RULE THE SCREEN & CLAIM YOUR <span className="text-yellow-400">1-OF-100 NFT</span>
         </h2>
 
         <p className="text-xs sm:text-base text-gray-300 leading-relaxed max-w-2xl mx-auto">
@@ -72,7 +72,7 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
               3
             </span>
             <Sparkles className="w-4 h-4" />
-            <span>Earn & Pump!</span>
+            <span>Program status</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
             The platform does not promise token value, market activity, token delivery, or NFT delivery.
@@ -84,15 +84,16 @@ export const ConceptHero: React.FC<ConceptHeroProps> = ({ onOpenTakeover, nextMi
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-3 border-t border-yellow-500/20">
         <div className="flex items-center gap-2 text-xs text-gray-300">
           <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-          <span>Instant 1-Click Solana micro-payments</span>
+          <span>Payments, NFT minting, and KOTS claims are paused.</span>
         </div>
 
         <button
           type="button"
           onClick={onOpenTakeover}
-          className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 text-black font-black text-sm uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.5)] flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          disabled
+          className="w-full sm:w-auto px-6 py-3 bg-gray-700 text-gray-300 font-black text-sm uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 cursor-not-allowed"
         >
-          <span>CLAIM THRONE & MINE $KOTS (${nextMinPriceUsd.toFixed(2)})</span>
+          <span>TAKEOVERS PAUSED</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

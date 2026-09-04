@@ -4,6 +4,7 @@ import { Connection } from "@solana/web3.js";
 import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
 import { createPaymentIntent, hashNetworkSource } from "@/lib/payment-protocol";
 import { getFreshSolQuote } from "@/lib/solana-quote";
+import { AUCTION_MANIFEST_V1, getCrownPriceCents } from "@/lib/auction-manifest";
 import { getAppState } from "@/lib/state";
 
 type IntentBody = {
@@ -35,6 +36,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ code: "STALE_TERMS", error: "Current terms acceptance is required." }, { status: 409 });
     }
     const state = getAppState();
+    const nextOrdinal = (state.stats.settledCrownCount ?? 0) + 1;
+    if (nextOrdinal > AUCTION_MANIFEST_V1.crownLimit) {
+      return NextResponse.json({ code: "CROWN_SERIES_COMPLETE", error: "The 100 Crown series is complete." }, { status: 409 });
+    }
     const hotWalletAddress = process.env.SOLANA_HOT_WALLET_ADDRESS;
     const rpcUrl = process.env.SOLANA_RPC_URL;
     if (!hotWalletAddress || !rpcUrl) throw new Error("PAYMENT_CONFIGURATION_UNAVAILABLE");
@@ -43,7 +48,7 @@ export async function POST(request: Request) {
       getFreshSolQuote(),
       new Connection(rpcUrl, "finalized").getLatestBlockhash("finalized"),
     ]);
-    const priceUsdCents = Math.round(state.nextMinPriceUsd * 100);
+    const priceUsdCents = getCrownPriceCents(nextOrdinal);
     const intent = createPaymentIntent({
       walletAddress: requireString(body.walletAddress),
       rewardWalletAddress: requireString(body.rewardWalletAddress),
@@ -52,7 +57,7 @@ export async function POST(request: Request) {
       contentDigest: requireString(body.contentDigest),
       termsVersion,
       sourceHash: hashNetworkSource(request.headers.get("x-forwarded-for") ?? "unknown"),
-      quote: { priceUsdCents, solUsdCents: quote.usdCents, priceVersion: quote.version },
+      quote: { priceUsdCents, solUsdCents: quote.usdCents, priceVersion: AUCTION_MANIFEST_V1.version },
       recipients: { treasuryAddress: state.walletConfig.solanaAddress, hotWalletAddress },
       recentBlockhash: latestBlockhash.blockhash,
     });

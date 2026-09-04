@@ -89,10 +89,9 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 Takeovers are currently paused. Any future payment terms, including cancellation and refund rules, will be published before payments are enabled.
               </p>
 
-              <h3 className="text-base font-bold text-white pt-2">2. Section 230 CDA & User Content Liability</h3>
+              <h3 className="text-base font-bold text-white pt-2">2. User content and moderation</h3>
               <p>
-                The platform operates as an "Interactive Computer Service" under Section 230 of the Communications Decency Act. We are not the publisher or speaker of any user-submitted content. 
-                You agree to <strong>fully indemnify and hold harmless</strong> the platform from any third-party claims arising from your uploads.
+                Content rules, moderation decisions, copyright notices, payment rules, and final user obligations will be published before paid takeovers are enabled. The platform can remove content that violates published rules.
               </p>
 
               <h3 className="text-base font-bold text-white pt-2">3. Limitation of Liability</h3>
@@ -101,10 +100,9 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                 Our total cumulative liability to you for any claim arising out of your use of the site shall not exceed <strong>the amount you paid to the platform, or $50 USD, whichever is less</strong>.
               </p>
 
-              <h3 className="text-base font-bold text-white pt-2">4. Binding Arbitration & Class Action Waiver</h3>
+              <h3 className="text-base font-bold text-white pt-2">4. Disputes</h3>
               <p>
-                Any dispute, claim, or controversy arising out of your use of this platform shall be resolved exclusively by <strong>individual, binding arbitration</strong>. 
-                You explicitly waive your right to a trial by jury or to participate in any <strong>class action, collective action, or representative proceeding</strong>.
+                Governing law, venue, notices, and dispute terms are not final. They will be published with the launch Terms of Service after the operator and jurisdiction are confirmed.
               </p>
 
               <h3 className="text-base font-bold text-white pt-2">5. Disclaimer of Warranties ("AS IS")</h3>
@@ -263,7 +261,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
 
         {/* Footer Confirmation */}
         <div className="mt-6 pt-4 border-t border-cyber-border/80 flex items-center justify-between">
-          <span className="text-[11px] text-gray-500">To the extent permitted by applicable law, governed by the laws of the Republic of Panama</span>
+          <span className="text-[11px] text-gray-500">Pre-launch legal notice. Final terms are not yet published.</span>
           <button
             onClick={onClose}
             className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-5 py-2 rounded-xl text-xs uppercase tracking-wider transition-colors"

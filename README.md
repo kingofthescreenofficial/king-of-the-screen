@@ -1,4 +1,6 @@
-# 👑 KING OF THE SCREEN ($1M Viral Web3 Engine)
+# 👑 KING OF THE SCREEN
+
+> Pre-launch status. Payments, NFT minting, KOTS claims, market operations, and the old Pump.fun token are disabled. Current product rules: `docs/KOTS_TOKENOMICS_V12.md` and `docs/LEGAL_LAUNCH_CHECKLIST.md`.
 
 > **Один экран. Один король. Властвуй, пока тебя не свергнут.**
 

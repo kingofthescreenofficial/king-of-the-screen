@@ -22,6 +22,7 @@ export interface AppState {
   stats: {
     totalRaisedUsd: number;
     totalDethronements: number;
+    settledCrownCount: number;
     longestReignSeconds: number;
     longestReignKing: string;
     targetGoalUsd: number;
