@@ -57,6 +57,7 @@
 - 2026-09-03 — Phase 4 durable-storage release deployed from pushed commit `7281ff4`. Pre-deploy SQLite backup `phase4-20260903T2219Z` has mode 600. `kots-web` restarted after a successful build; Sentinel was not restarted. Live state returned 200, and payment intents plus takeovers remained `503 PAYMENTS_DISABLED`.
 - 2026-09-04 — Public site replaced with a Coming Soon page from pushed commit `be6b024`. The VPS build passed, `kots-web` restarted, and `https://kingofthescreen.fun/` returned 200 with no public takeover or payment path.
 - 2026-09-04 — Tokenomics decision: exactly 100 Kings and 100 status NFTs. The auction target is $1,250,000 gross, which credits $1,000,000 to the cold wallet at the fixed 80/20 split. The KOTS policy may disclose that 20% of each confirmed throne payment is reinvested, but must not promise price growth, liquidity, profit, or buyer token allocation.
+- 2026-09-04 — The authoritative product specification is `docs/KOTS_ECONOMICS_V1.md`. It contains the exact 100-price manifest, SOL quote rules, NFT eligibility, KOTS operations policy and implementation gates. Payments, NFT issuance and KOTS operations remain disabled.
 
 ## Failure log
 
