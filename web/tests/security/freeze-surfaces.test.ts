@@ -6,6 +6,7 @@ import { POST as createPaymentIntent } from "@/app/api/payment-intents/route";
 import { POST as createWalletChallenge } from "@/app/api/payment-intents/challenge/route";
 import { DELETE as deleteTelemetry, POST as postTelemetry } from "@/app/api/telemetry/route";
 import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
+import { adminCookie, createAdminSession } from "@/lib/admin-auth";
 
 const originalPaymentFlag = process.env.PAID_TAKEOVER_ENABLED;
 
@@ -55,6 +56,18 @@ describe("emergency payment freeze", () => {
 });
 
 describe("frozen privileged endpoints", () => {
+  it("exposes operational status only to an authenticated administrator", async () => {
+    process.env.KOTS_ADMIN_PASSWORD_HASH = "scrypt$test-salt$0000000000000000000000000000000000000000000000000000000000000000";
+    process.env.KOTS_SESSION_SECRET = "a".repeat(32);
+    const session = createAdminSession();
+    const response = await adminDashboard(new Request("http://localhost/api/admin/dashboard", {
+      headers: { cookie: adminCookie(session.token, session.expiresAt) },
+    }));
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ operations: expect.any(Object) });
+  });
+
   it("rejects unauthenticated admin reads and destructive actions", async () => {
     for (const response of await Promise.all([adminDashboard(), takedownGet(), takedownPost()])) {
       expect(response.status).toBe(401);

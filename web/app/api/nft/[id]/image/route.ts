@@ -63,7 +63,7 @@ export async function GET(
 
   <rect x="640" y="70" width="300" height="56" rx="28" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
   <text x="670" y="105" font-family="monospace, sans-serif" font-size="18" font-weight="800" fill="#34d399">
-    ✓ ON-CHAIN VERIFIED
+    CROWN RECORD
   </text>
 
   <!-- Center 3D Crown -->
@@ -82,7 +82,7 @@ export async function GET(
   <!-- Central Relic Badge -->
   <rect x="350" y="600" width="300" height="42" rx="21" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="2"/>
   <text x="500" y="628" font-family="monospace, sans-serif" font-size="16" font-weight="900" fill="#c084fc" text-anchor="middle" letter-spacing="1">
-    ULTRA RARE GENESIS RELIC
+    STATUS NFT PENDING MINT
   </text>
 
   <!-- Bottom Stats Container -->
@@ -91,21 +91,21 @@ export async function GET(
   <!-- Column 1: Tribute -->
   <text x="110" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">TRIBUTE PAID</text>
   <text x="110" y="840" font-family="monospace, sans-serif" font-size="36" font-weight="900" fill="#facc15">${tribute}</text>
-  <text x="110" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">BNB SMART CHAIN</text>
+  <text x="110" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">SOLANA PAYMENT</text>
 
   <!-- Column 2: Program status -->
   <text x="440" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">KOTS PROGRAM</text>
-  <text x="440" y="840" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#34d399">TERMS PENDING</text>
+  <text x="440" y="840" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#34d399">STATUS RECORD</text>
   <text x="440" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">NO TOKEN CLAIM IS LIVE</text>
 
   <!-- Column 3: Token ID -->
   <text x="730" y="780" font-family="monospace, sans-serif" font-size="16" font-weight="700" fill="#9ca3af">RELIC TOKEN ID</text>
   <text x="730" y="840" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#c084fc">${tokenId}</text>
-  <text x="730" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">SERIES 1 OF 100</text>
+  <text x="730" y="875" font-family="monospace, sans-serif" font-size="14" fill="#6b7280">SERIES OF 100</text>
 
   <!-- Bottom Brand Watermark -->
   <text x="500" y="955" font-family="monospace, sans-serif" font-size="14" font-weight="800" fill="#eab308" text-anchor="middle" letter-spacing="3">
-    KING OF THE SCREEN — THE $1,000,000 MONUMENT
+    KING OF THE SCREEN — CROWN RECORD
   </text>
 </svg>`;
 

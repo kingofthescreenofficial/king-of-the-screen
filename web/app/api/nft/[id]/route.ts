@@ -1,79 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
+
+import { AUCTION_MANIFEST_V1 } from "@/lib/auction-manifest";
 import { getAppState } from "@/lib/state";
+import type { King } from "@/lib/types";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const ordinal = parseInt(id, 10) || 1;
-    const state = getAppState();
+function publicOrigin(request: NextRequest): string {
+  return process.env.KOTS_PUBLIC_ORIGIN?.replace(/\/$/, "") ?? request.nextUrl.origin;
+}
 
-    // Find monarch in hall of fame or current king
-    const allKings = [state.currentKing, ...(state.hallOfFame || [])].filter(
-      (k) => k.id !== "genesis_throne_origin"
-    );
+function settledKings(): King[] {
+  const state = getAppState();
+  return [state.currentKing, ...state.hallOfFame]
+    .filter((king) => king.cryptoCurrency === "SOL" && king.paidAmountUsd > 0)
+    .sort((left, right) => left.crownedAt - right.crownedAt);
+}
 
-    const targetKing = allKings[ordinal - 1] || state.currentKing;
-    const imageUrl = `https://king-of-the-screen.vercel.app/api/nft/${ordinal}/image`;
-
-    const metadata = {
-      name: `King of the Screen — Monarch #${ordinal} of 100`,
-      symbol: "KOTSNFT",
-      description: `Status NFT for a completed King of the Screen reign. Token claims and payments are not live. Monarch: ${targetKing.nickname}.`,
-      image: imageUrl,
-      external_url: "https://king-of-the-screen.vercel.app",
-      attributes: [
-        {
-          trait_type: "Monarch Rank",
-          value: `#${ordinal} of 100`,
-        },
-        {
-          trait_type: "Ruler Nickname",
-          value: targetKing.nickname,
-        },
-        {
-          trait_type: "Tribute Paid (USD)",
-          value: `$${targetKing.paidAmountUsd.toFixed(2)}`,
-        },
-        {
-          trait_type: "Currency",
-          value: targetKing.cryptoCurrency || "USDT",
-        },
-        {
-          trait_type: "Royal Decree",
-          value: targetKing.tagline,
-        },
-        {
-          trait_type: "Collection Tier",
-          value: "Series 1-of-100",
-        },
-      ],
-      properties: {
-        files: [
-          {
-            uri: imageUrl,
-            type: "image/png",
-          },
-        ],
-        category: "image",
-        creators: [
-          {
-            address: "0x36f1bBa134797da5Ec5CaF9ed4634903980CA305",
-            share: 100,
-          },
-        ],
-      },
-    };
-
-    return NextResponse.json(metadata, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-      },
-    });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to generate NFT metadata" }, { status: 500 });
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const ordinal = Number(id);
+  if (!Number.isInteger(ordinal) || ordinal < 1 || ordinal > AUCTION_MANIFEST_V1.crownLimit) {
+    return NextResponse.json({ code: "NFT_NOT_FOUND", error: "Status NFT was not found." }, { status: 404 });
   }
+  const king = settledKings()[ordinal - 1];
+  if (!king) return NextResponse.json({ code: "NFT_NOT_MINTABLE", error: "This Crown has not been settled." }, { status: 404 });
+
+  const origin = publicOrigin(request);
+  const imageUrl = `${origin}/api/nft/${ordinal}/image`;
+  return NextResponse.json({
+    name: `King of the Screen Crown #${ordinal} of ${AUCTION_MANIFEST_V1.crownLimit}`,
+    symbol: "KOTSCROWN",
+    description: "A status record for a completed King of the Screen Crown. It does not include token rights, revenue rights, or any promise of value.",
+    image: imageUrl,
+    external_url: origin,
+    attributes: [
+      { trait_type: "Crown Number", value: ordinal, max_value: AUCTION_MANIFEST_V1.crownLimit },
+      { trait_type: "Display Name", value: king.nickname },
+      { trait_type: "Public Message", value: king.tagline },
+      { trait_type: "Price Paid USD", value: king.paidAmountUsd },
+      { trait_type: "Payment Network", value: "Solana" },
+      { trait_type: "Reward Wallet", value: king.rewardWalletAddress ?? "Not recorded" },
+      { trait_type: "Crowned At", display_type: "date", value: Math.floor(king.crownedAt / 1000) },
+    ],
+    properties: { files: [{ uri: imageUrl, type: "image/svg+xml" }], category: "image" },
+  }, { headers: { "Access-Control-Allow-Origin": "*", "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120" } });
 }
