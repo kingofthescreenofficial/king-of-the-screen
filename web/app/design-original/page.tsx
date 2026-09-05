@@ -1,13 +1,16 @@
 import { Crown, Flame, Gem, Globe, ShieldCheck, Target, Trophy, Zap } from "lucide-react";
+import { buildPrelaunchDisplay } from "@/lib/prelaunch-display";
 
 const milestones = ["$0", "$10,000", "$100,000", "$500,000", "$1,000,000 (VICTORY)"];
 const steps = [
-  { number: "1", label: "Connect Wallet", tone: "border-purple-500/40 bg-purple-500/20 text-purple-400" },
-  { number: "2", label: "Claim the Throne", tone: "border-yellow-500/40 bg-yellow-500/20 text-yellow-400" },
-  { number: "3", label: "Receive a Relic", tone: "border-emerald-500/40 bg-emerald-500/20 text-emerald-400" },
+  { number: "1", label: "Wallet Access", tone: "border-purple-500/40 bg-purple-500/20 text-purple-400" },
+  { number: "2", label: "Throne Access", tone: "border-yellow-500/40 bg-yellow-500/20 text-yellow-400" },
+  { number: "3", label: "Relic Status", tone: "border-emerald-500/40 bg-emerald-500/20 text-emerald-400" },
 ];
 
 export default function OriginalDesignStudy() {
+  const display = buildPrelaunchDisplay();
+
   return (
     <main className="min-h-screen bg-[#08080c] px-4 py-6 font-mono text-white selection:bg-yellow-500 selection:text-black sm:py-8">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -21,7 +24,7 @@ export default function OriginalDesignStudy() {
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-400">● PRE-LAUNCH SIGNAL</span>
-            <span className="flex h-12 items-center gap-1.5 rounded-xl bg-gray-700 px-4 font-black uppercase tracking-wider text-gray-300">TAKEOVERS PAUSED</span>
+            <span className="flex h-12 items-center gap-1.5 rounded-xl bg-gray-700 px-4 font-black uppercase tracking-wider text-gray-300">{display.paymentStatus}</span>
           </div>
         </header>
 
@@ -42,7 +45,7 @@ export default function OriginalDesignStudy() {
           </div>
           <div className="relative mt-6 flex flex-col items-center justify-between gap-4 border-t border-yellow-500/20 pt-4 sm:flex-row">
             <span className="flex items-center gap-2 text-xs text-emerald-400"><ShieldCheck className="h-4 w-4" /> PAYMENTS, NFT MINTING, AND KOTS CLAIMS ARE PAUSED.</span>
-            <span className="rounded-xl bg-gray-700 px-6 py-3 text-sm font-black tracking-wider text-gray-300">TAKEOVERS PAUSED</span>
+            <span className="rounded-xl bg-gray-700 px-6 py-3 text-sm font-black tracking-wider text-gray-300">{display.paymentStatus}</span>
           </div>
         </section>
 
@@ -60,7 +63,7 @@ export default function OriginalDesignStudy() {
               <div className="flex items-center gap-3.5"><span className="rounded-xl bg-cyan-400 p-3 text-black"><Globe className="h-6 w-6" /></span><div><span className="block text-[11px] font-black tracking-widest text-cyan-300">OFFICIAL PROMOTED LINK / WEBSITE</span><span className="block text-lg font-black text-white sm:text-2xl">kingofthescreen.fun</span></div></div>
               <span className="rounded-xl bg-cyan-400 px-6 py-3 text-center text-sm font-black tracking-wider text-black">VISIT WEBSITE</span>
             </div>
-            <span className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gray-700 py-4 text-lg font-black tracking-wider text-gray-300 sm:py-5 sm:text-xl"><Flame className="h-7 w-7" /> TAKEOVERS PAUSED</span>
+            <span className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gray-700 py-4 text-lg font-black tracking-wider text-gray-300 sm:py-5 sm:text-xl"><Flame className="h-7 w-7" /> {display.paymentStatus}</span>
           </div>
           <div className="flex items-center justify-between border-t border-cyber-border bg-black/95 px-4 py-2 text-[11px] text-gray-400"><span className="flex items-center gap-2 text-red-400"><i className="h-2.5 w-2.5 rounded-full bg-red-500" /> 24/7 GLOBAL LIVE FEED</span><span className="hidden text-yellow-400 sm:block">RULE: Holds screen until outbid</span></div>
         </section>
