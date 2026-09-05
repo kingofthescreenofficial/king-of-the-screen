@@ -6,5 +6,9 @@ if (process.env.PAID_TAKEOVER_ENABLED === "true") {
   }
 }
 if (process.env.PAID_TAKEOVER_ENABLED && process.env.PAID_TAKEOVER_ENABLED !== "false" && process.env.PAID_TAKEOVER_ENABLED !== "true") failures.push("PAID_TAKEOVER_ENABLED");
+for (const key of ["PUBLIC_CROWN_ARCHIVE_ENABLED", "CONTENT_SUBMISSIONS_ENABLED"]) {
+  if (process.env[key] && process.env[key] !== "false" && process.env[key] !== "true") failures.push(key);
+}
+if (process.env.CONTENT_SUBMISSIONS_ENABLED === "true" && process.env.PAID_TAKEOVER_ENABLED !== "true") failures.push("CONTENT_SUBMISSIONS_ENABLED_REQUIRES_PAYMENTS");
 if (failures.length) throw new Error(`Invalid environment: ${failures.join(", ")}`);
 console.log(`Environment valid. Payments: ${process.env.PAID_TAKEOVER_ENABLED === "true" ? "enabled" : "disabled"}.`);
