@@ -57,4 +57,12 @@ test.describe("design studies", () => {
     await expect(page.getByText(/global monument progress/i)).toBeVisible();
     await expect(page.getByRole("button")).toHaveCount(0);
   });
+
+  test("combines the original neon visual system with the 3D layout", async ({ page }) => {
+    await page.goto("/design-hybrid");
+    await expect(page.getByRole("heading", { name: /rule the screen/i })).toBeVisible();
+    await expect(page.getByText(/original neon. new dimension/i)).toBeVisible();
+    await expect(page.getByText(/no payments live/i)).toBeVisible();
+    await expect(page.getByRole("button")).toHaveCount(0);
+  });
 });
