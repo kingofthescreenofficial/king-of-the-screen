@@ -16,15 +16,12 @@ test.describe("home page", () => {
   });
 });
 
-test.describe("mechanics v1.2 page", () => {
-  test("explains the draft mechanics without an investment claim", async ({ page }) => {
+test.describe("mechanics status page", () => {
+  test("does not publish financial mechanics during pre-launch", async ({ page }) => {
     await page.goto("/mechanics-v1-2");
 
-    await expect(page.getByRole("heading", { name: "100 KINGS. ONE EXPERIMENT." })).toBeVisible();
-    await expect(page.getByText("DRAFT FOR DISCUSSION")).toBeVisible();
-    await expect(page.getByText(/\$1,000,000/).first()).toBeVisible();
-    await expect(page.getByText(/Первый сезон не обещает цену, прибыль, ликвидность или доставку KOTS/)).toBeVisible();
-    await expect(page.getByRole("heading", { name: "KOTS не входит в первый сезон." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "MECHANICS ARE NOT PUBLIC TERMS" })).toBeVisible();
+    await expect(page.getByText(/Оплаты, NFT, KOTS и иные финансовые механики выключены/)).toBeVisible();
     await expect(page.getByRole("button", { name: /claim throne|takeovers paused/i })).toHaveCount(0);
   });
 });
@@ -32,8 +29,9 @@ test.describe("mechanics v1.2 page", () => {
 test.describe("pre-launch legal drafts", () => {
   test("states that payment and token mechanics are disabled", async ({ page }) => {
     await page.goto("/legal");
-    await expect(page.getByRole("heading", { name: "Документы первого сезона" })).toBeVisible();
-    await expect(page.getByText("Оплаты, NFT mint, KOTS claim и рыночные операции выключены.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "King of the Screen находится в pre-launch" })).toBeVisible();
+    await expect(page.getByText("Нет финансового предложения")).toBeVisible();
+    await expect(page.getByText("KOTS, airdrop, claim и рыночные операции")).toBeVisible();
   });
 });
 
@@ -42,7 +40,7 @@ test.describe("selected design study", () => {
     await page.goto("/design-original");
     await expect(page.getByRole("heading", { name: "KING OF THE SCREEN" }).first()).toBeVisible();
     await expect(page.getByText(/takeovers paused/i).first()).toBeVisible();
-    await expect(page.getByText(/global monument progress/i)).toBeVisible();
+    await expect(page.getByText(/pre-launch status/i)).toBeVisible();
     await expect(page.getByRole("button")).toHaveCount(0);
   });
 

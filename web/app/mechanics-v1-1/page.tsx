@@ -1,196 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, Check, CircleDollarSign, Crown, Eye, Gem, LockKeyhole, Orbit, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
-import styles from "./page.module.css";
+import { ArrowLeft, LockKeyhole } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "KOTS Mechanics v1.2 | Draft",
-  description: "A discussion draft explaining the King of the Screen mechanics.",
+  title: "KOTS Mechanics Status",
+  description: "The King of the Screen mechanics are under pre-launch review.",
   robots: { index: false, follow: false },
 };
 
-const priceMilestones = [
-  { number: "01", price: "$2", label: "Старт" },
-  { number: "26", price: "$95", label: "Первые 26 правлений" },
-  { number: "50", price: "$921", label: "Середина пути" },
-  { number: "75", price: "$10,295", label: "Зона статуса" },
-  { number: "100", price: "$115,040", label: "Финальный трон" },
-];
-
 export default function MechanicsV11Page() {
   return (
-    <main className={styles.page}>
-      <div className={styles.noise} aria-hidden="true" />
-      <div className={styles.orbit} aria-hidden="true"><Orbit /></div>
-
-      <nav className={styles.nav} aria-label="Навигация">
-        <Link href="/" className={styles.backLink}>
-          <ArrowLeft size={15} aria-hidden="true" />
-          <span>COMING SOON</span>
-        </Link>
-        <span className={styles.version}>MECHANICS V1.2</span>
-      </nav>
-
-      <section className={styles.hero} aria-labelledby="mechanics-title">
-        <div className={styles.draftMark}><span /> DRAFT FOR DISCUSSION</div>
-        <p className={styles.kicker}>KING OF THE SCREEN</p>
-        <h1 id="mechanics-title">100 KINGS. ONE EXPERIMENT.</h1>
-        <p className={styles.lead}>
-          Мы проверяем, способен ли публичный аукцион статуса, контента и редких цифровых артефактов
-          собрать $1,000,000 без внешнего инвестора.
-        </p>
-        <div className={styles.heroFacts}>
-          <div><strong>100</strong><span>правлений</span></div>
-          <div><strong>100</strong><span>статусных NFT</span></div>
-          <div><strong>$1M</strong><span>цель cold wallet</span></div>
-        </div>
+    <main className="flex min-h-screen items-center justify-center bg-[#08080c] px-5 py-10 font-sans text-zinc-200">
+      <section className="w-full max-w-xl rounded-2xl border border-yellow-400/30 bg-yellow-400/5 p-7 text-center">
+        <LockKeyhole className="mx-auto text-yellow-300" size={28} />
+        <p className="mt-5 text-xs font-bold tracking-[0.18em] text-yellow-300">PRE-LAUNCH REVIEW</p>
+        <h1 className="mt-3 text-3xl font-black text-white">MECHANICS ARE NOT PUBLIC TERMS</h1>
+        <p className="mt-4 leading-7 text-zinc-300">Оплаты, NFT, KOTS и иные финансовые механики выключены. Эта страница не предлагает участие, актив, инвестицию или будущую выгоду.</p>
+        <Link href="/legal" className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-yellow-300 hover:text-yellow-200"><ArrowLeft size={15} />READ PRE-LAUNCH NOTICE</Link>
       </section>
-
-      <section className={styles.section} aria-labelledby="premise-title">
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionNumber}>01</span>
-          <div>
-            <p className={styles.eyebrow}>ИДЕЯ</p>
-            <h2 id="premise-title">Один экран, один Король</h2>
-          </div>
-        </div>
-        <div className={styles.premiseGrid}>
-          <article className={styles.featureCard}>
-            <span className={styles.iconFrame}><Crown size={22} /></span>
-            <h3>Правление</h3>
-            <p>Король получает экран для своего изображения, сообщения или проекта. Следующий участник занимает экран по следующей цене.</p>
-          </article>
-          <article className={styles.featureCard}>
-            <span className={styles.iconFrame}><Gem size={22} /></span>
-            <h3>Запись в архиве</h3>
-            <p>После окончательного расчёта правление получает номер и один из 100 цифровых статусных NFT.</p>
-          </article>
-          <article className={styles.featureCard}>
-            <span className={styles.iconFrame}><Eye size={22} /></span>
-            <h3>Публичная история</h3>
-            <p>Каждое правление становится частью видимой истории эксперимента. Номера NFT не повторяются.</p>
-          </article>
-        </div>
-      </section>
-
-      <section className={`${styles.section} ${styles.priceSection}`} aria-labelledby="price-title">
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionNumber}>02</span>
-          <div>
-            <p className={styles.eyebrow}>ЛЕСТНИЦА</p>
-            <h2 id="price-title">Цена растёт вместе с историей</h2>
-          </div>
-        </div>
-        <p className={styles.sectionIntro}>Старт доступен. Финальные места становятся редкими и дорогими. Таблица цен фиксирована заранее.</p>
-        <div className={styles.milestoneRail}>
-          {priceMilestones.map((milestone, index) => (
-            <div className={styles.milestone} key={milestone.number}>
-              <span className={styles.milestoneDot}>{index + 1}</span>
-              <span className={styles.milestoneNumber}>KING {milestone.number}</span>
-              <strong>{milestone.price}</strong>
-              <span>{milestone.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className={styles.totalCard}>
-          <div>
-            <p>Весь путь из 100 правлений</p>
-            <strong>$1,250,000</strong>
-          </div>
-          <p>Это валовой оборот модели. Он построен так, чтобы 80% составили $1,000,000 для cold wallet.</p>
-        </div>
-      </section>
-
-      <section className={styles.section} aria-labelledby="flow-title">
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionNumber}>03</span>
-          <div>
-            <p className={styles.eyebrow}>ДВИЖЕНИЕ СРЕДСТВ</p>
-            <h2 id="flow-title">Что происходит после подтверждённой оплаты</h2>
-          </div>
-        </div>
-        <div className={styles.flow}>
-          <div className={styles.flowOrigin}>
-            <span className={styles.iconFrame}><WalletCards size={23} /></span>
-            <strong>Оплата трона</strong>
-            <span>Сумма в SOL соответствует опубликованной USD-цене</span>
-          </div>
-          <ArrowDown className={styles.flowArrow} aria-hidden="true" />
-          <div className={styles.splitGrid}>
-            <article className={styles.treasuryCard}>
-              <span>80%</span>
-              <CircleDollarSign size={23} aria-hidden="true" />
-              <h3>Cold wallet</h3>
-              <p>Движение к цели эксперимента. Цель, $1,000,000.</p>
-            </article>
-            <article className={styles.vaultCard}>
-              <span>20%</span>
-              <LockKeyhole size={23} aria-hidden="true" />
-              <h3>Operations Vault</h3>
-              <p>Резерв на технические и операционные расходы проекта. Он не используется для поддержки цены токена.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className={`${styles.section} ${styles.kotsSection}`} aria-labelledby="kots-title">
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionNumber}>04</span>
-          <div>
-            <p className={styles.eyebrow}>KOTS V1.2</p>
-            <h2 id="kots-title">KOTS не входит в первый сезон.</h2>
-          </div>
-        </div>
-        <div className={styles.kotsGrid}>
-          <div className={styles.kotsStatement}>
-            <Sparkles size={28} aria-hidden="true" />
-            <p>Первый сезон включает только размещение на экране и статусный NFT после окончательного расчёта.</p>
-            <p>Новый KOTS mint не создан. Старый token mint не используется проектом. Участие в первом сезоне не создаёт права на KOTS.</p>
-          </div>
-          <div className={styles.operations}>
-            <div><span>0</span><p>В первом сезоне нет KOTS claim, airdrop или распределения токенов.</p></div>
-            <div><span>0%</span><p>Operations Vault не направляется на выкуп KOTS или рыночные операции.</p></div>
-            <div><span><LockKeyhole size={15} /></span><p>Любая будущая токен-механика потребует новых условий и отдельной проверки.</p></div>
-          </div>
-        </div>
-        <div className={styles.ruleBox}>
-          <ShieldCheck size={20} aria-hidden="true" />
-          <p><strong>Честное правило:</strong> Первый сезон не обещает цену, прибыль, ликвидность или доставку KOTS. Operations Vault не является механизмом поддержки цены.</p>
-        </div>
-      </section>
-
-      <section className={styles.section} aria-labelledby="nft-title">
-        <div className={styles.sectionHeader}>
-          <span className={styles.sectionNumber}>05</span>
-          <div>
-            <p className={styles.eyebrow}>КОЛЛЕКЦИЯ</p>
-            <h2 id="nft-title">100 NFT, без повторов</h2>
-          </div>
-        </div>
-        <div className={styles.nftPanel}>
-          <div className={styles.nftSeal}><Crown size={42} aria-hidden="true" /><span>1 / 100</span></div>
-          <div>
-            <h3>NFT подтверждает правление</h3>
-            <p>Он хранит номер Короля, время правления, визуальный след и ссылку на подтверждённую транзакцию. NFT не даёт доход, долю в Vault или право на выкуп.</p>
-          </div>
-          <ul>
-            <li><Check size={16} aria-hidden="true" /> Один номер на одно подтверждённое правление</li>
-            <li><Check size={16} aria-hidden="true" /> Чеканка только после расчёта</li>
-            <li><Check size={16} aria-hidden="true" /> Серия закрывается после NFT №100</li>
-          </ul>
-        </div>
-      </section>
-
-      <section className={styles.disclosure} aria-label="Статус запуска">
-        <p>СТАТУС ПРОЕКТА</p>
-        <h2>Это черновик для обсуждения.</h2>
-        <span>Оплаты, NFT, claim и операции KOTS выключены. Эта страница не является предложением инвестировать, купить токен или ждать доход.</span>
-      </section>
-
-      <footer className={styles.footer}>
-        <span>KING OF THE SCREEN · MECHANICS V1.2</span>
-        <Link href="/legal">PRE-LAUNCH LEGAL DRAFTS</Link>
-      </footer>
     </main>
   );
 }

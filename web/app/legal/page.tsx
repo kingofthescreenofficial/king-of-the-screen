@@ -1,35 +1,74 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, FileText, LockKeyhole, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "KOTS Pre-launch Legal Drafts",
-  description: "Pre-launch legal and content policy drafts for King of the Screen.",
+  title: "KOTS Pre-Launch Notice",
+  description: "Current pre-launch status and public policies for King of the Screen.",
   robots: { index: false, follow: false },
 };
+
+const noFinancialFeatures = [
+  "Оплаты в SOL",
+  "Подключение и подписи кошелька",
+  "Загрузка публичного контента",
+  "Чеканка или доставка NFT",
+  "KOTS, airdrop, claim и рыночные операции",
+];
 
 export default function LegalPage() {
   return (
     <main className="min-h-screen bg-[#08080c] px-5 py-8 font-sans text-zinc-200 sm:px-8">
       <div className="mx-auto max-w-3xl">
         <nav className="mb-10 flex items-center justify-between border-b border-zinc-800 pb-5 text-xs font-bold tracking-[0.16em] text-zinc-400">
-          <Link href="/" className="inline-flex items-center gap-2 hover:text-yellow-300"><ArrowLeft size={15} />COMING SOON</Link>
-          <span>PRE-LAUNCH DRAFTS</span>
+          <Link href="/" className="inline-flex items-center gap-2 hover:text-yellow-300"><ArrowLeft size={15} />PRE-LAUNCH</Link>
+          <span>PUBLIC NOTICE</span>
         </nav>
+
         <section className="rounded-2xl border border-yellow-400/35 bg-yellow-400/5 p-6">
-          <div className="flex gap-3"><ShieldCheck className="mt-1 shrink-0 text-yellow-300" /><div>
-            <h1 className="text-2xl font-black text-yellow-200">Документы первого сезона</h1>
-            <p className="mt-2 leading-7 text-zinc-300">Оплаты, NFT mint, KOTS claim и рыночные операции выключены. Это pre-launch черновики. Они не заменяют финальные условия с данными оператора, контактами, применимым правом и правилами возврата.</p>
-          </div></div>
+          <div className="flex gap-3">
+            <ShieldCheck className="mt-1 shrink-0 text-yellow-300" />
+            <div>
+              <h1 className="text-2xl font-black text-yellow-200">King of the Screen находится в pre-launch</h1>
+              <p className="mt-2 leading-7 text-zinc-300">Сайт показывает будущий творческий проект. Сейчас он не принимает деньги и не создаёт цифровые активы для посетителей.</p>
+            </div>
+          </div>
         </section>
 
-        <article className="mt-10 space-y-8 leading-7 text-zinc-300">
-          <section><h2 className="text-xl font-bold text-white">1. Что покупает участник</h2><p>Участник оплачивает одно публичное размещение на главном экране. Размещение включает отображаемые имя, сообщение, изображение и ссылку. Правление остается активным до подтвержденного размещения следующего участника по следующей опубликованной цене.</p><p className="mt-3">После окончательного расчета и соблюдения правил контента участнику предназначается один статусный NFT из серии 100. NFT фиксирует факт правления. Он не дает долю в выручке, право на прибыль, дивиденды, выкуп, KOTS или средства Operations Vault.</p></section>
-          <section><h2 className="text-xl font-bold text-white">2. Цена и серия</h2><p>Цена следующего правления публикуется сервером до оплаты. Серия содержит максимум 100 подтвержденных правлений. Оплата проходит в SOL. USD-цена служит для отображения. Точная сумма SOL фиксируется в подписанном payment intent на ограниченный срок.</p></section>
-          <section><h2 className="text-xl font-bold text-white">3. KOTS</h2><p>Первый сезон не включает KOTS claim, airdrop, liquidity, выкуп токена, торговые операции или обещание будущего KOTS. Участие в первом сезоне не создает права требовать KOTS.</p></section>
-          <section><h2 className="text-xl font-bold text-white">4. Риски</h2><p>SOL-транзакции необратимы после подтверждения сети. Стоимость SOL меняется. NFT и цифровые активы не имеют гарантированной цены или ликвидности. Проект не обещает доход, охват, число просмотров, минимальный срок правления или медийный результат.</p><p className="mt-3">Solana, кошельки, RPC-провайдеры и NFT-инфраструктура являются внешними техническими системами. Участник использует собственный кошелек и никогда не передает seed phrase или приватный ключ.</p></section>
-          <section><h2 className="text-xl font-bold text-white">5. Контент</h2><p>Разрешены оригинальные изображения, сообщения и ссылки, на которые у участника есть права. Запрещены сексуальная эксплуатация детей, угрозы, насилие, терроризм, ненависть, фишинг, malware, wallet drainer, незаконные товары, финансовое мошенничество и нарушения прав третьих лиц.</p><p className="mt-3">Контент проверяется до публикации. Оператор вправе снять материал при нарушении правил, требовании закона, жалобе правообладателя или угрозе безопасности. Финальная версия включит процедуру жалоб и contact point.</p></section>
-          <section><h2 className="text-xl font-bold text-white">6. Перед запуском</h2><p>До включения оплат проект опубликует данные оператора, адрес для notices, email, применимое право, forum, правила возврата и ограниченные юрисдикции. Условия checkout будут требовать отдельного подтверждения участника.</p></section>
+        <article className="mt-10 space-y-9 leading-7 text-zinc-300">
+          <section>
+            <h2 className="flex items-center gap-2 text-xl font-bold text-white"><LockKeyhole size={19} className="text-yellow-300" />Что выключено</h2>
+            <ul className="mt-3 space-y-2 text-zinc-300">
+              {noFinancialFeatures.map((feature) => <li key={feature}>• {feature}</li>)}
+            </ul>
+            <p className="mt-4">Посещение сайта не создаёт право на трон, NFT, KOTS, airdrop, whitelist, возврат, ликвидность, доход или будущий доступ.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white">Нет финансового предложения</h2>
+            <p className="mt-3">Сайт не предлагает инвестиции, ценные бумаги, токены, торговые услуги, финансовый продукт или участие в будущей прибыли. Любой будущий платный сервис потребует отдельных условий, точного описания продукта и явного подтверждения на checkout.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white">Приватность</h2>
+            <p className="mt-3">Текущая версия хранит только техническую телеметрию посещений: путь страницы и время. Она не запрашивает имя, email, адрес кошелька, платежные данные, изображение, seed phrase или приватный ключ. Хостинг и защитные сервисы обрабатывают стандартные серверные журналы.</p>
+            <p className="mt-3">Проект не обещает анонимность посетителям, участникам или операторам. Блокчейн, провайдеры, суды, регуляторы и закон могут раскрывать или требовать данные.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white">Контент и безопасность</h2>
+            <p className="mt-3">Публичная загрузка контента закрыта. Будущий продукт не будет принимать незаконный контент, фишинг, wallet drainer, malware, финансовое мошенничество, угрозы или материалы с нарушением прав третьих лиц.</p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-white">KOTS</h2>
+            <p className="mt-3">KOTS не входит в текущий сайт и первый pre-launch этап. Сайт не создаёт, не раздаёт, не продвигает, не выкупает и не обеспечивает ликвидность KOTS. Старый Pump.fun mint не относится к текущему продукту.</p>
+          </section>
+
+          <section className="rounded-2xl border border-zinc-800 bg-zinc-950/50 p-5">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-white"><FileText size={18} className="text-yellow-300" />Перед платным запуском</h2>
+            <p className="mt-2">Будут опубликованы финальные условия сервиса, правила возвратов, контакт для обращений, правила контента, порядок жалоб, privacy notice и список обслуживаемых юрисдикций. До этого момента платёжный поток останется выключенным.</p>
+          </section>
         </article>
       </div>
     </main>
