@@ -36,3 +36,17 @@ test.describe("pre-launch legal drafts", () => {
     await expect(page.getByText("Оплаты, NFT mint, KOTS claim и рыночные операции выключены.")).toBeVisible();
   });
 });
+
+test.describe("design studies", () => {
+  test("keeps both studies informational and non-transactional", async ({ page }) => {
+    await page.goto("/design-a");
+    await expect(page.getByRole("heading", { name: /the screen has a ruler/i })).toBeVisible();
+    await expect(page.getByText(/preview only/i)).toBeVisible();
+    await expect(page.getByRole("button")).toHaveCount(0);
+
+    await page.goto("/design-b");
+    await expect(page.getByRole("heading", { name: /rule the signal/i })).toBeVisible();
+    await expect(page.getByText("NO PAYMENTS LIVE")).toBeVisible();
+    await expect(page.getByRole("button")).toHaveCount(0);
+  });
+});
