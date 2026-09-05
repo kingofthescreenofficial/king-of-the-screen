@@ -49,4 +49,12 @@ test.describe("design studies", () => {
     await expect(page.getByText("NO PAYMENTS LIVE")).toBeVisible();
     await expect(page.getByRole("button")).toHaveCount(0);
   });
+
+  test("preserves the original visual system as an inactive study", async ({ page }) => {
+    await page.goto("/design-original");
+    await expect(page.getByRole("heading", { name: "KING OF THE SCREEN" }).first()).toBeVisible();
+    await expect(page.getByText(/takeovers paused/i).first()).toBeVisible();
+    await expect(page.getByText(/global monument progress/i)).toBeVisible();
+    await expect(page.getByRole("button")).toHaveCount(0);
+  });
 });
