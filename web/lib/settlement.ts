@@ -73,6 +73,6 @@ export function settleVerifiedPayment(input: SettlementInput): SettlementResult 
     return { status: "SETTLED", paymentId, reignId, state: transition.state };
   });
   if (outcome.state) synchronizeRuntimeState(outcome.state);
-  const { state: _state, ...result } = outcome;
-  return result;
+  if (outcome.status === "SETTLED") return outcome.reignId ? { status: outcome.status, paymentId: outcome.paymentId, reignId: outcome.reignId } : { status: outcome.status, paymentId: outcome.paymentId };
+  return outcome.reason ? { status: outcome.status, paymentId: outcome.paymentId, reason: outcome.reason } : { status: outcome.status, paymentId: outcome.paymentId };
 }

@@ -118,7 +118,7 @@ export async function GET(
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch (error) {
+  } catch {
     return new NextResponse("Error generating SVG", { status: 500 });
   }
 }

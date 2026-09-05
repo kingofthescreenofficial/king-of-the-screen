@@ -58,7 +58,7 @@ export default function OriginalDesignStudy() {
               <div className="flex items-center gap-3"><span className="text-glow-gold flex items-center gap-2 text-2xl font-black tracking-wide sm:text-4xl">👑 CROWN RECORD</span><span className="rounded-md bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1 text-xs font-black uppercase tracking-wider text-black">UNPUBLISHED</span></div>
               <span className="flex items-center gap-1.5 rounded-xl border border-yellow-500/60 bg-gradient-to-r from-purple-900/60 to-yellow-900/60 px-3.5 py-1.5 text-xs font-black text-yellow-300"><Gem className="h-4 w-4 text-purple-400" /> {display.nft.status}</span>
             </div>
-            <p className="text-2xl font-black leading-tight tracking-tight text-emerald-300 sm:text-4xl">"No public record is available during pre-launch."</p>
+            <p className="text-2xl font-black leading-tight tracking-tight text-emerald-300 sm:text-4xl">&quot;No public record is available during pre-launch.&quot;</p>
             <div className="flex flex-col justify-between gap-4 rounded-2xl border-2 border-cyan-400 bg-gradient-to-r from-[#032b36] via-[#051d24] to-[#032b36] p-4 sm:flex-row sm:items-center sm:p-5">
               <div className="flex items-center gap-3.5"><span className="rounded-xl bg-cyan-400 p-3 text-black"><Globe className="h-6 w-6" /></span><div><span className="block text-[11px] font-black tracking-widest text-cyan-300">PUBLIC PROJECT HOME</span><span className="block text-lg font-black text-white sm:text-2xl">kingofthescreen.fun</span></div></div>
               <span className="rounded-xl bg-cyan-400 px-6 py-3 text-center text-sm font-black tracking-wider text-black">PRE-LAUNCH</span>

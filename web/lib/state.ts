@@ -161,7 +161,7 @@ export function executeDethronement(newKingData: Omit<King, "id" | "crownedAt" |
   return result;
 }
 
-export function resetToGenesis(fullReset: boolean = false): AppState {
+export function resetToGenesis(): AppState {
   const now = Date.now();
 
   const freshState: AppState = {
