@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Crown, Flame, Gem, Globe, ShieldCheck, Target, Trophy, Zap } from "lucide-react";
 
 const milestones = ["$0", "$10,000", "$100,000", "$500,000", "$1,000,000 (VICTORY)"];
@@ -74,7 +73,7 @@ export default function OriginalDesignStudy() {
 
         <section className="mx-auto my-8 w-full max-w-5xl rounded-2xl border border-cyber-border bg-cyber-card p-4 shadow-xl sm:p-6"><div className="mb-4 flex flex-wrap items-center justify-between gap-4 border-b border-cyber-border pb-4"><span className="flex items-center gap-2 text-base font-bold text-gold-400 sm:text-lg"><Trophy className="h-5 w-5 text-yellow-400" /> GRAVEYARD OF KINGS &amp; 1-OF-100 NFT RELICS</span><span className="rounded-xl border border-cyber-border bg-black/60 px-3 py-1.5 text-xs text-gray-400">TIMELINE</span></div><div className="py-10 text-center text-xs text-gray-500"><Crown className="mx-auto mb-2 h-8 w-8 opacity-50" /><p>No Kings have fallen yet. This archival layout stays inactive before launch.</p></div></section>
 
-        <footer className="border-t border-cyber-border/80 pb-12 pt-8 text-center text-xs text-gray-500"><div className="flex items-center justify-center gap-2 font-bold text-gray-300"><Crown className="h-4 w-4 text-yellow-400" /> KING OF THE SCREEN (2026)</div><p className="mt-2">Original visual system, preserved as a non-transactional design study.</p><Link href="/design-b" className="mt-4 inline-block text-yellow-400 underline">VIEW SELECTED 3D DIRECTION</Link></footer>
+        <footer className="border-t border-cyber-border/80 pb-12 pt-8 text-center text-xs text-gray-500"><div className="flex items-center justify-center gap-2 font-bold text-gray-300"><Crown className="h-4 w-4 text-yellow-400" /> KING OF THE SCREEN (2026)</div><p className="mt-2">Selected visual system, preserved as a non-transactional design study.</p></footer>
       </div>
     </main>
   );

@@ -37,19 +37,7 @@ test.describe("pre-launch legal drafts", () => {
   });
 });
 
-test.describe("design studies", () => {
-  test("keeps both studies informational and non-transactional", async ({ page }) => {
-    await page.goto("/design-a");
-    await expect(page.getByRole("heading", { name: /the screen has a ruler/i })).toBeVisible();
-    await expect(page.getByText(/preview only/i)).toBeVisible();
-    await expect(page.getByRole("button")).toHaveCount(0);
-
-    await page.goto("/design-b");
-    await expect(page.getByRole("heading", { name: /rule the signal/i })).toBeVisible();
-    await expect(page.getByText("NO PAYMENTS LIVE")).toBeVisible();
-    await expect(page.getByRole("button")).toHaveCount(0);
-  });
-
+test.describe("selected design study", () => {
   test("preserves the original visual system as an inactive study", async ({ page }) => {
     await page.goto("/design-original");
     await expect(page.getByRole("heading", { name: "KING OF THE SCREEN" }).first()).toBeVisible();
@@ -58,11 +46,4 @@ test.describe("design studies", () => {
     await expect(page.getByRole("button")).toHaveCount(0);
   });
 
-  test("combines the original neon visual system with the 3D layout", async ({ page }) => {
-    await page.goto("/design-hybrid");
-    await expect(page.getByRole("heading", { name: /rule the screen/i })).toBeVisible();
-    await expect(page.getByText(/original neon. new dimension/i)).toBeVisible();
-    await expect(page.getByText(/no payments live/i)).toBeVisible();
-    await expect(page.getByRole("button")).toHaveCount(0);
-  });
 });
