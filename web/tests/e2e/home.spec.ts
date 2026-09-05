@@ -35,6 +35,13 @@ test.describe("pre-launch legal drafts", () => {
   });
 });
 
+test.describe("staging boundary", () => {
+  test("keeps the devnet takeover console inaccessible in pre-launch", async ({ page }) => {
+    const response = await page.goto("/staging");
+    expect(response?.status()).toBe(404);
+  });
+});
+
 test.describe("selected design study", () => {
   test("preserves the original visual system as an inactive study", async ({ page }) => {
     await page.goto("/design-original");

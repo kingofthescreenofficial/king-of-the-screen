@@ -14,6 +14,10 @@ export function isContentSubmissionEnabled(): boolean {
   return isPaidTakeoverEnabled() && process.env.CONTENT_SUBMISSIONS_ENABLED === "true";
 }
 
+export function isStagingMode(): boolean {
+  return process.env.KOTS_RUNTIME_MODE === "staging" && process.env.SOLANA_CLUSTER === "devnet";
+}
+
 function hasFinalKotsMint(): boolean {
   return Boolean(process.env.KOTS_V12_MINT_ADDRESS?.trim());
 }

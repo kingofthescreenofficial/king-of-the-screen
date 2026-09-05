@@ -10,5 +10,12 @@ for (const key of ["PUBLIC_CROWN_ARCHIVE_ENABLED", "CONTENT_SUBMISSIONS_ENABLED"
   if (process.env[key] && process.env[key] !== "false" && process.env[key] !== "true") failures.push(key);
 }
 if (process.env.CONTENT_SUBMISSIONS_ENABLED === "true" && process.env.PAID_TAKEOVER_ENABLED !== "true") failures.push("CONTENT_SUBMISSIONS_ENABLED_REQUIRES_PAYMENTS");
+if (process.env.KOTS_RUNTIME_MODE && !["prelaunch", "staging"].includes(process.env.KOTS_RUNTIME_MODE)) failures.push("INVALID_KOTS_RUNTIME_MODE");
+if (process.env.KOTS_RUNTIME_MODE === "staging") {
+  if (process.env.SOLANA_CLUSTER !== "devnet") failures.push("STAGING_REQUIRES_DEVNET");
+  for (const key of ["PAID_TAKEOVER_ENABLED", "AUCTION_SETTLEMENT_ENABLED", "NFT_MINT_ENABLED", "KOTS_MECHANICS_ENABLED"]) {
+    if (process.env[key] === "true") failures.push(`STAGING_REQUIRES_${key}_FALSE`);
+  }
+}
 if (failures.length) throw new Error(`Invalid environment: ${failures.join(", ")}`);
 console.log(`Environment valid. Payments: ${process.env.PAID_TAKEOVER_ENABLED === "true" ? "enabled" : "disabled"}.`);
