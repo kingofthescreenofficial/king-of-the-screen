@@ -3,12 +3,12 @@ import "./globals.css";
 import { TelemetryTracker } from "../components/TelemetryTracker";
 
 export const metadata: Metadata = {
-  title: "KING OF THE SCREEN | Coming Soon",
+  title: "KING OF THE SCREEN | Pre-Launch",
   description:
-    "King of the Screen is preparing for public launch.",
+    "A public experiment in status, art, and competition. Payments, token activity, and NFT activity are paused.",
   openGraph: {
-    title: "KING OF THE SCREEN | Coming Soon",
-    description: "The throne is being prepared.",
+    title: "KING OF THE SCREEN | Pre-Launch",
+    description: "The throne is being prepared. Payments are paused.",
     type: "website",
   },
 };

@@ -1,12 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("home page", () => {
-  test("renders the public coming soon page", async ({ page }) => {
+  test("renders the selected pre-launch design", async ({ page }) => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "KING OF THE SCREEN" })).toBeVisible();
-    await expect(page.getByText("THE THRONE IS BEING PREPARED")).toBeVisible();
-    await expect(page.getByText("LAUNCHING SOON")).toBeVisible();
+    await expect(page.getByText("PRE-LAUNCH SIGNAL")).toBeVisible();
+    await expect(page.getByText(/takeovers paused/i).first()).toBeVisible();
   });
 
   test("does not expose a wallet transaction path", async ({ page }) => {
