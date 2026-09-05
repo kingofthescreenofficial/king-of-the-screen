@@ -2,7 +2,7 @@
 
 import { Transaction } from "@solana/web3.js";
 import { CheckCircle2, Crown, LockKeyhole, Wallet } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type PhantomProvider = {
   isPhantom?: boolean;
@@ -28,6 +28,7 @@ export function StagingTakeoverClient() {
   const [link, setLink] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const imagePreviewRef = useRef<string | null>(null);
   const [contentSubmissionId, setContentSubmissionId] = useState<string | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [status, setStatus] = useState("Devnet only. No money moves from this screen.");
@@ -41,15 +42,18 @@ export function StagingTakeoverClient() {
     setNftPreview(false);
   }
 
-  useEffect(() => {
-    if (!image) {
-      setImagePreview(null);
-      return;
-    }
-    const url = URL.createObjectURL(image);
-    setImagePreview(url);
-    return () => URL.revokeObjectURL(url);
-  }, [image]);
+  useEffect(() => () => {
+    if (imagePreviewRef.current) URL.revokeObjectURL(imagePreviewRef.current);
+  }, []);
+
+  function replaceImage(nextImage: File | null) {
+    if (imagePreviewRef.current) URL.revokeObjectURL(imagePreviewRef.current);
+    const nextPreview = nextImage ? URL.createObjectURL(nextImage) : null;
+    imagePreviewRef.current = nextPreview;
+    setImage(nextImage);
+    setImagePreview(nextPreview);
+    clearApprovedContent();
+  }
 
   async function connectWallet() {
     const provider = window.solana;
@@ -144,8 +148,8 @@ export function StagingTakeoverClient() {
           <label className="text-sm text-slate-300 sm:col-span-1">Display name<input value={displayName} onChange={(event) => { setDisplayName(event.target.value); clearApprovedContent(); }} maxLength={48} className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-3 text-white outline-none focus:border-cyan-300" placeholder="Your name" /></label>
           <label className="text-sm text-slate-300 sm:col-span-2">Message<input value={message} onChange={(event) => { setMessage(event.target.value); clearApprovedContent(); }} maxLength={280} className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-3 text-white outline-none focus:border-cyan-300" placeholder="What stays on the screen?" /></label>
           <label className="text-sm text-slate-300 sm:col-span-3">Link, optional<input value={link} onChange={(event) => { setLink(event.target.value); clearApprovedContent(); }} className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-3 text-white outline-none focus:border-cyan-300" placeholder="https://example.com" /></label>
-          <label className="text-sm text-slate-300 sm:col-span-2">Screen image<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={(event) => { setImage(event.target.files?.[0] ?? null); clearApprovedContent(); }} className="mt-2 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-100 file:px-3 file:py-2 file:font-bold file:text-slate-900" /></label>
-          <div className="rounded-xl border border-white/10 bg-black/20 p-2 sm:col-span-1">{imagePreview ? <img src={imagePreview} alt="Staging screen preview" className="h-20 w-full rounded-lg object-cover" /> : <p className="p-3 text-xs text-slate-500">No image selected</p>}</div>
+          <label className="text-sm text-slate-300 sm:col-span-2">Screen image<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={(event) => replaceImage(event.target.files?.[0] ?? null)} className="mt-2 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-100 file:px-3 file:py-2 file:font-bold file:text-slate-900" /></label>
+          <div className="rounded-xl border border-white/10 bg-black/20 p-2 sm:col-span-1">{imagePreview ? <div role="img" aria-label="Staging screen preview" className="h-20 w-full rounded-lg bg-cover bg-center" style={{ backgroundImage: `url("${imagePreview}")` }} /> : <p className="p-3 text-xs text-slate-500">No image selected</p>}</div>
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
           <button type="button" onClick={connectWallet} className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 font-bold text-slate-950 transition hover:bg-cyan-100"><Wallet size={18} />{walletAddress ? "DEVNET WALLET CONNECTED" : "CONNECT PHANTOM"}</button>
