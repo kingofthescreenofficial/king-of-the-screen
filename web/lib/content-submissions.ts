@@ -8,6 +8,8 @@ import { moderateImage, moderateText, type ModerationResult } from "@/lib/modera
 
 const MAX_NICKNAME_LENGTH = 48;
 const MAX_TAGLINE_LENGTH = 280;
+const SUBMISSION_ATTEMPT_WINDOW_MS = 15 * 60 * 1000;
+const SUBMISSION_ATTEMPT_LIMIT = 5;
 
 export type ContentSubmissionInput = {
   nickname: string;
@@ -16,6 +18,7 @@ export type ContentSubmissionInput = {
   file: File;
   mediaMime: string;
   bytes: Uint8Array;
+  sourceHash: string;
 };
 
 export type ApprovedContentSubmission = {
@@ -118,6 +121,12 @@ function insertSubmission(input: {
 
 export async function createContentSubmission(input: ContentSubmissionInput): Promise<ApprovedContentSubmission> {
   const validated = validateContentSubmission(input);
+  const now = Date.now();
+  const database = getDatabase();
+  database.prepare("DELETE FROM content_submission_attempts WHERE created_at < ?").run(now - SUBMISSION_ATTEMPT_WINDOW_MS);
+  const attempts = (database.prepare("SELECT COUNT(*) AS count FROM content_submission_attempts WHERE source_hash = ? AND created_at >= ?").get(validated.sourceHash, now - SUBMISSION_ATTEMPT_WINDOW_MS) as { count: number }).count;
+  if (attempts >= SUBMISSION_ATTEMPT_LIMIT) throw new Error("CONTENT_RATE_LIMITED");
+  database.prepare("INSERT INTO content_submission_attempts (id, source_hash, created_at, updated_at) VALUES (?, ?, ?, ?)").run(randomUUID(), validated.sourceHash, now, now);
   const digest = contentDigest(validated);
   const textReview = await moderateText([validated.nickname, validated.tagline, validated.linkUrl ?? ""].join("\n"));
   const reviews = textReview.allowed ? [textReview, await moderateImage(validated.file, validated.file.name)] : [textReview];

@@ -117,6 +117,12 @@ function migrate(database: Database.Database): void {
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS content_submission_attempts (
+      id TEXT PRIMARY KEY,
+      source_hash TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS settlement_recoveries (
       id TEXT PRIMARY KEY,
       payment_id TEXT NOT NULL UNIQUE,
@@ -141,6 +147,8 @@ function migrate(database: Database.Database): void {
       ON payment_intent_attempts(wallet_address, created_at);
     CREATE INDEX IF NOT EXISTS payment_intent_attempts_source_created_at
       ON payment_intent_attempts(source_hash, created_at);
+    CREATE INDEX IF NOT EXISTS content_submission_attempts_source_created_at
+      ON content_submission_attempts(source_hash, created_at);
   `);
 
   const paymentIntentColumns = [

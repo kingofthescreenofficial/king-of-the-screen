@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 
 import { createContentSubmission } from "@/lib/content-submissions";
 
@@ -27,11 +28,12 @@ export async function POST(request: Request) {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const mediaMime = detectedMime(bytes);
     if (!mediaMime || mediaMime !== file.type) throw new Error("UNSUPPORTED_MEDIA");
-    const submission = await createContentSubmission({ nickname: textField(form, "nickname"), tagline: textField(form, "tagline"), linkUrl: typeof form.get("linkUrl") === "string" ? textField(form, "linkUrl") : undefined, file, mediaMime, bytes });
+    const sourceHash = createHash("sha256").update(request.headers.get("x-forwarded-for") ?? "unknown").digest("hex");
+    const submission = await createContentSubmission({ nickname: textField(form, "nickname"), tagline: textField(form, "tagline"), linkUrl: typeof form.get("linkUrl") === "string" ? textField(form, "linkUrl") : undefined, file, mediaMime, bytes, sourceHash });
     return NextResponse.json({ id: submission.id, contentDigest: submission.contentDigest, status: "APPROVED" }, { status: 201 });
   } catch (error) {
     const code = error instanceof Error ? error.message : "INVALID_CONTENT";
-    const statuses: Record<string, number> = { INVALID_UPLOAD: 400, UNSUPPORTED_MEDIA: 415, INVALID_CONTENT: 400, INVALID_LINK_URL: 400, CONTENT_REJECTED: 422, CONTENT_MODERATION_UNAVAILABLE: 503 };
+    const statuses: Record<string, number> = { INVALID_UPLOAD: 400, UNSUPPORTED_MEDIA: 415, INVALID_CONTENT: 400, INVALID_LINK_URL: 400, CONTENT_REJECTED: 422, CONTENT_RATE_LIMITED: 429, CONTENT_MODERATION_UNAVAILABLE: 503 };
     return NextResponse.json({ code, error: "Content submission could not be accepted." }, { status: statuses[code] ?? 400 });
   }
 }

@@ -36,13 +36,16 @@ afterEach(() => {
 });
 
 describe("content submission route", () => {
-  it("fails closed and does not store a file when automated moderation is unavailable", async () => {
+  function submissionRequest(source = "test-source") {
     const form = new FormData();
     form.set("nickname", "King One");
     form.set("tagline", "A safe public message");
     form.set("file", new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])], "screen.png", { type: "image/png" }));
+    return new Request("http://localhost/api/content-submissions", { method: "POST", body: form, headers: { "x-forwarded-for": source } });
+  }
 
-    const response = await POST(new Request("http://localhost/api/content-submissions", { method: "POST", body: form }));
+  it("fails closed and does not store a file when automated moderation is unavailable", async () => {
+    const response = await POST(submissionRequest());
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({ code: "CONTENT_MODERATION_UNAVAILABLE" });
@@ -50,5 +53,14 @@ describe("content submission route", () => {
       { status: "REVIEW_UNAVAILABLE", media_storage_key: null },
     ]);
     expect(fs.existsSync(process.env.KOTS_UPLOADS_PATH!)).toBe(false);
+  });
+
+  it("limits repeated submissions before calling the provider", async () => {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      expect((await POST(submissionRequest("limited-source"))).status).toBe(503);
+    }
+    const limited = await POST(submissionRequest("limited-source"));
+    expect(limited.status).toBe(429);
+    await expect(limited.json()).resolves.toMatchObject({ code: "CONTENT_RATE_LIMITED" });
   });
 });
