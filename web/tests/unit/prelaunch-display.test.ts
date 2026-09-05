@@ -11,6 +11,14 @@ describe("buildPrelaunchDisplay", () => {
       kotsStatus: "KOTS CLAIMS DISABLED",
       currentKing: null,
       history: [],
+      screen: {
+        title: "THE SCREEN IS WAITING",
+        message: "No public crown record has been published.",
+      },
+      nft: {
+        status: "ARCHIVAL NFT STATUS: PAUSED",
+        ordinal: null,
+      },
     });
   });
 });
