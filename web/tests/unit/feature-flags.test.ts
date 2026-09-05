@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { getPublicCapabilities, isAuctionSettlementEnabled, isPublicCrownArchiveEnabled } from "@/lib/feature-flags";
+import { getPublicCapabilities, isAuctionSettlementEnabled, isPublicCrownArchiveEnabled, isStagingMode } from "@/lib/feature-flags";
 
 const originalEnvironment = { ...process.env };
 
@@ -45,5 +45,14 @@ describe("pre-launch capability flags", () => {
 
     process.env.PUBLIC_CROWN_ARCHIVE_ENABLED = "true";
     expect(isPublicCrownArchiveEnabled()).toBe(true);
+  });
+
+  it("allows the staging console only for an explicit devnet runtime", () => {
+    process.env.KOTS_RUNTIME_MODE = "staging";
+    process.env.SOLANA_CLUSTER = "mainnet-beta";
+    expect(isStagingMode()).toBe(false);
+
+    process.env.SOLANA_CLUSTER = "devnet";
+    expect(isStagingMode()).toBe(true);
   });
 });
