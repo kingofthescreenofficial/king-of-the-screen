@@ -1,6 +1,6 @@
 # 👑 KING OF THE SCREEN
 
-> Pre-launch status. Payments, NFT minting, KOTS claims, market operations, and the old Pump.fun token are disabled. Current product rules: `docs/KOTS_TOKENOMICS_V12.md` and `docs/LEGAL_LAUNCH_CHECKLIST.md`.
+> Pre-launch status. Payments, NFT minting, KOTS claims, market operations, and the old Pump.fun token are disabled. An isolated devnet staging console exists behind `KOTS_RUNTIME_MODE=staging` and `SOLANA_CLUSTER=devnet`. See `docs/DEVNET_STAGING_RUNBOOK.md`.
 
 > **Один экран. Один король. Властвуй, пока тебя не свергнут.**
 
