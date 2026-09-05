@@ -15,12 +15,13 @@ This runbook validates the browser flow without mainnet value movement. It prepa
 ## Expected flow
 
 1. Connect Phantom.
-2. Enter a display name and message.
-3. Select `PREPARE 80/20 PREVIEW`.
-4. Confirm that the preview shows 80% for Treasury and 20% for Operations.
-5. Select `SIGN DEVNET PREVIEW` only if you want to test Phantom signing.
-6. Confirm that Phantom returns to the site and no transaction signature is broadcast.
-7. Select `QUEUE NFT PREVIEW` to record a `STAGING_PREVIEW` job.
+2. Enter a display name, message, optional HTTPS link, and image.
+3. Select `REVIEW CONTENT` and wait for staging approval.
+4. Select `PREPARE 80/20 PREVIEW`.
+5. Confirm that the preview shows 80% for Treasury and 20% for Operations.
+6. Select `SIGN DEVNET PREVIEW` only if you want to test Phantom signing.
+7. Confirm that Phantom returns to the site and no transaction signature is broadcast.
+8. Select `QUEUE NFT PREVIEW` to record a `STAGING_PREVIEW` job.
 
 ## Stop conditions
 
