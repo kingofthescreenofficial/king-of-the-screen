@@ -4,17 +4,21 @@ import { GET } from "@/app/api/state/route";
 import { POST } from "@/app/api/takeover/route";
 
 describe("public state route", () => {
-  it("returns the current crown and the next price", async () => {
+  it("returns a safe pre-launch projection until the public archive is explicitly enabled", async () => {
     const response = await GET();
     const body = await response.json();
 
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
-      currentKing: expect.objectContaining({ id: expect.any(String) }),
-      nextMinPriceUsd: expect.any(Number),
-      stats: expect.any(Object),
+      mode: "PRE_LAUNCH",
+      currentKing: null,
+      hallOfFame: [],
+      recentEvents: [],
+      nextMinPriceUsd: null,
       capabilities: { paidTakeoverEnabled: false },
     });
+    expect(body).not.toHaveProperty("walletConfig");
+    expect(body).not.toHaveProperty("stats");
   });
 });
 

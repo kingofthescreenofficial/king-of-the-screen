@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { getPublicCapabilities, isAuctionSettlementEnabled } from "@/lib/feature-flags";
+import { getPublicCapabilities, isAuctionSettlementEnabled, isPublicCrownArchiveEnabled } from "@/lib/feature-flags";
 
 const originalEnvironment = { ...process.env };
 
@@ -37,5 +37,13 @@ describe("pre-launch capability flags", () => {
 
     process.env.AUCTION_SETTLEMENT_ENABLED = "true";
     expect(isAuctionSettlementEnabled()).toBe(true);
+  });
+
+  it("keeps the public crown archive closed without a separate approval", () => {
+    delete process.env.PUBLIC_CROWN_ARCHIVE_ENABLED;
+    expect(isPublicCrownArchiveEnabled()).toBe(false);
+
+    process.env.PUBLIC_CROWN_ARCHIVE_ENABLED = "true";
+    expect(isPublicCrownArchiveEnabled()).toBe(true);
   });
 });

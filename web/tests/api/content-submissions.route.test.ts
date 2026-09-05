@@ -17,6 +17,8 @@ beforeEach(() => {
   fixtureDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "kots-submission-"));
   process.env.KOTS_DATABASE_PATH = path.join(fixtureDirectory, "kots.sqlite");
   process.env.KOTS_UPLOADS_PATH = path.join(fixtureDirectory, "uploads");
+  process.env.PAID_TAKEOVER_ENABLED = "true";
+  process.env.CONTENT_SUBMISSIONS_ENABLED = "true";
   delete process.env.SIGHTENGINE_USER;
   delete process.env.SIGHTENGINE_SECRET;
   delete process.env.OPENAI_API_KEY;
@@ -26,6 +28,8 @@ afterEach(() => {
   closeDatabaseForTests();
   delete process.env.KOTS_DATABASE_PATH;
   delete process.env.KOTS_UPLOADS_PATH;
+  delete process.env.PAID_TAKEOVER_ENABLED;
+  delete process.env.CONTENT_SUBMISSIONS_ENABLED;
   if (originalSightengineUser === undefined) delete process.env.SIGHTENGINE_USER;
   else process.env.SIGHTENGINE_USER = originalSightengineUser;
   if (originalSightengineSecret === undefined) delete process.env.SIGHTENGINE_SECRET;

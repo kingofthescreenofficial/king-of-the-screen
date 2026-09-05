@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAppState } from "@/lib/state";
+import { isPublicCrownArchiveEnabled } from "@/lib/feature-flags";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!isPublicCrownArchiveEnabled()) return new NextResponse(null, { status: 404 });
   try {
     const { id } = await params;
     const ordinal = parseInt(id, 10) || 1;

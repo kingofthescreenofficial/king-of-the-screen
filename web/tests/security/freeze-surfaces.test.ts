@@ -4,6 +4,7 @@ import { GET as adminDashboard } from "@/app/api/admin/dashboard/route";
 import { GET as takedownGet, POST as takedownPost } from "@/app/api/admin/takedown/route";
 import { POST as createPaymentIntent } from "@/app/api/payment-intents/route";
 import { POST as createWalletChallenge } from "@/app/api/payment-intents/challenge/route";
+import { POST as createContentSubmission } from "@/app/api/content-submissions/route";
 import { DELETE as deleteTelemetry, POST as postTelemetry } from "@/app/api/telemetry/route";
 import { isPaidTakeoverEnabled } from "@/lib/feature-flags";
 import { adminCookie, createAdminSession } from "@/lib/admin-auth";
@@ -52,6 +53,13 @@ describe("emergency payment freeze", () => {
     }));
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toMatchObject({ code: "PAYMENTS_DISABLED" });
+  });
+
+  it("closes content submission before any body is processed during pre-launch", async () => {
+    delete process.env.CONTENT_SUBMISSIONS_ENABLED;
+    const response = await createContentSubmission(new Request("http://localhost/api/content-submissions", { method: "POST" }));
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toMatchObject({ code: "CONTENT_SUBMISSIONS_DISABLED" });
   });
 });
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 
 import { createContentSubmission } from "@/lib/content-submissions";
+import { isContentSubmissionEnabled } from "@/lib/feature-flags";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 
@@ -21,6 +22,9 @@ function textField(form: FormData, key: string): string {
 }
 
 export async function POST(request: Request) {
+  if (!isContentSubmissionEnabled()) {
+    return NextResponse.json({ code: "CONTENT_SUBMISSIONS_DISABLED", error: "Content submission is temporarily paused." }, { status: 503 });
+  }
   try {
     const form = await request.formData();
     const file = form.get("file");

@@ -15,12 +15,14 @@ beforeEach(() => {
   fixtureDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "kots-media-"));
   process.env.KOTS_DATABASE_PATH = path.join(fixtureDirectory, "kots.sqlite");
   process.env.KOTS_UPLOADS_PATH = path.join(fixtureDirectory, "uploads");
+  process.env.PUBLIC_CROWN_ARCHIVE_ENABLED = "true";
 });
 
 afterEach(() => {
   closeDatabaseForTests();
   delete process.env.KOTS_DATABASE_PATH;
   delete process.env.KOTS_UPLOADS_PATH;
+  delete process.env.PUBLIC_CROWN_ARCHIVE_ENABLED;
   fs.rmSync(fixtureDirectory, { force: true, recursive: true });
 });
 

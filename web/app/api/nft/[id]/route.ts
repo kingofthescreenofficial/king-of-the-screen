@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { AUCTION_MANIFEST_V1 } from "@/lib/auction-manifest";
 import { getAppState } from "@/lib/state";
+import { isPublicCrownArchiveEnabled } from "@/lib/feature-flags";
 import type { King } from "@/lib/types";
 
 function publicOrigin(request: NextRequest): string {
@@ -16,6 +17,7 @@ function settledKings(): King[] {
 }
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  if (!isPublicCrownArchiveEnabled()) return NextResponse.json({ code: "CROWN_ARCHIVE_DISABLED", error: "The public Crown archive is not available." }, { status: 503 });
   const { id } = await params;
   const ordinal = Number(id);
   if (!Number.isInteger(ordinal) || ordinal < 1 || ordinal > AUCTION_MANIFEST_V1.crownLimit) {
