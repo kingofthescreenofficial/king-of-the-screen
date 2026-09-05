@@ -23,8 +23,16 @@ test.describe("mechanics v1.2 page", () => {
     await expect(page.getByRole("heading", { name: "100 KINGS. ONE EXPERIMENT." })).toBeVisible();
     await expect(page.getByText("DRAFT FOR DISCUSSION")).toBeVisible();
     await expect(page.getByText(/\$1,000,000/).first()).toBeVisible();
-    await expect(page.getByText(/No price, profit, liquidity, or token delivery is guaranteed/)).toBeVisible();
-    await expect(page.getByText("100 фиксированных наград. Новый mint ещё не создан.")).toBeVisible();
+    await expect(page.getByText(/Первый сезон не обещает цену, прибыль, ликвидность или доставку KOTS/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "KOTS не входит в первый сезон." })).toBeVisible();
     await expect(page.getByRole("button", { name: /claim throne|takeovers paused/i })).toHaveCount(0);
+  });
+});
+
+test.describe("pre-launch legal drafts", () => {
+  test("states that payment and token mechanics are disabled", async ({ page }) => {
+    await page.goto("/legal");
+    await expect(page.getByRole("heading", { name: "Документы первого сезона" })).toBeVisible();
+    await expect(page.getByText("Оплаты, NFT mint, KOTS claim и рыночные операции выключены.")).toBeVisible();
   });
 });

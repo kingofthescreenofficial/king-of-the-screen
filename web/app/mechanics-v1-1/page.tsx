@@ -126,8 +126,8 @@ export default function MechanicsV11Page() {
             <article className={styles.vaultCard}>
               <span>20%</span>
               <LockKeyhole size={23} aria-hidden="true" />
-              <h3>KOTS Vault</h3>
-              <p>Прозрачный резерв. Он накапливается до отдельного решения о ликвидности.</p>
+              <h3>Operations Vault</h3>
+              <p>Резерв на технические и операционные расходы проекта. Он не используется для поддержки цены токена.</p>
             </article>
           </div>
         </div>
@@ -138,24 +138,24 @@ export default function MechanicsV11Page() {
           <span className={styles.sectionNumber}>04</span>
           <div>
             <p className={styles.eyebrow}>KOTS V1.2</p>
-            <h2 id="kots-title">100 фиксированных наград. Новый mint ещё не создан.</h2>
+            <h2 id="kots-title">KOTS не входит в первый сезон.</h2>
           </div>
         </div>
         <div className={styles.kotsGrid}>
           <div className={styles.kotsStatement}>
             <Sparkles size={28} aria-hidden="true" />
-            <p>После завершения серии каждый окончательно расчётный Король получит право на 1,000,000 KOTS и одну статусную NFT. Сумма не зависит от цены трона.</p>
-            <p>Новый KOTS mint создаётся только после отдельной юридической и технической проверки. Старый token mint не используется проектом.</p>
+            <p>Первый сезон включает только размещение на экране и статусный NFT после окончательного расчёта.</p>
+            <p>Новый KOTS mint не создан. Старый token mint не используется проектом. Участие в первом сезоне не создаёт права на KOTS.</p>
           </div>
           <div className={styles.operations}>
-            <div><span>10%</span><p>100,000,000 KOTS. Резерв Crown Rewards для 100 Королей.</p></div>
-            <div><span>25%</span><p>250,000 KOTS из награды открываются после завершения серии и антифрод-проверки.</p></div>
-            <div><span><LockKeyhole size={15} /></span><p>750,000 KOTS из награды открываются равномерно за 12 месяцев.</p></div>
+            <div><span>0</span><p>В первом сезоне нет KOTS claim, airdrop или распределения токенов.</p></div>
+            <div><span>0%</span><p>Operations Vault не направляется на выкуп KOTS или рыночные операции.</p></div>
+            <div><span><LockKeyhole size={15} /></span><p>Любая будущая токен-механика потребует новых условий и отдельной проверки.</p></div>
           </div>
         </div>
         <div className={styles.ruleBox}>
           <ShieldCheck size={20} aria-hidden="true" />
-          <p><strong>Честное правило:</strong> No price, profit, liquidity, or token delivery is guaranteed before final launch terms. Vault не является механизмом поддержки цены.</p>
+          <p><strong>Честное правило:</strong> Первый сезон не обещает цену, прибыль, ликвидность или доставку KOTS. Operations Vault не является механизмом поддержки цены.</p>
         </div>
       </section>
 
@@ -189,7 +189,7 @@ export default function MechanicsV11Page() {
 
       <footer className={styles.footer}>
         <span>KING OF THE SCREEN · MECHANICS V1.2</span>
-        <span>TEMPORARY DISCUSSION PAGE</span>
+        <Link href="/legal">PRE-LAUNCH LEGAL DRAFTS</Link>
       </footer>
     </main>
   );
