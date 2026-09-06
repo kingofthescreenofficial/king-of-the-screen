@@ -9,8 +9,9 @@ This runbook validates the browser flow without mainnet value movement. It prepa
 1. Copy `web/.env.staging.example` to `web/.env.local` in an isolated local checkout.
 2. Set `KOTS_RUNTIME_MODE=staging` and `SOLANA_CLUSTER=devnet`.
 3. Set both recipient addresses to public devnet test addresses. Never use mainnet private keys, seed phrases, or production RPC credentials.
-4. Start the app with `npm run dev` from `web`.
-5. Open `http://localhost:3000/staging` in a browser with Phantom set to Solana devnet.
+4. Run `npm run ops:validate:local` from `web`. It must report that payments are disabled.
+5. Start the app with `npm run dev` from `web`.
+6. Open `http://localhost:3000/staging` in a browser with Phantom set to Solana devnet.
 
 ## Expected flow
 
