@@ -18,6 +18,16 @@ export default defineConfig({
   ],
   webServer: {
     command: `npm run build && PORT=${port} npm run start`,
+    env: {
+      ...process.env,
+      KOTS_RUNTIME_MODE: "prelaunch",
+      PAID_TAKEOVER_ENABLED: "false",
+      AUCTION_SETTLEMENT_ENABLED: "false",
+      NFT_MINT_ENABLED: "false",
+      KOTS_MECHANICS_ENABLED: "false",
+      PUBLIC_CROWN_ARCHIVE_ENABLED: "false",
+      CONTENT_SUBMISSIONS_ENABLED: "false",
+    },
     reuseExistingServer: false,
     timeout: 120_000,
     url: baseURL,

@@ -12,13 +12,20 @@ type PhantomProvider = {
 };
 
 declare global {
-  interface Window { solana?: PhantomProvider; }
+  interface Window {
+    phantom?: { solana?: PhantomProvider };
+    solana?: PhantomProvider;
+  }
 }
 
 type Preview = { totalLamports: number; treasuryLamports: number; operationsVaultLamports: number; serializedTransaction: string };
 
 function sol(lamports: number): string {
   return (lamports / 1_000_000_000).toFixed(4);
+}
+
+function getPhantomProvider(): PhantomProvider | undefined {
+  return window.phantom?.solana?.isPhantom ? window.phantom.solana : window.solana?.isPhantom ? window.solana : undefined;
 }
 
 export function StagingTakeoverClient() {
@@ -56,8 +63,8 @@ export function StagingTakeoverClient() {
   }
 
   async function connectWallet() {
-    const provider = window.solana;
-    if (!provider?.isPhantom) {
+    const provider = getPhantomProvider();
+    if (!provider) {
       setStatus("Phantom was not found. Open this staging page in a browser with Phantom installed.");
       return;
     }
@@ -115,8 +122,8 @@ export function StagingTakeoverClient() {
   }
 
   async function signPreview() {
-    const provider = window.solana;
-    if (!provider?.isPhantom || !preview) return;
+    const provider = getPhantomProvider();
+    if (!provider || !preview) return;
     try {
       const transaction = Transaction.from(Buffer.from(preview.serializedTransaction, "base64"));
       await provider.signTransaction(transaction);
