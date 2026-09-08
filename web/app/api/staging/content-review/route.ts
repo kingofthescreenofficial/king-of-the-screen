@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 import { createContentSubmission } from "@/lib/content-submissions";
 import { isStagingMode } from "@/lib/feature-flags";
+import { hasStagingAccessFromCookieHeader } from "@/lib/staging-access";
 
 const MAX_BYTES = 2 * 1024 * 1024;
 
@@ -23,7 +24,7 @@ function required(form: FormData, key: string): string {
 }
 
 export async function POST(request: Request) {
-  if (!isStagingMode()) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
+  if (!isStagingMode() || !hasStagingAccessFromCookieHeader(request.headers.get("cookie"))) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
   try {
     const form = await request.formData();
     const file = form.get("file");

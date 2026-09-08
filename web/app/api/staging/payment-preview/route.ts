@@ -3,12 +3,13 @@ import { NextResponse } from "next/server";
 
 import { getApprovedContentSubmission } from "@/lib/content-submissions";
 import { isStagingMode } from "@/lib/feature-flags";
+import { hasStagingAccessFromCookieHeader } from "@/lib/staging-access";
 import { buildStagingPaymentPreview } from "@/lib/staging-payment";
 
 const STAGING_TOTAL_LAMPORTS = 5_000_000;
 
 export async function POST(request: Request) {
-  if (!isStagingMode()) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
+  if (!isStagingMode() || !hasStagingAccessFromCookieHeader(request.headers.get("cookie"))) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
   try {
     const body = await request.json() as { walletAddress?: unknown; contentSubmissionId?: unknown };
     if (typeof body.walletAddress !== "string" || !body.walletAddress.trim()) throw new Error("INVALID_WALLET");

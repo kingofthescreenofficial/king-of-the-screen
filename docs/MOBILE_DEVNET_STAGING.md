@@ -25,9 +25,10 @@ Before a tunnel starts, confirm all controls:
 1. Switch Phantom to Solana Devnet.
 2. Add test SOL through a devnet faucet. Do not send mainnet SOL.
 3. Open the protected HTTPS tunnel URL in Phantom's in-app browser.
-4. Connect Phantom.
-5. Submit content for review.
-6. Review the unsigned 80/20 devnet transaction.
-7. Sign only the devnet preview.
-8. Confirm that no transaction is broadcast and no NFT is minted or delivered.
-9. Close the tunnel after the test.
+4. Use the `/staging/access?token=[STAGING_ACCESS_TOKEN]` entry URL once. It stores a 30-minute HttpOnly session.
+5. Connect Phantom.
+6. Submit content for review.
+7. Review the unsigned 80/20 devnet transaction.
+8. Sign only the devnet preview.
+9. Confirm that no transaction is broadcast and no NFT is minted or delivered.
+10. Close the tunnel after the test.

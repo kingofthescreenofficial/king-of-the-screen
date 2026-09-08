@@ -6,9 +6,10 @@ import { NextResponse } from "next/server";
 import { getApprovedContentSubmission } from "@/lib/content-submissions";
 import { getDatabase } from "@/lib/database";
 import { isStagingMode } from "@/lib/feature-flags";
+import { hasStagingAccessFromCookieHeader } from "@/lib/staging-access";
 
 export async function POST(request: Request) {
-  if (!isStagingMode()) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
+  if (!isStagingMode() || !hasStagingAccessFromCookieHeader(request.headers.get("cookie"))) return NextResponse.json({ code: "STAGING_DISABLED", error: "Staging is unavailable." }, { status: 404 });
   try {
     const body = await request.json() as { walletAddress?: unknown; displayName?: unknown; message?: unknown; contentSubmissionId?: unknown };
     if (typeof body.walletAddress !== "string" || typeof body.displayName !== "string" || typeof body.message !== "string" || typeof body.contentSubmissionId !== "string") throw new Error("INVALID_NFT_PREVIEW");

@@ -1,10 +1,13 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { StagingTakeoverClient } from "@/components/StagingTakeoverClient";
 import { isStagingMode } from "@/lib/feature-flags";
+import { STAGING_ACCESS_COOKIE, hasValidStagingAccess } from "@/lib/staging-access";
 
-export default function StagingPage() {
-  if (!isStagingMode()) notFound();
+export default async function StagingPage() {
+  const cookieStore = await cookies();
+  if (!isStagingMode() || !hasValidStagingAccess(cookieStore.get(STAGING_ACCESS_COOKIE)?.value)) notFound();
   return (
     <main className="min-h-screen bg-[#060a12] px-4 py-8 font-sans text-white sm:px-8 sm:py-12">
       <div className="mx-auto max-w-6xl">
