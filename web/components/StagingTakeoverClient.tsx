@@ -4,6 +4,8 @@ import { Transaction } from "@solana/web3.js";
 import { CheckCircle2, Crown, LockKeyhole, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { PHANTOM_DOWNLOAD_URL, buildPhantomBrowseUrl, isMobileUserAgent } from "@/lib/phantom-browser";
+
 type PhantomProvider = {
   isPhantom?: boolean;
   publicKey?: { toBase58(): string };
@@ -62,10 +64,35 @@ export function StagingTakeoverClient() {
     clearApprovedContent();
   }
 
+  function openPhantomOnMobile() {
+    const accessToken = new URLSearchParams(window.location.search).get("staging_access_token");
+    if (!accessToken) {
+      window.location.assign(PHANTOM_DOWNLOAD_URL);
+      return;
+    }
+    const stagingAccessUrl = new URL("/staging/access", window.location.origin);
+    stagingAccessUrl.searchParams.set("token", accessToken);
+    let appOpened = false;
+    const onVisibilityChange = () => {
+      appOpened = document.visibilityState === "hidden";
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange, { once: true });
+    window.setTimeout(() => {
+      if (!appOpened) window.location.assign(PHANTOM_DOWNLOAD_URL);
+    }, 2_000);
+    window.location.assign(buildPhantomBrowseUrl(stagingAccessUrl.toString(), window.location.origin));
+  }
+
   async function connectWallet() {
     const provider = getPhantomProvider();
     if (!provider) {
-      setStatus("Phantom was not found. Open this staging page in a browser with Phantom installed.");
+      if (isMobileUserAgent(navigator.userAgent)) {
+        setStatus("Opening this staging session in Phantom.");
+        openPhantomOnMobile();
+        return;
+      }
+      setStatus("Phantom was not found. Opening the Phantom download page.");
+      window.location.assign(PHANTOM_DOWNLOAD_URL);
       return;
     }
     try {
