@@ -77,7 +77,11 @@ describe("frozen privileged endpoints", () => {
   });
 
   it("rejects unauthenticated admin reads and destructive actions", async () => {
-    for (const response of await Promise.all([adminDashboard(), takedownGet(), takedownPost()])) {
+    for (const response of await Promise.all([
+      adminDashboard(new Request("http://localhost/api/admin/dashboard")),
+      takedownGet(),
+      takedownPost(new Request("http://localhost/api/admin/takedown", { method: "POST" })),
+    ])) {
       expect(response.status).toBe(401);
       await expect(response.json()).resolves.toMatchObject({ code: "ADMIN_AUTH_REQUIRED" });
     }

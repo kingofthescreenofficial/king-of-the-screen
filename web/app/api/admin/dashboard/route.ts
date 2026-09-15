@@ -5,8 +5,8 @@ import { getPublicCapabilities } from "@/lib/feature-flags";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request?: Request) {
-  if (!request || !requireAdmin(request)) return NextResponse.json({ code: "ADMIN_AUTH_REQUIRED", error: "Authentication is required." }, { status: 401 });
+export async function GET(request: Request) {
+  if (!requireAdmin(request)) return NextResponse.json({ code: "ADMIN_AUTH_REQUIRED", error: "Authentication is required." }, { status: 401 });
   const database = getDatabase();
   const count = (table: "content_submissions" | "payments" | "reward_jobs" | "settlement_recoveries") => (database.prepare(`SELECT COUNT(*) AS count FROM ${table}`).get() as { count: number }).count;
   const pendingNftJobs = (database.prepare("SELECT COUNT(*) AS count FROM reward_jobs WHERE status = 'PENDING_LAUNCH'").get() as { count: number }).count;

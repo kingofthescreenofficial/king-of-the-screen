@@ -12,7 +12,7 @@ export async function GET() {
   return unavailable();
 }
 
-export async function POST(request?: Request) {
-  if (!request || !requireAdminMutation(request)) return unavailable();
+export async function POST(request: Request) {
+  if (!requireAdminMutation(request)) return unavailable();
   return NextResponse.json({ code: "TAKEDOWN_NOT_READY", error: "Takedown is temporarily unavailable." }, { status: 503 });
 }
