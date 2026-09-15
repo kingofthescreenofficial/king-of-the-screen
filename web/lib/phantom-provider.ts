@@ -15,6 +15,10 @@ declare global {
   }
 }
 
+export function readPhantomProvider(browser: Pick<Window, "phantom">): PhantomProvider | undefined {
+  return browser.phantom?.solana?.isPhantom ? browser.phantom.solana : undefined;
+}
+
 export function getPhantomProvider(): PhantomProvider | undefined {
-  return window.phantom?.solana?.isPhantom ? window.phantom.solana : window.solana?.isPhantom ? window.solana : undefined;
+  return readPhantomProvider(window);
 }

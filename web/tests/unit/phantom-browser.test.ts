@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { PHANTOM_DOWNLOAD_URL, buildPhantomBrowseUrl, isMobileUserAgent } from "@/lib/phantom-browser";
+import { readPhantomProvider } from "@/lib/phantom-provider";
 
 describe("Phantom browser handoff", () => {
   it("detects mobile browsers without matching desktop user agents", () => {
@@ -13,5 +14,11 @@ describe("Phantom browser handoff", () => {
       "https://phantom.app/ul/browse/https%3A%2F%2Fstaging.example%2Fstaging%2Faccess%3Ftoken%3Dtest?ref=https%3A%2F%2Fstaging.example",
     );
     expect(PHANTOM_DOWNLOAD_URL).toBe("https://phantom.app/download");
+  });
+
+  it("accepts only Phantom's namespaced provider", () => {
+    const provider = { isPhantom: true } as never;
+    expect(readPhantomProvider({ phantom: { solana: provider } })).toBe(provider);
+    expect(readPhantomProvider({})).toBeUndefined();
   });
 });
