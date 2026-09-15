@@ -17,5 +17,14 @@ if (process.env.KOTS_RUNTIME_MODE === "staging") {
     if (process.env[key] === "true") failures.push(`STAGING_REQUIRES_${key}_FALSE`);
   }
 }
+if (process.env.LIVE_MICROTEST_ENABLED === "true") {
+  if (process.env.SOLANA_CLUSTER !== "mainnet-beta") failures.push("LIVE_MICROTEST_REQUIRES_MAINNET");
+  for (const key of ["PAID_TAKEOVER_ENABLED", "AUCTION_SETTLEMENT_ENABLED", "NFT_MINT_ENABLED", "KOTS_MECHANICS_ENABLED"]) {
+    if (process.env[key] === "true") failures.push(`LIVE_MICROTEST_REQUIRES_${key}_FALSE`);
+  }
+  for (const key of ["LIVE_MICROTEST_ACCESS_TOKEN", "SOLANA_RPC_URL", "SOLANA_TREASURY_ADDRESS", "SOLANA_OPERATIONS_VAULT_ADDRESS"]) {
+    if (!process.env[key]) failures.push(`LIVE_MICROTEST_REQUIRES_${key}`);
+  }
+}
 if (failures.length) throw new Error(`Invalid environment: ${failures.join(", ")}`);
 console.log(`Environment valid. Payments: ${process.env.PAID_TAKEOVER_ENABLED === "true" ? "enabled" : "disabled"}.`);

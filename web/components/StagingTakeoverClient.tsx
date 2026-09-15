@@ -5,29 +5,12 @@ import { CheckCircle2, Crown, LockKeyhole, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { PHANTOM_DOWNLOAD_URL, buildPhantomBrowseUrl, isMobileUserAgent } from "@/lib/phantom-browser";
-
-type PhantomProvider = {
-  isPhantom?: boolean;
-  publicKey?: { toBase58(): string };
-  connect(): Promise<{ publicKey: { toBase58(): string } }>;
-  signTransaction(transaction: Transaction): Promise<Transaction>;
-};
-
-declare global {
-  interface Window {
-    phantom?: { solana?: PhantomProvider };
-    solana?: PhantomProvider;
-  }
-}
+import { getPhantomProvider } from "@/lib/phantom-provider";
 
 type Preview = { totalLamports: number; treasuryLamports: number; operationsVaultLamports: number; serializedTransaction: string };
 
 function sol(lamports: number): string {
   return (lamports / 1_000_000_000).toFixed(4);
-}
-
-function getPhantomProvider(): PhantomProvider | undefined {
-  return window.phantom?.solana?.isPhantom ? window.phantom.solana : window.solana?.isPhantom ? window.solana : undefined;
 }
 
 export function StagingTakeoverClient() {
