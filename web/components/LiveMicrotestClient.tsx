@@ -18,7 +18,7 @@ function sol(lamports: number): string {
   return (lamports / 1_000_000_000).toFixed(6);
 }
 
-export function LiveMicrotestClient() {
+export function LiveMicrotestClient({ phantomBrowseUrl }: { phantomBrowseUrl: string }) {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
@@ -104,6 +104,7 @@ export function LiveMicrotestClient() {
         <button type="button" onClick={preparePayment} disabled={!walletAddress} className="rounded-xl border border-amber-300/60 px-4 py-3 font-bold text-amber-100 disabled:cursor-not-allowed disabled:opacity-40">PREPARE $0.95</button>
         <button type="button" onClick={sendPayment} disabled={!preview || Boolean(signature)} className="rounded-xl bg-amber-300 px-4 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-40">SEND IN PHANTOM</button>
       </div>
+      <a href={phantomBrowseUrl} className="mt-4 inline-flex rounded-xl border border-cyan-300/60 px-4 py-3 text-sm font-bold text-cyan-100">OPEN THIS PAGE IN PHANTOM</a>
       {preview && <div className="mt-6 space-y-2 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-slate-200"><div className="flex justify-between gap-5"><span>Total</span><strong>{sol(preview.totalLamports)} SOL</strong></div><div className="flex justify-between gap-5"><span>Treasury</span><strong>{sol(preview.treasuryLamports)} SOL</strong></div><div className="flex justify-between gap-5"><span>Operations</span><strong>{sol(preview.operationsVaultLamports)} SOL</strong></div></div>}
       <p aria-live="polite" className="mt-6 text-sm leading-6 text-amber-100">{status}</p>
       {signature && <a className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-cyan-200 underline" href={`https://explorer.solana.com/tx/${signature}`} rel="noreferrer" target="_blank">OPEN SOLANA EXPLORER <ExternalLink size={15} /></a>}
