@@ -21,10 +21,9 @@ export function PrivateCaptureClient({ currentKing, token }: { currentKing: stri
   const [status, setStatus] = useState(`Private production test. ${currentKing} is the current King.`);
 
   function openInPhantom() {
-    if (!token) { window.location.assign(PHANTOM_DOWNLOAD_URL); return; }
-    const access = new URL("/capture/access", window.location.origin);
-    access.searchParams.set("token", token);
-    window.location.assign(buildPhantomBrowseUrl(access.toString(), window.location.origin));
+    const target = token ? new URL("/capture/access", window.location.origin) : new URL("/", window.location.origin);
+    if (token) target.searchParams.set("token", token);
+    window.location.assign(buildPhantomBrowseUrl(target.toString(), window.location.origin));
   }
 
   async function connectWallet() {

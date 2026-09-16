@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { hasLiveMicrotestAccessFromCookieHeader, isLiveMicrotestEnabled } from "@/lib/live-microtest";
+import { hasPrivateCaptureAccess, isLiveMicrotestEnabled } from "@/lib/live-microtest";
 import { settlePrivateCapture } from "@/lib/private-capture";
 
 export async function POST(request: Request) {
-  if (!isLiveMicrotestEnabled() || !hasLiveMicrotestAccessFromCookieHeader(request.headers.get("cookie"))) return NextResponse.json({ code: "PRIVATE_CAPTURE_DISABLED" }, { status: 404 });
+  if (!isLiveMicrotestEnabled() || !hasPrivateCaptureAccess(request.headers.get("cookie"))) return NextResponse.json({ code: "PRIVATE_CAPTURE_DISABLED" }, { status: 404 });
   try {
     const body = await request.json() as { intentId?: unknown; signature?: unknown };
     const result = await settlePrivateCapture(body.intentId, body.signature);

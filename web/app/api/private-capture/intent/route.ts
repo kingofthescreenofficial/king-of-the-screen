@@ -1,12 +1,12 @@
 import { Connection } from "@solana/web3.js";
 import { NextResponse } from "next/server";
 
-import { LIVE_MICROTEST_AMOUNT_USD_CENTS, hasLiveMicrotestAccessFromCookieHeader, isLiveMicrotestEnabled } from "@/lib/live-microtest";
+import { LIVE_MICROTEST_AMOUNT_USD_CENTS, hasPrivateCaptureAccess, isLiveMicrotestEnabled } from "@/lib/live-microtest";
 import { createPrivateCaptureIntent } from "@/lib/private-capture";
 import { getFreshSolQuote } from "@/lib/solana-quote";
 
 export async function POST(request: Request) {
-  if (!isLiveMicrotestEnabled() || !hasLiveMicrotestAccessFromCookieHeader(request.headers.get("cookie"))) return NextResponse.json({ code: "PRIVATE_CAPTURE_DISABLED" }, { status: 404 });
+  if (!isLiveMicrotestEnabled() || !hasPrivateCaptureAccess(request.headers.get("cookie"))) return NextResponse.json({ code: "PRIVATE_CAPTURE_DISABLED" }, { status: 404 });
   try {
     const body = await request.json() as Record<string, unknown>;
     const treasuryAddress = process.env.SOLANA_TREASURY_ADDRESS;

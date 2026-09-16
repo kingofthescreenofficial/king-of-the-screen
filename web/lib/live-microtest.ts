@@ -14,6 +14,10 @@ export function isLiveMicrotestEnabled(): boolean {
   return process.env.LIVE_MICROTEST_ENABLED === "true" && process.env.SOLANA_CLUSTER === "mainnet-beta";
 }
 
+export function isPublicPrivateCaptureEnabled(): boolean {
+  return isLiveMicrotestEnabled() && process.env.PUBLIC_PRIVATE_CAPTURE_ENABLED === "true";
+}
+
 export function hasValidLiveMicrotestAccess(token: string | undefined): boolean {
   return matches(token, process.env.LIVE_MICROTEST_ACCESS_TOKEN);
 }
@@ -21,4 +25,8 @@ export function hasValidLiveMicrotestAccess(token: string | undefined): boolean 
 export function hasLiveMicrotestAccessFromCookieHeader(cookieHeader: string | null): boolean {
   const token = cookieHeader?.match(new RegExp(`(?:^|;\\s*)${LIVE_MICROTEST_ACCESS_COOKIE}=([^;]+)`))?.[1];
   return hasValidLiveMicrotestAccess(token);
+}
+
+export function hasPrivateCaptureAccess(cookieHeader: string | null): boolean {
+  return isPublicPrivateCaptureEnabled() || hasLiveMicrotestAccessFromCookieHeader(cookieHeader);
 }
