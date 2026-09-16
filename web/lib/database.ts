@@ -160,6 +160,7 @@ function migrate(database: Database.Database): void {
       nonce TEXT NOT NULL,
       expires_at INTEGER NOT NULL,
       serialized_transaction TEXT NOT NULL,
+      content_submission_id TEXT,
       signature TEXT UNIQUE,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
@@ -218,6 +219,14 @@ function migrate(database: Database.Database): void {
   for (const column of contentSubmissionColumns) {
     const [name] = column.split(" ");
     if (!existingContentColumns.has(name)) database.exec(`ALTER TABLE content_submissions ADD COLUMN ${column}`);
+  }
+  const privateCaptureColumns = ["content_submission_id TEXT"];
+  const existingPrivateCaptureColumns = new Set(
+    (database.prepare("PRAGMA table_info(private_capture_intents)").all() as Array<{ name: string }>).map(({ name }) => name),
+  );
+  for (const column of privateCaptureColumns) {
+    const [name] = column.split(" ");
+    if (!existingPrivateCaptureColumns.has(name)) database.exec(`ALTER TABLE private_capture_intents ADD COLUMN ${column}`);
   }
   const adminSessionColumns = ["token_hash TEXT", "csrf_token TEXT", "idle_expires_at INTEGER", "revoked_at INTEGER"];
   const existingAdminColumns = new Set(

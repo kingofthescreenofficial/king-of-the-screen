@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 
 import { getDatabase } from "@/lib/database";
 import { isPublicCrownArchiveEnabled } from "@/lib/feature-flags";
+import { isPublicPrivateCaptureEnabled } from "@/lib/live-microtest";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -13,7 +14,7 @@ function uploadsDirectory(): string {
 }
 
 export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
-  if (!isPublicCrownArchiveEnabled()) return new NextResponse(null, { status: 404 });
+  if (!isPublicCrownArchiveEnabled() && !isPublicPrivateCaptureEnabled()) return new NextResponse(null, { status: 404 });
   const { id } = await context.params;
   if (!UUID_PATTERN.test(id)) return new NextResponse(null, { status: 404 });
   const row = getDatabase().prepare(`

@@ -16,32 +16,17 @@ export type PrivateCaptureIntent = {
 type CaptureRow = {
   id: string; status: string; buyer_wallet: string; nickname: string; tagline: string; link_url: string | null;
   price_usd_cents: number; treasury_address: string; operations_vault_address: string; treasury_lamports: number;
-  operations_vault_lamports: number; nonce: string; expires_at: number; created_at: number; signature: string | null;
+  operations_vault_lamports: number; nonce: string; expires_at: number; created_at: number; signature: string | null; content_submission_id: string;
 };
 
-function cleanText(value: unknown, limit: number): string {
-  if (typeof value !== "string") throw new Error("INVALID_CAPTURE_CONTENT");
-  const normalized = value.normalize("NFKC").trim().replace(/\s+/g, " ");
-  if (!normalized || normalized.length > limit) throw new Error("INVALID_CAPTURE_CONTENT");
-  return normalized;
-}
-
-function cleanLink(value: unknown): string | null {
-  if (value === undefined || value === null || value === "") return null;
-  if (typeof value !== "string") throw new Error("INVALID_CAPTURE_CONTENT");
-  const url = new URL(value);
-  if (url.protocol !== "https:" || url.username || url.password) throw new Error("INVALID_CAPTURE_CONTENT");
-  return url.toString();
-}
-
 export function createPrivateCaptureIntent(input: {
-  walletAddress: unknown; nickname: unknown; tagline: unknown; linkUrl: unknown; priceUsdCents: number;
+  walletAddress: unknown; contentSubmissionId: unknown; priceUsdCents: number;
   solUsdCents: number; treasuryAddress: string; operationsVaultAddress: string; recentBlockhash: string; now?: number;
 }): PrivateCaptureIntent {
-  const walletAddress = cleanText(input.walletAddress, 64);
-  const nickname = cleanText(input.nickname, 48);
-  const tagline = cleanText(input.tagline, 280);
-  const linkUrl = cleanLink(input.linkUrl);
+  if (typeof input.walletAddress !== "string" || typeof input.contentSubmissionId !== "string") throw new Error("INVALID_CAPTURE_CONTENT");
+  const walletAddress = input.walletAddress.trim();
+  const submission = getDatabase().prepare("SELECT id, nickname, tagline, link_url FROM content_submissions WHERE id = ? AND status = 'APPROVED'").get(input.contentSubmissionId) as { id: string; nickname: string; tagline: string; link_url: string | null } | undefined;
+  if (!submission) throw new Error("CONTENT_NOT_APPROVED");
   if (!Number.isSafeInteger(input.priceUsdCents) || input.priceUsdCents < 1 || !Number.isSafeInteger(input.solUsdCents) || input.solUsdCents < 1) throw new Error("INVALID_CAPTURE_PRICE");
   const now = input.now ?? Date.now();
   const totalLamports = Math.ceil((input.priceUsdCents * 1_000_000_000) / input.solUsdCents);
@@ -53,8 +38,8 @@ export function createPrivateCaptureIntent(input: {
     database.prepare("UPDATE private_capture_intents SET status = 'EXPIRED', updated_at = ? WHERE status = 'RESERVED' AND expires_at < ?").run(now, now);
     const active = database.prepare("SELECT id FROM private_capture_intents WHERE status = 'RESERVED' AND expires_at >= ? LIMIT 1").get(now);
     if (active) throw new Error("PRIVATE_CAPTURE_RESERVED");
-    database.prepare(`INSERT INTO private_capture_intents (id, status, buyer_wallet, nickname, tagline, link_url, price_usd_cents, sol_usd_cents, total_lamports, treasury_lamports, operations_vault_lamports, treasury_address, operations_vault_address, nonce, expires_at, serialized_transaction, created_at, updated_at) VALUES (?, 'RESERVED', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(id, walletAddress, nickname, tagline, linkUrl, input.priceUsdCents, input.solUsdCents, preview.totalLamports, preview.treasuryLamports, preview.operationsVaultLamports, input.treasuryAddress, input.operationsVaultAddress, nonce, expiresAt, preview.serializedTransaction, now, now);
+    database.prepare(`INSERT INTO private_capture_intents (id, status, buyer_wallet, nickname, tagline, link_url, price_usd_cents, sol_usd_cents, total_lamports, treasury_lamports, operations_vault_lamports, treasury_address, operations_vault_address, nonce, expires_at, serialized_transaction, content_submission_id, created_at, updated_at) VALUES (?, 'RESERVED', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(id, walletAddress, submission.nickname, submission.tagline, submission.link_url, input.priceUsdCents, input.solUsdCents, preview.totalLamports, preview.treasuryLamports, preview.operationsVaultLamports, input.treasuryAddress, input.operationsVaultAddress, nonce, expiresAt, preview.serializedTransaction, submission.id, now, now);
     return { id, nonce, expiresAt, ...preview };
   });
 }
@@ -76,9 +61,10 @@ export async function settlePrivateCapture(intentId: unknown, signature: unknown
   return withImmediateTransaction((transactionDatabase) => {
     const current = transactionDatabase.prepare("SELECT * FROM private_capture_intents WHERE id = ?").get(intent.id) as CaptureRow;
     if (current.status === "SETTLED") return { status: "SETTLED" as const, king: current.nickname };
-    const transition = advanceAuctionState(getAppState(), { nickname: current.nickname, tagline: current.tagline, link: current.link_url ?? undefined, mediaUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80", mediaType: "image", paidAmountUsd: current.price_usd_cents / 100, paidCryptoAmount: (current.treasury_lamports + current.operations_vault_lamports) / 1_000_000_000, cryptoCurrency: "SOL", countryCode: "🔒", rewardWalletAddress: current.buyer_wallet, txHash: signature }, Date.now(), { expectedPriceUsdCents: current.price_usd_cents, keepNextPrice: true });
+    const transition = advanceAuctionState(getAppState(), { nickname: current.nickname, tagline: current.tagline, link: current.link_url ?? undefined, mediaUrl: `/api/media/${current.content_submission_id}`, mediaType: "image", paidAmountUsd: current.price_usd_cents / 100, paidCryptoAmount: (current.treasury_lamports + current.operations_vault_lamports) / 1_000_000_000, cryptoCurrency: "SOL", countryCode: "🔒", rewardWalletAddress: current.buyer_wallet, txHash: signature }, Date.now(), { expectedPriceUsdCents: current.price_usd_cents, keepNextPrice: true });
     if (!transition.success) throw new Error(transition.error ?? "CAPTURE_TRANSITION_FAILED");
     transactionDatabase.prepare("UPDATE private_capture_intents SET status = 'SETTLED', signature = ?, updated_at = ? WHERE id = ? AND status = 'RESERVED'").run(signature, Date.now(), current.id);
+    transactionDatabase.prepare("UPDATE content_submissions SET status = 'CROWNED', settled_at = ?, updated_at = ? WHERE id = ? AND status = 'APPROVED'").run(Date.now(), Date.now(), current.content_submission_id);
     transactionDatabase.prepare("INSERT INTO auction_state (id, state_json, created_at, updated_at) VALUES (1, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET state_json = excluded.state_json, updated_at = excluded.updated_at").run(JSON.stringify(transition.state), Date.now(), Date.now());
     synchronizeRuntimeState(transition.state);
     return { status: "SETTLED" as const, king: current.nickname };

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const rpcUrl = process.env.SOLANA_RPC_URL;
     if (!treasuryAddress || !operationsVaultAddress || !rpcUrl) throw new Error("PRIVATE_CAPTURE_CONFIGURATION_UNAVAILABLE");
     const [quote, blockhash] = await Promise.all([getFreshSolQuote(), new Connection(rpcUrl, "confirmed").getLatestBlockhash("confirmed")]);
-    const intent = createPrivateCaptureIntent({ walletAddress: body.walletAddress, nickname: body.nickname, tagline: body.tagline, linkUrl: body.linkUrl, priceUsdCents: LIVE_MICROTEST_AMOUNT_USD_CENTS, solUsdCents: quote.usdCents, treasuryAddress, operationsVaultAddress, recentBlockhash: blockhash.blockhash });
+    const intent = createPrivateCaptureIntent({ walletAddress: body.walletAddress, contentSubmissionId: body.contentSubmissionId, priceUsdCents: LIVE_MICROTEST_AMOUNT_USD_CENTS, solUsdCents: quote.usdCents, treasuryAddress, operationsVaultAddress, recentBlockhash: blockhash.blockhash });
     return NextResponse.json({ ...intent, amountUsdCents: LIVE_MICROTEST_AMOUNT_USD_CENTS, cluster: "mainnet-beta" }, { status: 201 });
   } catch (error) {
     const code = error instanceof Error ? error.message : "PRIVATE_CAPTURE_PREPARATION_FAILED";
