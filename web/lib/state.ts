@@ -94,7 +94,7 @@ export function synchronizeRuntimeState(state: AppState): void {
   memoryState = state;
 }
 
-export function advanceAuctionState(previousState: AppState, newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">, now: number): { success: boolean; state: AppState; error?: string } {
+export function advanceAuctionState(previousState: AppState, newKingData: Omit<King, "id" | "crownedAt" | "dethronedAt" | "reignDurationSeconds">, now: number, options: { expectedPriceUsdCents?: number; keepNextPrice?: boolean } = {}): { success: boolean; state: AppState; error?: string } {
   const state = JSON.parse(JSON.stringify(previousState)) as AppState;
   const settledCrownCount = state.stats.settledCrownCount ?? 0;
   const nextOrdinal = settledCrownCount + 1;
@@ -103,9 +103,10 @@ export function advanceAuctionState(previousState: AppState, newKingData: Omit<K
     return { success: false, state, error: "CROWN_SERIES_COMPLETE" };
   }
 
-  const expectedPriceUsd = getCrownPriceCents(nextOrdinal) / 100;
+  const expectedPriceUsdCents = options.expectedPriceUsdCents ?? getCrownPriceCents(nextOrdinal);
+  const expectedPriceUsd = expectedPriceUsdCents / 100;
 
-  if (Math.round(newKingData.paidAmountUsd * 100) !== getCrownPriceCents(nextOrdinal)) {
+  if (Math.round(newKingData.paidAmountUsd * 100) !== expectedPriceUsdCents) {
     return {
       success: false,
       state,
@@ -148,7 +149,7 @@ export function advanceAuctionState(previousState: AppState, newKingData: Omit<K
   }
 
   // 4. Calculate next minimum price
-  const nextMinPriceUsd = nextOrdinal === AUCTION_MANIFEST_V1.crownLimit
+  const nextMinPriceUsd = options.keepNextPrice ? state.nextMinPriceUsd : nextOrdinal === AUCTION_MANIFEST_V1.crownLimit
     ? 0
     : getCrownPriceCents(nextOrdinal + 1) / 100;
 

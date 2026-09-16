@@ -1,6 +1,6 @@
 import bs58 from "bs58";
 
-export type StoredPaymentIntent = { id: string; nonce: string; buyerWallet: string; treasuryAddress: string; operationsVaultAddress: string; treasuryLamports: number; operationsVaultLamports: number; createdAt: number; expiresAt: number };
+export type StoredPaymentIntent = { id: string; nonce: string; buyerWallet: string; treasuryAddress: string; operationsVaultAddress: string; treasuryLamports: number; operationsVaultLamports: number; createdAt: number; expiresAt: number; memo?: string };
 export type ParsedInstruction = { program?: string; programId?: string; parsed?: { type?: string; info?: { source?: string; destination?: string; lamports?: number } }; data?: string };
 export type SolanaPaymentFixture = { signature: string; confirmationStatus: "processed" | "confirmed" | "finalized"; blockTime: number | null; meta: { err: unknown; innerInstructions?: unknown[] | null } | null; transaction: { message: { accountKeys: Array<{ pubkey: string } | string>; instructions: ParsedInstruction[] } } };
 export type PaymentVerification = { valid: true } | { valid: false; code: string };
@@ -10,7 +10,8 @@ function compute(instruction: ParsedInstruction): boolean { return instruction.p
 function transfer(instruction: ParsedInstruction, source: string, destination: string, lamports: number): boolean { const info = instruction.parsed?.info; return instruction.program === "system" && instruction.parsed?.type === "transfer" && info?.source === source && info.destination === destination && info.lamports === lamports; }
 function memo(instruction: ParsedInstruction, intent: StoredPaymentIntent): boolean {
   const memoValue = instruction.parsed?.info?.source ?? instruction.data ?? "";
-  return (instruction.program === "spl-memo" || instruction.programId === "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr") && memoValue === `kots:intent:${intent.id}:${intent.nonce}`;
+  const expectedMemo = intent.memo ?? `kots:intent:${intent.id}:${intent.nonce}`;
+  return (instruction.program === "spl-memo" || instruction.programId === "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr") && memoValue === expectedMemo;
 }
 
 export function verifySolanaPayment(transaction: SolanaPaymentFixture, intent: StoredPaymentIntent, options: { now?: number; signatureAlreadyUsed?: boolean } = {}): PaymentVerification {

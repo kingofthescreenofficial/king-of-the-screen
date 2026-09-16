@@ -143,12 +143,35 @@ function migrate(database: Database.Database): void {
       updated_at INTEGER NOT NULL,
       UNIQUE(event_type, aggregate_id)
     );
+    CREATE TABLE IF NOT EXISTS private_capture_intents (
+      id TEXT PRIMARY KEY,
+      status TEXT NOT NULL,
+      buyer_wallet TEXT NOT NULL,
+      nickname TEXT NOT NULL,
+      tagline TEXT NOT NULL,
+      link_url TEXT,
+      price_usd_cents INTEGER NOT NULL,
+      sol_usd_cents INTEGER NOT NULL,
+      total_lamports INTEGER NOT NULL,
+      treasury_lamports INTEGER NOT NULL,
+      operations_vault_lamports INTEGER NOT NULL,
+      treasury_address TEXT NOT NULL,
+      operations_vault_address TEXT NOT NULL,
+      nonce TEXT NOT NULL,
+      expires_at INTEGER NOT NULL,
+      serialized_transaction TEXT NOT NULL,
+      signature TEXT UNIQUE,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
     CREATE INDEX IF NOT EXISTS payment_intent_attempts_wallet_created_at
       ON payment_intent_attempts(wallet_address, created_at);
     CREATE INDEX IF NOT EXISTS payment_intent_attempts_source_created_at
       ON payment_intent_attempts(source_hash, created_at);
     CREATE INDEX IF NOT EXISTS content_submission_attempts_source_created_at
       ON content_submission_attempts(source_hash, created_at);
+    CREATE INDEX IF NOT EXISTS private_capture_intents_status_expires_at
+      ON private_capture_intents(status, expires_at);
   `);
 
   const paymentIntentColumns = [
